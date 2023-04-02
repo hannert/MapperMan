@@ -4,7 +4,8 @@ const Schema = mongoose.Schema
 
 const mapSchema = new Schema(
     {
-        name: {type: String, required: true}
+        name: {type: String, required: true},
+        mapData: {type: Object, required: true}
         
     }
 )

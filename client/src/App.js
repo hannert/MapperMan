@@ -1,13 +1,13 @@
 import './App.css';
-import TestComponent from './TestComponent';
+import TestComponent from './components/TestComponent';
+import { FileUpload } from './components/FileUpload';
 
 function App() {
   return (
     <div className="App">
+      <FileUpload />
       <TestComponent />
-      <div>
-        Hello from app
-      </div>
+
     </div>
   );
 }

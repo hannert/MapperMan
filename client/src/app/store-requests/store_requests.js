@@ -5,10 +5,11 @@ const api = axios.create({
 })
 
 
-export const createMap = (mapname) => {
+export const createMap = (mapname, mapData) => {
     return api.post('/newmap/', 
     {
         name: mapname,
+        mapData: mapData,
     })
 }
 
@@ -41,6 +42,7 @@ export const deleteFeature = (mapEdit) => {
 const apis = {
     createMap,
     deleteMapById,
+    getMapById,
 }
 
 export default apis

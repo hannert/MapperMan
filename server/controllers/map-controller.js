@@ -21,23 +21,15 @@ createMap = (req, res) => {
 
 
 getMapById = async (req, res) => {
-    const body = res.body;
     console.log("loading map");
-    if (!body) {
-        return res.status(400).json({
-            success: false,
-            error: 'No maps were selected to load',
-        })
-    }
-    await Map.findById({ _id: req.params.id }, (err, map) => {
+
+
+    await Map.findById({ _id: req.params.id }).then((map) => {
         console.log("Found Map!")
-        if (err) {
-            return res.status(400).json({ success: false, error: err})
+        if (map) {
+            return res.status(200).json({ success: true, map: map})
         }
-        return res.status(200).json({success: true, map: map})
-
-        
-
+        return res.status(400).json({success: false})
     }).catch(err => console.log(err))
 
 }
