@@ -23,14 +23,16 @@ createMap = (req, res) => {
 getMapById = async (req, res) => {
     console.log("loading map");
 
-
     await Map.findById({ _id: req.params.id }).then((map) => {
         console.log("Found Map!")
         if (map) {
             return res.status(200).json({ success: true, map: map})
         }
         return res.status(400).json({success: false})
-    }).catch(err => console.log(err))
+    }).catch(err => {
+        console.log(err)
+        return res.status(400).json({success:false, error: error});
+    })
 
 }
 
@@ -53,5 +55,4 @@ module.exports = {
     getMapById,
     deleteMapById,
     getPublicMaps
-
 }
