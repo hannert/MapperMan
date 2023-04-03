@@ -17,8 +17,6 @@ jobs:
             server:
               - 'server/**'
 
-
-
       - name: Install Node
         if: steps.changes.outputs.server == 'true'
         uses: actions/setup-node@v2.5.2

@@ -22,7 +22,7 @@ createMap = (req, res) => {
 
 getMapById = async (req, res) => {
     console.log("loading map");
-
+    //stuff
     await Map.findById({ _id: req.params.id }).then((map) => {
         console.log("Found Map!")
         if (map) {
