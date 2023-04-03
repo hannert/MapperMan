@@ -20,7 +20,7 @@ jobs:
 
 
       - name: Install Node
-        # if: steps.changes.outputs.server == 'true'
+        if: steps.changes.outputs.server == 'true'
         uses: actions/setup-node@v2.5.2
         with:
           node-version: 16
@@ -28,18 +28,13 @@ jobs:
 
 
       - name: Install packages
-        # if: steps.changes.outputs.server == 'true'
+        if: steps.changes.outputs.server == 'true'
         working-directory: ./server
         run: npm install
-        
 
-      # - name: Build
-      #   # if: steps.changes.outputs.server == 'true'
-      #   working-directory: ./server
-      #   run: npm run build
 
       - name: Deploy to Heroku
-        # if: steps.changes.outputs.server == 'true'1
+        if: steps.changes.outputs.server == 'true'1
         uses: AkhileshNS/heroku-deploy@v3.12.13
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
