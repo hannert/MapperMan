@@ -19,15 +19,25 @@ jobs:
             server:
               - 'server/**'
 
-      - name: deploy on netlify
+      - name: Install Node
+        if: steps.changes.outputs.client == 'true'
+        uses: actions/setup-node@v2.5.2
+          with:
+            node-version: 16.x
+
+
+      - name: Install packages
         if: steps.changes.outputs.client == 'true'
         run: npm install
 
+      - name: Create production build
+        if: steps.changes.outputs.client == 'true'
+        run: npm run build
 
       - name: Deploy to Netlify
         uses: nwtgck/actions-netlify@v2.0
         with:
-          publish-dir: './client'
+          publish-dir: './client/build'
           production-deploy: true
           production-branch: main
           deploy-message: "Deploy from GitHub Actions"
