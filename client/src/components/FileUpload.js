@@ -32,12 +32,12 @@ export function FileUpload(props) {
     return(
         <div>  
             <form>
-                <input type='file' onChange={handleUpload}/>
+                <input type='file' onChange={handleUpload} id='choose-file-button' />
             </form>
             
 
             <form onSubmit={handleSubmit}>
-                <input type='submit' value='upload to server'/>
+                <input type='submit' value='upload to server' id='upload-file-button'  />
             </form>
         </div>
     )

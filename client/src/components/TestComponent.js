@@ -92,19 +92,19 @@ function TestComponent () {
         <div>
             <div>
                 <input value={deleteText} onChange={handleDeleteText}/>
-                <button onClick={handleDeleteById}>
+                <button onClick={handleDeleteById} id='delete-by-id-button'>
                     Submit Delete Request
                 </button>
             </div>
             <div>
                 <input value={getText} onChange={handleGetText}/>
-                <button onClick={handleGetById}>
+                <button onClick={handleGetById} id='get-by-id-button'>
                     Submit Get by ID Request
                 </button>
             </div>
             {leaf}
             <div>
-                <button onClick={handleGetPublicMaps}>
+                <button onClick={handleGetPublicMaps} id='get-public-maps-button'>
                     Get All Maps in Database
                 </button>
                 {mapList}
