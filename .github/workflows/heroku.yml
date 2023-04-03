@@ -39,7 +39,7 @@ jobs:
       #   run: npm run build
 
       - name: Deploy to Heroku
-        # if: steps.changes.outputs.server == 'true'
+        # if: steps.changes.outputs.server == 'true'1
         uses: AkhileshNS/heroku-deploy@v3.12.13
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
