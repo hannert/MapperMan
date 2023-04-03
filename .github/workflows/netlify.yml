@@ -43,13 +43,12 @@ jobs:
         working-directory: ./client
         run: npm run build
 
-      - name: Run Cypress Tests Checkout
+      - name: Cypress Tests
         if: steps.changes.outputs.client == 'true'
         uses: actions/checkout@v2
         
-      - name: Cypress run
-        if: steps.changes.outputs.clent == 'true'
-        uses: cypress-io/github-action@v3
+      - name: Run Cypress Tests
+        uses: cypress-io/github-action@v4
         with:
           command: npx cypress run
           browser: chrome
