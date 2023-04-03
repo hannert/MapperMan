@@ -97,7 +97,7 @@ function TestComponent () {
                 </button>
             </div>
             <div>
-                <input value={getText} onChange={handleGetText}/>
+                <input value={getText} onChange={handleGetText} id="get-map-id"/>
                 <button onClick={handleGetById} id='get-by-id-button'>
                     Submit Get by ID Request
                 </button>
