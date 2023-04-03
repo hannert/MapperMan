@@ -1,0 +1,15 @@
+{
+  "engines": {
+    "node": "16.x",
+    "npm": "9.4.0"
+  },
+  "name": "server",
+  "version": "1.0.0",
+  "description": "server side code for mapperman",
+  "main": "index.js",
+  "scripts": {
+    "test": "nodemon index.js"
+  },
+  "author": "",
+  "license": "ISC"
+}

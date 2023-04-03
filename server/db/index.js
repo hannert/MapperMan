@@ -3,7 +3,7 @@ const dotenv = require('dotenv')
 dotenv.config();
 
 mongoose
-    .connect(process.env.DB_CONNECT, { useNewUrlParser: true })
+    .connect("mongodb+srv://hannert:Coke1235@mapperman.xdnolvq.mongodb.net/?retryWrites=true&w=majority", { useNewUrlParser: true })
     .catch(e => {
         console.error('Connection error', e.message)
     })

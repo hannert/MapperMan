@@ -43,6 +43,7 @@ const apis = {
     createMap,
     deleteMapById,
     getMapById,
+    getPublicMaps
 }
 
 export default apis

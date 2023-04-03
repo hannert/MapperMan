@@ -12,7 +12,7 @@ function TestComponent () {
     const [deleteText, setDeleteText ] = useState('');
     const [getText, setGetText ] = useState('');
     const [currentMap, setCurrentMap] = useState(null);
-
+    const [mapIDList, setMapIDList] = useState(null)
 
     function handleDeleteById (event) {
         event.preventDefault();
@@ -46,6 +46,21 @@ function TestComponent () {
         setGetText(event.target.value)
     }
 
+    function handleGetPublicMaps (event) {
+        event.preventDefault();
+
+        async function asyncGetPublicMaps(){
+            let response = await api.getPublicMaps();
+            if(response.data.success === true) {
+                console.log(response.data.maps)
+                setMapIDList(response.data.maps)
+            }
+        }
+
+        asyncGetPublicMaps();
+        
+    }
+
 
     let leaf = ''
 
@@ -59,6 +74,17 @@ function TestComponent () {
                     />
             </MapContainer>
         )
+    }
+
+    let mapList = ''
+
+    if(mapIDList !== null){
+        mapList = <div>
+            Maps Currently in the Database:
+            {mapIDList.map((item) => (
+                <div key={hash(item)}>{item._id}</div>
+            ))}
+        </div>
     }
 
 
@@ -77,6 +103,12 @@ function TestComponent () {
                 </button>
             </div>
             {leaf}
+            <div>
+                <button onClick={handleGetPublicMaps}>
+                    Get All Maps in Database
+                </button>
+                {mapList}
+            </div>
         </div>
     );
 

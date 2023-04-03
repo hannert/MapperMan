@@ -38,13 +38,20 @@ deleteMapById = async (req, res) => {
 
     await Map.findOneAndRemove({ _id: req.params.id }).then(() => {
         return res.status(200)
-    })
+    }).catch(err => console.log(err))
 
+}
+
+getPublicMaps = async (req, res) => {
+    await Map.find({}, '_id').then((maps) => {
+        return res.status(200).json({success: true, maps: maps})
+    }).catch(err => console.log(err))
 }
 
 module.exports = {
     createMap,
     getMapById,
-    deleteMapById
+    deleteMapById,
+    getPublicMaps
 
 }
