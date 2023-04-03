@@ -34,7 +34,7 @@ jobs:
 
 
       - name: Deploy to Heroku
-        if: steps.changes.outputs.server == 'true'1
+        if: steps.changes.outputs.server == 'true'
         uses: AkhileshNS/heroku-deploy@v3.12.13
         with:
           heroku_api_key: ${{secrets.HEROKU_API_KEY}}
