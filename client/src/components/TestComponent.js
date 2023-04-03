@@ -91,7 +91,7 @@ function TestComponent () {
     return(
         <div>
             <div>
-                <input value={deleteText} onChange={handleDeleteText}/>
+                <input value={deleteText} onChange={handleDeleteText} id = "get-delete-id"/>
                 <button onClick={handleDeleteById} id='delete-by-id-button'>
                     Submit Delete Request
                 </button>
