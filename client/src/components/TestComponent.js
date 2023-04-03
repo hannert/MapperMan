@@ -113,5 +113,5 @@ function TestComponent () {
     );
 
 }
-// Hip hip hooray Yippee!
+// Hip hip hooray Yippee! Testing auto deploy
 export default TestComponent;
