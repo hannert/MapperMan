@@ -1,0 +1,47 @@
+name: Build and Deploy to Heroku (Backend)
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      # ( Build to ./dist or other directory... )
+      - uses: dorny/paths-filter@v2.11.1
+        id: changes
+        with:
+          filters: |
+            server:
+              - 'server/**'
+
+
+
+      - name: Install Node
+        # if: steps.changes.outputs.server == 'true'
+        uses: actions/setup-node@v2.5.2
+        with:
+          node-version: 16
+
+
+
+      - name: Install packages
+        # if: steps.changes.outputs.server == 'true'
+        working-directory: ./server
+        run: npm install
+        
+
+      - name: Run server
+        # if: steps.changes.outputs.server == 'true'
+        working-directory: ./server
+        run: nodemon index.js
+
+      - name: Deploy to Heroku
+        # if: steps.changes.outputs.server == 'true'
+        uses: AkhileshNS/heroku-deploy@v3.12.13
+        with:
+          heroku_api_key: ${{secrets.HEROKU_API_KEY}}
+          heroku_app_name: mapperman
+
