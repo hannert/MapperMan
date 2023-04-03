@@ -1,5 +1,5 @@
 import axios from 'axios';
-axios.defaults.withCredentials = true;
+axios.defaults.withCredentials = false;
 const api = axios.create({
     baseURL: "https://mapperman.herokuapp.com/api", //our server we are deploying on
 })
