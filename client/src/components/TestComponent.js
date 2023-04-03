@@ -91,13 +91,13 @@ function TestComponent () {
     return(
         <div>
             <div>
-                <input value={deleteText} onChange={handleDeleteText}/>
+                <input value={deleteText} onChange={handleDeleteText} id = "get-delete-id"/>
                 <button onClick={handleDeleteById} id='delete-by-id-button'>
                     Submit Delete Request
                 </button>
             </div>
             <div>
-                <input value={getText} onChange={handleGetText}/>
+                <input value={getText} onChange={handleGetText} id="get-map-id"/>
                 <button onClick={handleGetById} id='get-by-id-button'>
                     Submit Get by ID Request
                 </button>
@@ -113,5 +113,5 @@ function TestComponent () {
     );
 
 }
-// Hip hip hooray
+// Hip hip hooray Yippee! Testing auto deploy
 export default TestComponent;
