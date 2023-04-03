@@ -13,7 +13,7 @@ app.use(express.urlencoded({limit: '2000kb', extended: true, parameterLimit:5000
 app.use(cors({
     origin: [process.env.ORIGIN],
     credentials: true,
-    headers: {'Access-Control-Allow-Origin': process.env.ORIGIN}
+    headers: {'Access-Control-Allow-Origin': '*'}
 
 }))
 app.use(express.json({limit:'2000kb'}))
