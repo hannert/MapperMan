@@ -12,6 +12,7 @@ const app = express()
 app.use(express.urlencoded({limit: '2000kb', extended: true, parameterLimit:50000}));
 app.use(cors({
     origin: '*',
+    credentials: false
 
 }))
 app.use(express.json({limit:'2000kb'}))
