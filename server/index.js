@@ -11,8 +11,8 @@ const app = express()
 // SETUP THE MIDDLEWARE
 app.use(express.urlencoded({limit: '2000kb', extended: true, parameterLimit:50000}));
 app.use(cors({
-    origin: process.env.ORIGIN,
-    credentials: true,
+    origin: [process.env.ORIGIN],
+    credentials: true
 
 }))
 app.use(express.json({limit:'2000kb'}))
