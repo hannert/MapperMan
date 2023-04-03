@@ -50,8 +50,10 @@ jobs:
       - name: Run Cypress Tests
         uses: cypress-io/github-action@v4
         with:
+          working-directory: ./client
           command: npx cypress run
           browser: chrome
+          
         
       - name: Deploy to Netlify      
         if: steps.changes.outputs.client == 'true'
