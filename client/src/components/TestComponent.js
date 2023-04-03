@@ -113,5 +113,5 @@ function TestComponent () {
     );
 
 }
-// Hip hip hooray
+// Hip hip hooray Yippee!
 export default TestComponent;
