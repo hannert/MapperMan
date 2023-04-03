@@ -51,14 +51,8 @@ jobs:
         if: steps.changes.outputs.clent == 'true'
         uses: cypress-io/github-action@v3
         with:
-          project: ./client
+          command: npx cypress run
           browser: chrome
-          build: yarn build
-          start: yarn start
-          wait-on: "https://mapperman.netlify.app/"
-        env:
-          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-          NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
         
       - name: Deploy to Netlify      
         if: steps.changes.outputs.client == 'true'
