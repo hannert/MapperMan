@@ -20,7 +20,7 @@ jobs:
               - 'server/**'
 
       - name: Install Node
-        if: steps.changes.outputs.client == 'true'
+        # if: steps.changes.outputs.client == 'true'
         uses: actions/setup-node@v2.5.2
         with:
           node-version: 16
@@ -28,11 +28,11 @@ jobs:
 
 
       - name: Install packages
-        if: steps.changes.outputs.client == 'true'
+        # if: steps.changes.outputs.client == 'true'
         run: npm install
 
       - name: Create production build
-        if: steps.changes.outputs.client == 'true'
+        # if: steps.changes.outputs.client == 'true'
         run: npm run build
 
       - name: Deploy to Netlify
