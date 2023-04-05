@@ -96,7 +96,7 @@ function AppBanner() {
     }
 
     return (
-        <Box sx={{flexGrow: 1}}>
+        <Box sx={{flexGrow: 1, color:'black'}}>
             <AppBar position="static">
                 <Toolbar>
                     <Typography                        
@@ -105,7 +105,8 @@ function AppBanner() {
                         component="div"
                         sx={{ display: { xs: 'none', sm: 'block' } }}                        
                     >
-                        <Link onClick={handleHouseClick} style={{ textDecoration: 'none', color: 'white' }} to='/'><img src="https://i.ibb.co/SnCcPnW/Mapper-Man-Logo-Transparent.png" height={85} width={85}/></Link>
+                        Mapper Man
+                        <Link onClick={handleHouseClick} style={{ textDecoration: 'none', color: 'white' }} to='/'><img src="https://i.ibb.co/SnCcPnW/Mapper-Man-Logo-Transparent.png" height={35} width={35}/></Link>
                     </Typography>
                     <Box sx={{ flexGrow: 1 }}></Box>
                     <Box sx={{ height: "90px", display: { xs: 'none', md: 'flex' } }}>

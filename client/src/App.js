@@ -6,6 +6,11 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import AppBanner  from './components/AppBanner';
 import HomeWrapper from './components/HomeWrapper';
 function App() {
+
+  
+
+
+
   return (
     // <div className="App">
     //   <FileUpload />
