@@ -97,7 +97,7 @@ function AppBanner() {
 
     return (
         <Box sx={{flexGrow: 1, color:'black'}}>
-            <AppBar position="static">
+            <AppBar position="static" sx={{bgcolor: "#2B2B2B", borderColor: "#777777", borderWidth: "5px", borderStyle: "solid", borderRadius: "2px"}}>
                 <Toolbar>
                     <Typography                        
                         variant="h4"

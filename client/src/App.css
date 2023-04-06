@@ -30,10 +30,10 @@
 
 #splash-screen {
   background-size: cover;
-  background: rgb(81 81 81);
+  background: rgb(43 43 43);
   color: rgb(0, 0, 0);
   font-size: 24px;
-  border-color: black;
+  border-color: rgb(119 119 119);
   border-width: 5px;
   border-style: solid;
   border-radius: 2px;

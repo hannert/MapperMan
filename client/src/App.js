@@ -5,11 +5,28 @@ import { React } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import AppBanner  from './components/AppBanner';
 import HomeWrapper from './components/HomeWrapper';
+import LoginScreen from './components/LoginScreen';
+import RegisterScreen from './components/RegisterScreen';
+import { ThemeOptions, ThemeProvider, createTheme } from '@mui/material';
+
+
+const themeOptions = createTheme({
+  palette: {
+    mode: 'dark',
+    primary: {
+      main: '#1976d2',
+    },
+    secondary: {
+      main: '#9c27b0',
+    },
+    background: {
+      default: '#2B2B2B',
+      paper: '#2B2B2B',
+    },
+  },
+});
+
 function App() {
-
-  
-
-
 
   return (
     // <div className="App">
@@ -18,14 +35,14 @@ function App() {
 
     // </div>
     <BrowserRouter>
-      <AppBanner />
-      <Routes>
-        <Route path="/" element={<HomeWrapper />} />
-      </Routes>
-    
-    
-    
-    
+      <ThemeProvider theme={themeOptions}>
+        <AppBanner />
+        <Routes>
+          <Route path="/" element={<HomeWrapper />} />
+          <Route path="/login" element={<LoginScreen />} />
+          <Route path="/register" element={<RegisterScreen />} />
+        </Routes>
+      </ThemeProvider>
     </BrowserRouter>
   );
 }
