@@ -1,20 +1,34 @@
 import MapCard from './MapCard';
+import SearchBar from './SearchBar';
+import AddMapButton from './AddMapButton';
 import { Grid, Box, Paper } from '@mui/material';
 
 export default function MapsScreen(){
     const currentList = [
         {map: 'Africa', published: '3/7/2023', index: 0},
-        {map: 'South America', published: '3/2/2023', index: 1},
+        {map: 'South America', published: '3/4/2023', index: 1},
         {map: 'Germany', published: '3/3/2023', index: 2},
-        {map: 'Netherlands', published: '2/27/2023', index: 3}
+        {map: 'Netherlands', published: '2/27/2023', index: 3},
+        {map: 'France', published: '2/20/2023', index: 4},
+        {map: 'New Zealand', published: '2/19/2023', index: 5}
     ]
 
     
     return (
-        <Grid sx={{backgroundColor: '#2B2B2B', marginTop: '20px', display:'flex',alignItems:"center", justifyContent:"center"}}>
-                    {/* Added margin top to have a gap like the mockup, idk how to make background universally gray tho */}
-            <Box sx={{width: '75%', height: '75%', backgroundColor: '#2B2B2B', marginTop: '20px'}}>
-                <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+        <Grid container rowSpacing={0} sx={{backgroundColor: '#2B2B2B', marginTop: '20px',
+                    alignItems:"center", justifyContent:"center"}}>
+            {/* Added margin top to have a gap like the mockup, idk how to make background universally gray tho */}
+
+            {/* Giving this height is a cursed technique but is what it is */}
+            <Grid item  xs = {12} sx={{textAlign:'right', height:'25px'}}>
+                <AddMapButton></AddMapButton>
+            </Grid>
+            <Grid container xs = {12} sx={{ alignItems:"center", justifyContent:"center"}}>
+                <SearchBar></SearchBar>
+            </Grid>
+
+            <Box sx={{width: '60%', backgroundColor: '#2B2B2B', marginTop: '20px', maxHeight:'700px', overflow: 'auto'}}>
+                <Grid container rowSpacing={4} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                     {      
                         currentList.map((map)=>(
                             <Grid item xs = {6} sx={{align: 'center'}} >

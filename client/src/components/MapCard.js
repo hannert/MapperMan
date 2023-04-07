@@ -1,7 +1,8 @@
-import { IconButton } from '@mui/material';
+import { ButtonBase, CardActionArea, IconButton } from '@mui/material';
 import React, { useContext, useState } from 'react'
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Grid, Box } from '@mui/material';
+
 
 export default function MapCard(props) {
     const { map } = props;
@@ -9,10 +10,10 @@ export default function MapCard(props) {
     let cardClass = "list-card unselected-list-card";
     const index = map.index;
     return (
-        <Box sx ={{             
-            '&:hover': {
-                opacity: [0.9, 0.8, 0.7],
-              }}}>
+        <Box sx = {{'&:hover': {
+            opacity: [0.9, 0.8, 0.7],
+        }}}>
+            <CardActionArea>
             {/* Title with delete */}
             <Box sx={{backgroundColor: '#d2d4d9', color: 'black', display: 'flex', height:'25px'}}>
                 {map.map}                 
@@ -23,6 +24,7 @@ export default function MapCard(props) {
             <Box sx ={{backgroundColor: '#56585c', color: 'white', minHeight: '200px'}}>
                 <div>Picture here</div>
             </Box>
+            
             {/* User who made map and published here */}
             <Box sx ={{height:'25px', backgroundColor: 'black', color: 'white'}}>
                 <Grid container rowSpacing={0}>
@@ -34,6 +36,7 @@ export default function MapCard(props) {
                     </Grid>
                 </Grid>
             </Box>
+            </CardActionArea>
         </Box>
     );
 }
