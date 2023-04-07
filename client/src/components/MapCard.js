@@ -20,12 +20,14 @@ export default function MapCard(props) {
             </Box>  
 
             {/* Picture of the map here */}
-            <Box sx ={{backgroundColor: '#56585c', margin: '10px', marginTop: '-10px', color: 'white', minHeight: '100px'}}>
+            <Box sx ={{backgroundColor: '#56585c', margin: '10px', marginTop: '-10px', color: 'white', minHeight: '200px'}}>
                 <div>Picture here</div>
             </Box>
             
-            <Box sx ={{height:'25px', backgroundColor: 'black', color: 'white', margin: '10px', marginTop:'-10px', textAlign: 'right'}}>
-            {map.published}
+            <Box sx ={{height:'25px', backgroundColor: 'black', color: 'white', margin: '10px', marginTop:'-10px'}}>
+                <div sx={{textAlign:'right'}}>
+                {map.published}
+                </div>
             </Box>
         </Box>
     );
