@@ -11,7 +11,8 @@ export default function MapsScreen(){
 
     
     return (
-        <Grid sx={{width: '100%', height: '100%', backgroundColor: '#2B2B2B', marginTop: '20px', display:'flex',alignItems:"center", justifyContent:"center"}}>
+        <Grid sx={{backgroundColor: '#2B2B2B', marginTop: '20px', display:'flex',alignItems:"center", justifyContent:"center"}}>
+                    {/* Added margin top to have a gap like the mockup, idk how to make background universally gray tho */}
             <Box sx={{width: '75%', height: '75%', backgroundColor: '#2B2B2B', marginTop: '20px'}}>
                 <Grid container rowSpacing={1} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
                     {      
