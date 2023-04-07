@@ -14,8 +14,9 @@ export default function MapsScreen(){
         {map: 'France', published: '2/20/2023', index: 4},
         {map: 'New Zealand', published: '2/19/2023', index: 5},
         {map: 'China', published: '2/16/2023', index: 6},
-        {map: 'Japan', published: '2/16/2023', index: 7}
-
+        {map: 'Japan', published: '2/16/2023', index: 7},
+        {map: 'United States', published: '2/16/2023', index: 8},
+        {map: 'Iceland', published: '2/16/2023', index: 9}
     ]
 
     
