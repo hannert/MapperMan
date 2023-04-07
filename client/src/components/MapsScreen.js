@@ -21,9 +21,8 @@ export default function MapsScreen(){
 
     
     return (
-        <Grid container rowSpacing={0} sx={{backgroundColor: '#2B2B2B', marginTop: '20px',
+        <Grid container rowSpacing={0} sx={{backgroundColor: '#2B2B2B',
                     alignItems:"center", justifyContent:"center"}}>
-            {/* Added margin top to have a gap like the mockup, idk how to make background universally gray tho */}
 
             {/* Giving this height is a cursed technique but is what it is */}
             <Grid item  xs = {12} sx={{textAlign:'right', height:'25px'}}>
@@ -33,8 +32,8 @@ export default function MapsScreen(){
                 <SearchBar></SearchBar>
             </Grid>
 
-            <Box sx={{width: '60%', backgroundColor: '#2B2B2B', marginTop: '20px'}}>
-                <Grid container rowSpacing={4} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
+            <Box sx={{width: '70%', backgroundColor: '#2B2B2B', marginTop: '20px'}}>
+                <Grid container rowSpacing={6} columnSpacing={6}>
                     {      
                         currentList.map((map)=>(
                             <Grid item xs = {6} sx={{align: 'center'}} >
