@@ -66,9 +66,11 @@
 
 }
 
-
-
-
+.list-card {
+  font-size: 18pt;
+  margin: 10px;
+  padding: 20px;
+}
 
 
 

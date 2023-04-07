@@ -8,7 +8,8 @@ import HomeWrapper from './components/HomeWrapper';
 import LoginScreen from './components/LoginScreen';
 import RegisterScreen from './components/RegisterScreen';
 import { ThemeOptions, ThemeProvider, createTheme } from '@mui/material';
-
+import EditScreen from './components/EditScreen';
+import MapsScreen from './components/MapsScreen';
 
 const themeOptions = createTheme({
   palette: {
@@ -41,6 +42,8 @@ function App() {
           <Route path="/" element={<HomeWrapper />} />
           <Route path="/login" element={<LoginScreen />} />
           <Route path="/register" element={<RegisterScreen />} />
+          <Route path='/maps/edit' element={<EditScreen/>}/>
+          <Route path='/maps' element = {<MapsScreen/>}/>
         </Routes>
       </ThemeProvider>
     </BrowserRouter>
