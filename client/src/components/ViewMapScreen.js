@@ -3,6 +3,7 @@ import { Grid, Box, Button } from '@mui/material';
 import { GeoJSON, MapContainer, TileLayer } from "react-leaflet";
 import file from './NA.json'; //hardcoded geojson
 import hash from 'object-hash';
+import CommentsList from "./CommentsList";
 
 
 
@@ -36,8 +37,8 @@ function ViewMapScreen() {
             </Grid>
 
             <Grid item xs={4}>
-                <Box display="flex" justifyContent="center" alignItems="center">
-                    Comments component here
+                <Box display="flex" justifyContent="center" alignItems="center" height="100%">
+                    <CommentsList />
                 </Box>
             </Grid>
             <Grid item  bgcolor='#2B2B2B' component="main" direction="column" justify="flex-end" alignItems="center" xs={8}>

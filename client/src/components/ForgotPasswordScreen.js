@@ -54,6 +54,7 @@ export default function LoginScreen() {
                     <Typography component="h1" variant="h5">
                         Change Password
                     </Typography>
+                    
                     <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
                         <TextField
                             margin="normal"
@@ -65,6 +66,14 @@ export default function LoginScreen() {
                             autoComplete="email"
                             autoFocus
                         />
+                        <Button
+                            type="submit"
+                            fullWidth
+                            variant="contained"
+                            sx={{ mt: 3, mb: 2 }}
+                        >
+                            Verify Email
+                        </Button>
                         <TextField
                             margin="normal"
                             required
