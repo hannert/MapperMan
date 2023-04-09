@@ -2,10 +2,13 @@ import { CardActionArea, IconButton, Typography } from '@mui/material';
 import React from 'react'
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Grid, Box, Button } from '@mui/material';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function MapCard(props) {
+    const navigate = useNavigate();
     const { map } = props;
+    const id = "id-belongs-here"
 
     function handleDelete(e){
         e.stopPropagation();
@@ -13,6 +16,13 @@ export default function MapCard(props) {
 
     function handleMapClick(){
         console.log('Map clicked');
+        
+        /*routes you to /maps/view/id, where id is the id of the map, which can be
+        used to GET the map from the backend. We should set up proper authentication
+        when using this, so users cannot just go to a url and access a map that is
+        not published or that they dont own */
+
+        navigate(`/maps/view/${id}`)
     }
 
     function mouseDown(e){
