@@ -1,9 +1,9 @@
-import { useParams } from "react-router-dom";
-import { Grid, Box, Button } from '@mui/material';
-import { GeoJSON, MapContainer, TileLayer } from "react-leaflet";
-import file from './NA.json'; //hardcoded geojson
+import { Box, Grid } from '@mui/material';
 import hash from 'object-hash';
+import { GeoJSON, MapContainer, TileLayer } from "react-leaflet";
+import { useParams } from "react-router-dom";
 import CommentsList from "./CommentsList";
+import file from './NA.json'; //hardcoded geojson
 
 
 

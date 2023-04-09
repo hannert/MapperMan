@@ -110,7 +110,7 @@ function AppBanner() {
                         </Typography>                        
                         {/* <img src="https://i.ibb.co/SnCcPnW/Mapper-Man-Logo-Transparent.png" height={35} width={35}/> */}
                     </Link>
-                    <Link to='/edit'>
+                    <Link to='/maps/edit'>
                         <EditIcon />
                     </Link>
                     <Box sx={{ flexGrow: 1 }}></Box>

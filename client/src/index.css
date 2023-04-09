@@ -10,6 +10,7 @@ body {
 
 html, body, #root, .App {
   height: 100%;
+  background-color: rgb(43 43 43);
 }
 
 code {

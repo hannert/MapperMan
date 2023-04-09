@@ -4,11 +4,11 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
 import AppBanner from './components/AppBanner';
 import EditScreen from './components/EditScreen';
+import ForgotPasswordScreen from './components/ForgotPasswordScreen';
 import HomeWrapper from './components/HomeWrapper';
 import LoginScreen from './components/LoginScreen';
 import MapsScreen from './components/MapsScreen';
 import RegisterScreen from './components/RegisterScreen';
-import ForgotPasswordScreen from './components/ForgotPasswordScreen';
 import ViewMapScreen from './components/ViewMapScreen';
 
 const { palette } = createTheme();
@@ -55,7 +55,6 @@ function App() {
             <Route path='/maps' element = {<MapsScreen/>}/>
             <Route path='/maps/view/:id' element = {<ViewMapScreen />} />
             <Route path='/forgotPassword/' element ={<ForgotPasswordScreen/>}/>
-            <Route path='/edit' element ={<EditScreen/>}/>
           </Routes>          
         </Box>
 

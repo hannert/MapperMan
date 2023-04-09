@@ -68,15 +68,10 @@
 }
 
 
-
-
-
-
-
-
-
-
-
+#property-editor {
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
 
 
 @keyframes App-logo-spin {
