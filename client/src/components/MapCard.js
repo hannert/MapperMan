@@ -3,8 +3,7 @@ import React from 'react'
 import DeleteIcon from '@mui/icons-material/Delete';
 import { Grid, Box, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-
-
+import dummy from './na.png'
 export default function MapCard(props) {
     const navigate = useNavigate();
     const { map } = props;
@@ -53,12 +52,12 @@ export default function MapCard(props) {
                 </Grid>          
             </Box>  
             {/* Picture of the map here */}
-            <Box sx ={{backgroundColor: '#56585c', color: 'white', minHeight: '200px'}}>
-                <div>Picture here</div>
+            <Box sx ={{backgroundColor: '#56585c', color: 'white', minHeight: '200px', maxWidth:'100%', maxHeight:'100%'}}>
+                <img alt='?' src={dummy} width='100%' height='100%'></img>
             </Box>
             
             {/* User who made map and published here */}
-            <Box sx ={{height:'25px', backgroundColor: 'black', color: 'white'}}>
+            <Box sx ={{height:'25px', backgroundColor: 'black', color: 'white', marginTop:'-5px'}}>
                 <Grid container rowSpacing={0}>
                     <Grid item xs = {6} sx={{textAlign:'left'}}>
                         <Typography sx = {{margin: '3px',fontSize: 14}}>
