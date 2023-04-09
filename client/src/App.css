@@ -45,6 +45,21 @@
   position: relative;
 }
 
+#Home-screen {
+  background: rgb(43 43 43);
+  color: rgb(0, 0, 0);
+  font-size: 24px;
+  height: 100%;
+  margin-top: auto;
+  margin-bottom: auto;
+  text-align: center;
+  vertical-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  position: relative;
+}
 #mapperman-logo {
   display: block;
   margin: auto;

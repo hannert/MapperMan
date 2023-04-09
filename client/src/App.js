@@ -5,6 +5,7 @@ import './App.css';
 import AppBanner from './components/AppBanner';
 import EditScreen from './components/EditScreen';
 import HomeWrapper from './components/HomeWrapper';
+import HomeScreen from './components/HomeScreen';
 import LoginScreen from './components/LoginScreen';
 import MapsScreen from './components/MapsScreen';
 import RegisterScreen from './components/RegisterScreen';
@@ -49,6 +50,7 @@ function App() {
           <AppBanner />
           <Routes>
             <Route path="/" element={<HomeWrapper />} />
+            <Route path='/home' element = {<HomeScreen />}/>
             <Route path="/login" element={<LoginScreen />} />
             <Route path="/register" element={<RegisterScreen />} />
             <Route path='/maps/edit' element={<EditScreen/>}/>
