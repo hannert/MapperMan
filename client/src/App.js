@@ -9,6 +9,7 @@ import LoginScreen from './components/LoginScreen';
 import MapsScreen from './components/MapsScreen';
 import RegisterScreen from './components/RegisterScreen';
 import ForgotPasswordScreen from './components/ForgotPasswordScreen';
+import ViewMapScreen from './components/ViewMapScreen';
 
 const { palette } = createTheme();
 const { augmentColor } = palette;
@@ -52,6 +53,7 @@ function App() {
             <Route path="/register" element={<RegisterScreen />} />
             <Route path='/maps/edit' element={<EditScreen/>}/>
             <Route path='/maps' element = {<MapsScreen/>}/>
+          <Route path='/maps/view/:id' element = {<ViewMapScreen />} />
             <Route path='/forgotPassword/' element ={<ForgotPasswordScreen/>}/>
           </Routes>          
         </Box>
