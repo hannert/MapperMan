@@ -1,5 +1,5 @@
+import { Add } from '@mui/icons-material';
 import { Button, Menu, MenuItem } from "@mui/material";
-import AddIcon from '@mui/icons-material/Add';
 import React from "react";
 
 export default function AddMapButton(){
@@ -22,7 +22,7 @@ export default function AddMapButton(){
           onClick={handleClick}
           sx = {{width:'50px', height:'50px', borderRadius:'50%', backgroundColor: '#d2d4d9', margin:'10px'}}
         >
-          <AddIcon sx={{color:'black'}}></AddIcon>
+          <Add sx={{color:'black'}}></Add>
         </Button>
         <Menu
           id="basic-menu"

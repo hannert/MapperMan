@@ -1,8 +1,8 @@
-import { useContext, useState } from 'react';
-import { Link } from 'react-router-dom'
+import { useState } from 'react';
+import { Link } from 'react-router-dom';
 // import AuthContext from '../auth';
 
-import AccountCircle from '@mui/icons-material/AccountCircle';
+import { AccountCircle } from '@mui/icons-material';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
@@ -96,18 +96,20 @@ function AppBanner() {
     }
 
     return (
-        <Box sx={{flexGrow: 1, color:'black'}}>
+        <Box sx={{color:'black', width:'100%'}}>
             <AppBar position="static" sx={{bgcolor: "#2B2B2B", borderColor: "#777777", borderWidth: "5px", borderStyle: "solid", borderRadius: "2px"}}>
                 <Toolbar>
-                    <Typography                        
-                        variant="h4"
-                        noWrap
-                        component="div"
-                        sx={{ display: { xs: 'none', sm: 'block' } }}                        
-                    >
-                        Mapper Man
-                        <Link onClick={handleHouseClick} style={{ textDecoration: 'none', color: 'white' }} to='/'><img src="https://i.ibb.co/SnCcPnW/Mapper-Man-Logo-Transparent.png" height={35} width={35}/></Link>
-                    </Typography>
+                    <Link onClick={handleHouseClick} style={{ textDecoration: 'none', color: 'white',  }} to='/'>
+                        <Typography                        
+                            variant="h4"
+                            noWrap
+                            component="div"
+                            sx={{ display: { xs: 'none', sm: 'block' }, fontFamily: 'Koulen'}}                        
+                        >
+                            Mapper Man
+                        </Typography>                        
+                        {/* <img src="https://i.ibb.co/SnCcPnW/Mapper-Man-Logo-Transparent.png" height={35} width={35}/> */}
+                    </Link>
                     <Box sx={{ flexGrow: 1 }}></Box>
                     <Box sx={{ height: "90px", display: { xs: 'none', md: 'flex' } }}>
                         <IconButton
