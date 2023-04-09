@@ -1,6 +1,8 @@
 import { useParams } from "react-router-dom";
 import { Grid, Box, Button } from '@mui/material';
 import { GeoJSON, MapContainer, TileLayer } from "react-leaflet";
+import file from './NA.json'; //hardcoded geojson
+import hash from 'object-hash';
 
 
 
@@ -40,7 +42,17 @@ function ViewMapScreen() {
             </Grid>
             <Grid item  bgcolor='#2B2B2B' component="main" direction="column" justify="flex-end" alignItems="center" xs={8}>
                 <Grid item>
-                    Map Here
+                    <Box>
+                        <MapContainer center={[51.505, -0.09]} zoom={1} doubleClickZoom={false}
+                            id="mapId"
+                            preferCanvas={true}>
+                                <TileLayer url='http://{s}.tile.osm.org/{z}/{x}/{y}.png' attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' />
+                                <GeoJSON 
+                                    key={hash(file)} 
+                                    data={file} 
+                                    />
+                        </MapContainer>
+                    </Box>
                 </Grid>
             </Grid>
         </Grid>
