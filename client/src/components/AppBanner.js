@@ -97,7 +97,7 @@ function AppBanner() {
 
     return (
         <Box sx={{color:'black', width:'100%'}}>
-            <AppBar position="static" sx={{bgcolor: "#2B2B2B",}}>
+            <AppBar position="static" sx={{bgcolor: "#252931",}}>
                 <Toolbar>
                     <Link onClick={handleHouseClick} style={{ textDecoration: 'none', color: 'white',  }} to='/'>
                         <Typography                        

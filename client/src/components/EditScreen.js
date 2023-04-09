@@ -1,4 +1,4 @@
-import { AddCircle, Circle, Merge, Mouse, Redo, RemoveCircle, Undo } from '@mui/icons-material';
+import { AddCircle, AddLocation, Circle, Merge, Mouse, Redo, RemoveCircle, Timeline, Undo, WrongLocation } from '@mui/icons-material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { Button, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip, Typography } from '@mui/material';
 import { Box } from "@mui/system";
@@ -38,11 +38,11 @@ export default function EditScreen(){
     let propertyComponent = <Box id='property-editor'></Box>;
     if (propertyOpen === true) {
         propertyComponent = (
-            <Box id='property-editor' sx={{width:'35%', height:'100%', backgroundColor:'#323228', display:'flex',  flexDirection:'column', alignItems:'flex-start'}}>
+            <Box id='property-editor' sx={{width:'35%', height:'100%', backgroundColor:'#1D2026', display:'flex',  flexDirection:'column', alignItems:'flex-start'}}>
                 <IconButton onClick={handleToggleProperty} >
                     <ChevronLeftIcon />
                 </IconButton>
-                <Typography sx={{fontFamily:'Koulen'}}>
+                <Typography variant='h4' sx={{fontFamily:'Koulen', color:"#B9D3E9", marginLeft:'20px'}}>
                     Edit Region Properties
                 </Typography>
                 <TableContainer>
@@ -117,6 +117,22 @@ export default function EditScreen(){
                         </Button>
                     </Tooltip>
 
+                    <Tooltip title='polyline' placement='right'>
+                        <Button variant='contained'>
+                            <Timeline />
+                        </Button>
+                    </Tooltip>
+
+                    <Tooltip title='add subregion' placement='right'>
+                        <Button variant='contained'>
+                            <AddLocation />
+                        </Button>
+                    </Tooltip>
+                    <Tooltip title='remove subregion' placement='right'>
+                        <Button variant='contained'>
+                            <WrongLocation />
+                        </Button>
+                    </Tooltip>
                     <Tooltip title='merge subregion' placement='right'>
                         <Button variant='contained'>
                             <Merge />
