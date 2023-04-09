@@ -78,7 +78,7 @@ export default function LoginScreen() {
                             autoComplete="current-password"
                         />
                         <Link href="/forgotPassword/" variant="body2">
-                            Don't have an account? Sign Up
+                            Forgot Password? Click here
                         </Link>
                         <Button
                             type="submit"
