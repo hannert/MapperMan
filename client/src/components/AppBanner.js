@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 // import AuthContext from '../auth';
-
 import { AccountCircle } from '@mui/icons-material';
+import EditIcon from '@mui/icons-material/Edit';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
@@ -97,7 +97,7 @@ function AppBanner() {
 
     return (
         <Box sx={{color:'black', width:'100%'}}>
-            <AppBar position="static" sx={{bgcolor: "#2B2B2B", borderColor: "#777777", borderWidth: "5px", borderStyle: "solid", borderRadius: "2px"}}>
+            <AppBar position="static" sx={{bgcolor: "#2B2B2B",}}>
                 <Toolbar>
                     <Link onClick={handleHouseClick} style={{ textDecoration: 'none', color: 'white',  }} to='/'>
                         <Typography                        
@@ -110,8 +110,11 @@ function AppBanner() {
                         </Typography>                        
                         {/* <img src="https://i.ibb.co/SnCcPnW/Mapper-Man-Logo-Transparent.png" height={35} width={35}/> */}
                     </Link>
+                    <Link to='/edit'>
+                        <EditIcon />
+                    </Link>
                     <Box sx={{ flexGrow: 1 }}></Box>
-                    <Box sx={{ height: "90px", display: { xs: 'none', md: 'flex' } }}>
+                    <Box sx={{ height: "50px", display: { xs: 'none', md: 'flex' } }}>
                         <IconButton
                             size="large"
                             edge="end"
