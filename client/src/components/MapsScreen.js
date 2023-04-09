@@ -1,5 +1,5 @@
 import MapCard from './MapCard';
-import SearchBar from './SearchBar';
+import FilterMaps from './FilterMaps';
 import AddMapButton from './AddMapButton';
 import Pagination from '@mui/material/Pagination';
 import { Grid, Box, Paper } from '@mui/material';
@@ -22,14 +22,14 @@ export default function MapsScreen(){
     
     return (
         <Grid container rowSpacing={0} sx={{backgroundColor: '#2B2B2B',
-                    alignItems:"center", justifyContent:"center"}}>
+                    alignItems:"center", justifyContent:"center", marginRight: '10px'}}>
 
             {/* Giving this height is a cursed technique but is what it is */}
             <Grid item  xs = {12} sx={{textAlign:'right', height:'25px'}}>
                 <AddMapButton></AddMapButton>
             </Grid>
             <Grid container xs = {12} sx={{ alignItems:"center", justifyContent:"center"}}>
-                <SearchBar></SearchBar>
+                <FilterMaps></FilterMaps>
             </Grid>
 
             <Box sx={{width: '70%', backgroundColor: '#2B2B2B', marginTop: '20px'}}>

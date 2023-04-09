@@ -1,6 +1,24 @@
-
+import { GeoJSON, MapContainer, TileLayer, Pane } from "react-leaflet";
+import React, { createRef, useState, useEffect } from 'react'
+import file from './NA.json';
+import hash from 'object-hash';
+import { Box } from "@mui/system";
+import { Button } from "@mui/material";
 
 export default function EditScreen(){
 
-    return <p>EditScreen</p>
+    return (
+        <Box>
+            <MapContainer center={[51.505, -0.09]} zoom={1} doubleClickZoom={false}
+                  id="mapId"
+                  preferCanvas={true}>
+                    <TileLayer url='http://{s}.tile.osm.org/{z}/{x}/{y}.png' attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' />
+                    <GeoJSON 
+                        key={hash(file)} 
+                        data={file} 
+                        />
+            </MapContainer>
+        </Box>
+
+    )
 }

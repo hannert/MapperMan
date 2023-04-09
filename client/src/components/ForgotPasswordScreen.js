@@ -9,6 +9,7 @@ import Button from '@mui/material/Button';
 import Checkbox from '@mui/material/Checkbox';
 import CssBaseline from '@mui/material/CssBaseline';
 import FormControlLabel from '@mui/material/FormControlLabel';
+import LockResetIcon from '@mui/icons-material/LockReset';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
@@ -22,10 +23,7 @@ export default function LoginScreen() {
     const handleSubmit = (event) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
-        // auth.loginUser(
-        //     formData.get('email'),
-        //     formData.get('password')
-        // );
+        // auth.changePassword(email, new password, new password confirm);
 
     };
 
@@ -51,10 +49,10 @@ export default function LoginScreen() {
                     }}
                 >
                     <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                        <LockOutlinedIcon/>
+                        <LockResetIcon/>
                     </Avatar>
                     <Typography component="h1" variant="h5">
-                        Sign in
+                        Change Password
                     </Typography>
                     <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
                         <TextField
@@ -71,30 +69,30 @@ export default function LoginScreen() {
                             margin="normal"
                             required
                             fullWidth
-                            name="password"
-                            label="Password"
+                            name="newpassword"
+                            label="New Password"
                             type="password"
-                            id="password"
-                            autoComplete="current-password"
+                            id="new-password"
+                            autoComplete="new-password"
                         />
-                        <Link href="/forgotPassword/" variant="body2">
-                            Forgot Password? Click here
-                        </Link>
+                        <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="confirm-newpassword"
+                            label="Confirm New Password"
+                            type="password"
+                            id="confirm-new-password"
+                            autoComplete="confirm-new-password"
+                        />
                         <Button
                             type="submit"
                             fullWidth
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
                         >
-                            Sign In
+                            Change Password
                         </Button>
-                        <Grid container>
-                            <Grid item>
-                                <Link href="/register/" variant="body2">
-                                    Don't have an account? Sign Up
-                                </Link>
-                            </Grid>
-                        </Grid>
                     </Box>
                 </Box>
             </Grid>
