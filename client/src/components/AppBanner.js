@@ -97,7 +97,7 @@ function AppBanner() {
 
     return (
         <Box sx={{color:'black', width:'100%'}}>
-            <AppBar position="static" sx={{bgcolor: "#2B2B2B",}}>
+            <AppBar position="static" sx={{bgcolor: "#252931",}}>
                 <Toolbar>
                     <Link onClick={handleHouseClick} style={{ textDecoration: 'none', color: 'white',  }} to='/'>
                         <Typography                        
@@ -110,7 +110,7 @@ function AppBanner() {
                         </Typography>                        
                         {/* <img src="https://i.ibb.co/SnCcPnW/Mapper-Man-Logo-Transparent.png" height={35} width={35}/> */}
                     </Link>
-                    <Link to='/edit'>
+                    <Link to='/maps/edit'>
                         <EditIcon />
                     </Link>
                     <Box sx={{ flexGrow: 1 }}></Box>
