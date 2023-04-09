@@ -53,8 +53,9 @@ function App() {
             <Route path="/register" element={<RegisterScreen />} />
             <Route path='/maps/edit' element={<EditScreen/>}/>
             <Route path='/maps' element = {<MapsScreen/>}/>
-          <Route path='/maps/view/:id' element = {<ViewMapScreen />} />
+            <Route path='/maps/view/:id' element = {<ViewMapScreen />} />
             <Route path='/forgotPassword/' element ={<ForgotPasswordScreen/>}/>
+            <Route path='/edit' element ={<EditScreen/>}/>
           </Routes>          
         </Box>
 
