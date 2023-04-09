@@ -10,6 +10,7 @@ import RegisterScreen from './components/RegisterScreen';
 import { ThemeOptions, ThemeProvider, createTheme } from '@mui/material';
 import EditScreen from './components/EditScreen';
 import MapsScreen from './components/MapsScreen';
+import ForgotPasswordScreen from './components/ForgotPasswordScreen';
 
 const themeOptions = createTheme({
   palette: {
@@ -44,6 +45,7 @@ function App() {
           <Route path="/register" element={<RegisterScreen />} />
           <Route path='/maps/edit' element={<EditScreen/>}/>
           <Route path='/maps' element = {<MapsScreen/>}/>
+          <Route path='/forgotPassword/' element ={<ForgotPasswordScreen/>}/>
         </Routes>
       </ThemeProvider>
     </BrowserRouter>
