@@ -1,5 +1,6 @@
 import { configureStore } from '@reduxjs/toolkit'
 import createMapReducer from './store-actions/createMap'
+import editMapListReducer from './store-actions/editMapList'
 
 export default configureStore({
 
@@ -10,7 +11,7 @@ export default configureStore({
     ),
 
     reducer: {
-
         createMap: createMapReducer,
+        editMapList: editMapListReducer
     },
 })

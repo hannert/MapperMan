@@ -28,6 +28,67 @@
   color: #61dafb;
 }
 
+#splash-screen {
+  background-size: cover;
+  background: rgb(43 43 43);
+  color: rgb(0, 0, 0);
+  font-size: 24px;
+  height: 100%;
+  margin-top: auto;
+  margin-bottom: auto;
+  text-align: center;
+  vertical-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  position: relative;
+}
+
+#Home-screen {
+  background: rgb(43 43 43);
+  color: rgb(0, 0, 0);
+  font-size: 24px;
+  height: 100%;
+  margin-top: auto;
+  margin-bottom: auto;
+  text-align: center;
+  vertical-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  position: relative;
+}
+#mapperman-logo {
+  display: block;
+  margin: auto;
+  max-width: 100%;
+  height: 200px;
+}
+
+
+#splash-screen-buttons{
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  max-width: 100%;
+
+}
+
+.list-card {
+  font-size: 18pt;
+  margin: 10px;
+  padding: 20px;
+}
+
+
+#property-editor {
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+}
+
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
