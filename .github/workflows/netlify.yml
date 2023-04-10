@@ -47,9 +47,9 @@ jobs:
         if: steps.changes.outputs.client == 'true'
         uses: cypress-io/github-action@v4
         with:
-        working-directory: ./client
-        command: npx cypress run
-        browser: chrome
+          working-directory: ./client
+          command: npx cypress run
+          browser: chrome
           
       - name: Create production build
         if: steps.changes.outputs.client == 'true'
