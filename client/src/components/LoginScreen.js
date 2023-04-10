@@ -73,7 +73,7 @@ export default function LoginScreen() {
                             id="password"
                             autoComplete="current-password"
                         />
-                        <Link href="/forgotPassword/" variant="body2">
+                        <Link href="/forgotPassword/" variant="body2" id="forgot-password-link">
                             Forgot Password? Click here
                         </Link>
                         <Button

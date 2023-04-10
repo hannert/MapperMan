@@ -16,7 +16,7 @@ function SplashScreen(){
                 <Typography variant='h1' id='logo-text' color={'white'} sx={{fontFamily: 'Koulen'}}>Mapper Man</Typography>
                 <Typography color={'white'} sx={{fontFamily: 'Lato'}}>Aiming to provide better map editing. One vertex at a time.</Typography>
                 <Box id="splash-screen-buttons">
-                    <Button sx={{color:"white", mt:"20px", width:280, height: 80, fontSize: 24, borderRadius: 3, fontWeight: 'bold', justifyContent: 'space-around'}} 
+                    <Button id= "login-button" sx={{color:"white", mt:"20px", width:280, height: 80, fontSize: 24, borderRadius: 3, fontWeight: 'bold', justifyContent: 'space-around'}} 
                             variant="contained" 
                             color="buttonColor"
                             component={Link} to="/login"
@@ -34,7 +34,7 @@ function SplashScreen(){
                         Create Account
                         <AppRegistrationIcon sx={{fontSize: 48}}/>
                     </Button>
-                    <Button sx={{color:"white", mt:"20px",  width:280, height: 80, fontSize: 24, borderRadius: 3, fontWeight: 'bold', justifyContent: 'space-around'}}
+                    <Button id="continue-as-guest" sx={{color:"white", mt:"20px",  width:280, height: 80, fontSize: 24, borderRadius: 3, fontWeight: 'bold', justifyContent: 'space-around'}}
                             variant="contained" 
                             color="buttonColor"
                             component={Link} to="/maps"
