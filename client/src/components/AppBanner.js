@@ -55,7 +55,7 @@ function AppBanner() {
     }
     const handleSaveClose = (event, reason) => {
         if (reason === 'clickaway') {
-            return;
+            return; 
         }
       
         setSaveOpen(false);    
