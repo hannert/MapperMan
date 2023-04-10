@@ -34,6 +34,12 @@ const themeOptions = createTheme({
     },
     buttonColor: createColor("#59A0E2")
   },
+  dialog: {
+    backgroundColor: 'black',
+    typography: {
+      color: 'red'
+    }
+  },
 });
 
 function App() {

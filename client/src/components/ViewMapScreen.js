@@ -28,25 +28,24 @@ function ViewMapScreen() {
     // )
 
     return(
-        <Grid container direction='row' justify="flex" alignItems="center" justifyContent="center">
-            
-            <Grid item xs={12}>
-                <Box display="flex" justifyContent="center" alignItems="center" color="red" bgcolor='#2B2B2B'>
-                    VIEWING: Italy
-                </Box>
-            </Grid>
+        <Box sx={{height:"100%"}}>
+            <Box width='100%' color="white" bgcolor='#2B2B2B' sx={{textAlign:'center'}}>
+                        VIEWING: Italy
+                    </Box>
+            <Grid container direction='row'sx={{height:'100%'}}>
 
-            <Grid item xs={4}>
-                <Box display="flex" justifyContent="center" alignItems="center" height="100%">
-                    <CommentsList />
-                </Box>
-            </Grid>
-            <Grid item  bgcolor='#2B2B2B' component="main" direction="column" justify="flex-end" alignItems="center" xs={8}>
-                <Grid item>
-                    <Box>
-                        <MapContainer center={[51.505, -0.09]} zoom={1} doubleClickZoom={false}
+                <Grid item xs={4}>
+                    <Box display="flex" justifyContent="center" alignItems="center" height="100%">
+                        <CommentsList />
+                    </Box>
+                </Grid>
+                <Grid item bgcolor='#2B2B2B' component="main" direction="column" justify="flex-end" alignItems="center" xs={8}>
+                    <Box sx={{height:'100%'}}>
+                        <MapContainer center={[37.09, -95.71]} zoom={4} doubleClickZoom={false}
                             id="mapId"
-                            preferCanvas={true}>
+                            preferCanvas={true}
+                            style={{width:'100%', height:'100%'}}
+                            >
                                 <TileLayer url='http://{s}.tile.osm.org/{z}/{x}/{y}.png' attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' />
                                 <GeoJSON 
                                     key={hash(file)} 
@@ -56,7 +55,8 @@ function ViewMapScreen() {
                     </Box>
                 </Grid>
             </Grid>
-        </Grid>
+                                
+        </Box>
         
     )
 }

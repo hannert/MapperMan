@@ -37,6 +37,7 @@ function SplashScreen(){
                     <Button sx={{color:"white", mt:"20px",  width:280, height: 80, fontSize: 24, borderRadius: 3, fontWeight: 'bold', justifyContent: 'space-around'}}
                             variant="contained" 
                             color="buttonColor"
+                            component={Link} to="/maps"
                     >
                         Continue as guest
                         <PersonIcon sx={{fontSize: 60}}/>

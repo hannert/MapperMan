@@ -151,7 +151,7 @@ export default function EditScreen(){
                 </Box>
                 <Box sx ={leafletSize}>
 
-                    <MapContainer center={[51.505, -0.09]} zoom={1} doubleClickZoom={false}
+                    <MapContainer center={[37.09, -95.71]} zoom={4} doubleClickZoom={false}
                         id="mapId" style={{width:'100%', height:'100%'}}>
                             <TileLayer url='http://{s}.tile.osm.org/{z}/{x}/{y}.png' attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' />
                             <GeoJSON 

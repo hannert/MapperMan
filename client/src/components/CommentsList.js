@@ -1,5 +1,4 @@
-import { Box, TextField, Typography } from "@mui/material";
-import { Grid, Button } from '@mui/material';
+import { Box, Grid, TextField, Typography } from "@mui/material";
 import CommentCard from './CommentCard';
 
 
@@ -21,6 +20,7 @@ export default function CommentsList(){
     return(
         <Box sx={{
             backgroundColor:'#D4D4F5', 
+            height:'100%'
             }}>
             <Typography variant="overline">Comments</Typography>
             <Box id='comment-container' sx={{height:'87.5%'}}>
