@@ -37,7 +37,7 @@ function ViewMapScreen() {
             </Grid>
 
             <Grid item xs={4}>
-                <Box display="flex">
+                <Box display="flex" justifyContent="center" alignItems="center" height="100%">
                     <CommentsList />
                 </Box>
             </Grid>
