@@ -39,17 +39,17 @@ jobs:
         
 
 
-      # - name: Cypress Tests
-      #   if: steps.changes.outputs.client == 'true'
-      #   uses: actions/checkout@v2
+      - name: Cypress Tests
+        if: steps.changes.outputs.client == 'true'
+        uses: actions/checkout@v2
         
-      # - name: Run Cypress Tests
-      #   if: steps.changes.outputs.client == 'true'
-      #   uses: cypress-io/github-action@v4
-      #   with:
-      #     working-directory: ./client
-      #     command: npx cypress run
-      #     browser: chrome
+      - name: Run Cypress Tests
+        if: steps.changes.outputs.client == 'true'
+        uses: cypress-io/github-action@v4
+        with:
+        working-directory: ./client
+        command: npx cypress run
+        browser: chrome
           
       - name: Create production build
         if: steps.changes.outputs.client == 'true'
