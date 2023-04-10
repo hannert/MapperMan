@@ -11,11 +11,11 @@ export default function CommentsList(){
         {comment: "Hode up... kinda cool >_<", index: 4, user: "User1"}
     ]
 
-    const styles = {
-        floatingLabelFocusStyle: {
-            color: "b;acl"
-        }
-    }
+    // const styles = {
+    //     floatingLabelFocusStyle: {
+    //         color: "b;acl"
+    //     }
+    // }
 
     return(
         <Box sx={{

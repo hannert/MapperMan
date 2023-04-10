@@ -26,7 +26,6 @@ function AppBanner() {
     // const { store } = useContext(GlobalStoreContext);
     const navigate = useNavigate();
     const location = useLocation();
-    const theme = useTheme();
 
 
     const [anchorEl, setAnchorEl] = useState(null);
@@ -219,24 +218,24 @@ function AppBanner() {
             </MenuItem>
         </Menu>
     );
-    const loggedInMenu = 
-        <Menu
-            anchorEl={anchorEl}
-            anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-            }}
-            id={menuId}
-            keepMounted
-            transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-            }}
-            open={isMenuOpen}
-            onClose={handleMenuClose}
-        >
-            <MenuItem onClick={handleLogout}>Logout</MenuItem>
-        </Menu>        
+    // const loggedInMenu = 
+    //     <Menu
+    //         anchorEl={anchorEl}
+    //         anchorOrigin={{
+    //             vertical: 'top',
+    //             horizontal: 'right',
+    //         }}
+    //         id={menuId}
+    //         keepMounted
+    //         transformOrigin={{
+    //             vertical: 'top',
+    //             horizontal: 'right',
+    //         }}
+    //         open={isMenuOpen}
+    //         onClose={handleMenuClose}
+    //     >
+    //         <MenuItem onClick={handleLogout}>Logout</MenuItem>
+    //     </Menu>        
 
     let playListerToolbar = "";
     let menu = loggedOutMenu;
@@ -249,14 +248,14 @@ function AppBanner() {
 
 
     //Since we dont have auth set up, this will always return account circle
-    function getAccountMenu(loggedIn) {
-        // let userInitials = auth.getUserInitials();
-        // console.log("userInitials: " + userInitials);
-        // if (loggedIn) 
-        //     return <div>{userInitials}</div>;
-        // else
-            return <AccountCircle />;
-    }
+    // function getAccountMenu(loggedIn) {
+    //     // let userInitials = auth.getUserInitials();
+    //     // console.log("userInitials: " + userInitials);
+    //     // if (loggedIn) 
+    //     //     return <div>{userInitials}</div>;
+    //     // else
+    //         return <AccountCircle />;
+    // }
 
     let screen = location.pathname;
     let tempToolbar = '';
