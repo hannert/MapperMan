@@ -55,6 +55,8 @@ jobs:
         if: steps.changes.outputs.client == 'true'
         working-directory: ./client
         run: npm run build
+        env:
+          CI: false
         
       - name: Deploy to Netlify      
         if: steps.changes.outputs.client == 'true'
