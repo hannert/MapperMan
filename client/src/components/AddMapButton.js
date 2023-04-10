@@ -20,7 +20,7 @@ export default function AddMapButton(){
           aria-haspopup="true"
           aria-expanded={open ? 'true' : undefined}
           onClick={handleClick}
-          sx = {{width:'50px', height:'50px', borderRadius:'50%', backgroundColor: '#d2d4d9', margin:'10px'}}
+          sx = {{width:'50px', height:'50px', borderRadius:'50%', backgroundColor: '#d2d4d9', margin:'10px   '}}
         >
           <Add sx={{color:'black'}}></Add>
         </Button>
