@@ -23,7 +23,7 @@ export default function TagsFilter(){
               renderInput={(params) => (
                 <TextField
                   {...params}
-                  label="Search input"
+                  label="Search tags"
                   InputProps={{
                     ...params.InputProps,
                     type: 'search',
