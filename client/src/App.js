@@ -8,7 +8,7 @@ import ForgotPasswordScreen from './components/ForgotPasswordScreen';
 import HomeWrapper from './components/HomeWrapper';
 import HomeScreen from './components/HomeScreen';
 import LoginScreen from './components/LoginScreen';
-import MapsScreen from './components/MapsScreen';
+import MapsScreen from './components/MapListScreen/MapsScreen';
 import RegisterScreen from './components/RegisterScreen';
 import ViewMapScreen from './components/ViewMapScreen';
 

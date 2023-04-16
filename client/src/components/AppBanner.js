@@ -103,7 +103,7 @@ function AppBanner() {
     // ! Have components bunched up in AppBanner: Modals for Copy, Delete, Add Collaborator
 
     const copyMapDialog = (
-        <Dialog open={copyMap} onClose={handleCopyClose} sx>
+        <Dialog open={copyMap} onClose={handleCopyClose}>
         <DialogTitle>Fork Map</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -119,7 +119,7 @@ function AppBanner() {
     )
 
     const publishMapDialog = (
-        <Dialog open={publishMap} onClose={handlePublishClose} sx>
+        <Dialog open={publishMap} onClose={handlePublishClose}>
         <DialogTitle>Fork Map</DialogTitle>
         <DialogContent>
           <DialogContentText>
