@@ -33,7 +33,13 @@ export default function AddMapButton(){
             'aria-labelledby': 'basic-button',
           }}
         >
-          <MenuItem onClick={handleClose}>SHP/DBF Upload</MenuItem>
+            <label>
+            <input multiple type="file" style={{ display: 'none' }}/>
+            <MenuItem onClick={handleClose}>
+              SHP/DBF Upload
+            </MenuItem>
+            </label>
+            
           <MenuItem onClick={handleClose}>GeoJSON Upload</MenuItem>
         </Menu>
       </div>
