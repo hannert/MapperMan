@@ -1,7 +1,7 @@
 import { useContext } from 'react';
-// import AuthContext from '../auth'
-// import MUIErrorModal from './MUIErrorModal'
-// import Copyright from './Copyright'
+import AuthContext from '../auth'
+import MUIErrorModel from './MUIErrorModel'
+import Copyright from './Copyright'
 
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
@@ -15,7 +15,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 export default function RegisterScreen() {
-    // const { auth } = useContext(AuthContext);
+    const { auth } = useContext(AuthContext);
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -23,22 +23,22 @@ export default function RegisterScreen() {
         console.log("formdata: ")
         console.log(formData);
         console.log("formData password verify: " + formData.get('passwordVerify'))
-        // auth.registerUser(
-        //     formData.get('firstName'),
-        //     formData.get('lastName'),
-        //     formData.get('username'),
-        //     formData.get('email'),
-        //     formData.get('password'),
-        //     formData.get('passwordVerify')
-        // );
+        auth.registerUser(
+            formData.get('firstName'),
+            formData.get('lastName'),
+            formData.get('username'),
+            formData.get('email'),
+            formData.get('password'),
+            formData.get('passwordVerify')
+        );
     };
 
-    // let modalJSX = ""
-    // console.log(auth);
-    // if (auth.errorMessage !== null){
-    //     modalJSX = <MUIErrorModal />;
-    // }
-    // console.log(modalJSX);
+    let modalJSX = ""
+    console.log(auth);
+    if (auth.errorMessage !== null){
+        modalJSX = <MUIErrorModel />;
+    }
+    console.log(modalJSX);
 
     return (
             <Container component="main" maxWidth="xs">
@@ -140,8 +140,8 @@ export default function RegisterScreen() {
                         </Grid>
                     </Box>
                 </Box>
-                {/* <Copyright sx={{ mt: 5 }} /> */}
-                {/* { modalJSX } */}
+                { <Copyright sx={{ mt: 5 }} /> }
+                { modalJSX } 
             </Container>
     );
 }

@@ -1,6 +1,6 @@
-// import AuthContext from '../auth'
-// import MUIErrorModal from './MUIErrorModal'
-
+import AuthContext from '../auth'
+import MUIErrorModel from './MUIErrorModel'
+import { useContext } from 'react';
 
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Avatar from '@mui/material/Avatar';
@@ -12,25 +12,26 @@ import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
+
 export default function LoginScreen() {
-    // const { auth } = useContext(AuthContext);
+    const { auth } = useContext(AuthContext);
 
     const handleSubmit = (event) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
-        // auth.loginUser(
-        //     formData.get('email'),
-        //     formData.get('password')
-        // );
+        auth.loginUser(
+            formData.get('email'),
+            formData.get('password')
+        );
 
     };
 
-    // let modalJSX = "";
-    // console.log(auth);
-    // if (auth.errorMessage !== null){
-    //     modalJSX = <MUIErrorModal />;
-    // }
-    // console.log(modalJSX);
+    let modalJSX = "";
+    console.log(auth);
+    if (auth.errorMessage !== null){
+        modalJSX = <MUIErrorModel />;
+    }
+    console.log(modalJSX);
 
     return (
         <Grid container  component="main" direction="column" justify="flex-end" alignItems="center" >
@@ -94,7 +95,7 @@ export default function LoginScreen() {
                     </Box>
                 </Box>
             </Grid>
-            {/* { modalJSX } */}
+            { modalJSX }
         </Grid>
     );
 }
