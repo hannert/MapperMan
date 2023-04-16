@@ -9,15 +9,26 @@ export default function AddMapDialog(props){
 
     const [shapefile, setShapefile]=useState(null);
     const [dbfFile, setdbfFile]=useState(null);
+    const [geoJsonFile, setGeoJsonFile]=useState(null);
 
     const handleClose = () => {
         onClose(selectedValue);
     };
 
 
-
+    /*Handles the button icon for shpfile/DBF upload: */
     const shpButton = (shapefile) ? <Check/> : <Add/>;
     const dbfButton = (dbfFile) ? <Check/> : <Add/>;
+
+
+    /*Handles the confirm button for the same thing */
+    const shpdbfConfirm =(shapefile && dbfFile) ? <Button variant="contained">Confirm</Button> : <Button disabled variant="contained">Confirm</Button>
+
+
+    /*Handles the button icon for geoJSON*/
+    const geoJsonButton = (geoJsonFile) ? <Check/> : <Add/>;
+    /* Handles the confirm button for the same thing */
+    const geoJsonConfirm = (geoJsonFile) ? <Button variant="contained">Confirm</Button> : <Button disabled variant="contained">Confirm</Button>
 
 
     
@@ -30,7 +41,8 @@ export default function AddMapDialog(props){
             reader.onload = function() {
             setShapefile(reader.result);
             }
-            reader.readAsArrayBuffer(event.target.files[0])
+            reader.readAsArrayBuffer(event.target.files[0]);
+            setGeoJsonFile(null);
         }
     }
     const handleDBFFileChange = (event) =>{
@@ -39,12 +51,26 @@ export default function AddMapDialog(props){
         setdbfFile(event.target.files[0]);
 
         var reader = new FileReader();
-            reader.onload = function() {
-            setdbfFile(reader.result);
-            }
-            reader.readAsArrayBuffer(event.target.files[0])
+        reader.onload = function() {
+        setdbfFile(reader.result);
+        }
+        reader.readAsArrayBuffer(event.target.files[0])
+        setGeoJsonFile(null);
     }
-}
+    }
+    const handleGeoJsonChange = (event) =>{
+            if(event.target.files){
+                setGeoJsonFile(event.target.files[0]);
+                var reader = new FileReader();
+                reader.onload = function() {
+                setGeoJsonFile(reader.result);
+                }
+                reader.readAsArrayBuffer(event.target.files[0])
+
+                setShapefile(null);
+                setdbfFile(null);
+            }
+        }
 
     return (
         <Dialog maxWidth='lg' open={open} onClose={handleClose}>
@@ -54,13 +80,14 @@ export default function AddMapDialog(props){
                     <Box sx ={{width:'100%', height:'100%'}}>
                         <Typography sx={{width:'80%', textAlign:'center', backgroundColor:'gray', margin:'auto'}}>GeoJSON</Typography>
                         <Box sx={{display:'flex', height:'80%', width:'80%', alignItems:"center", 
-                                justifyContent:'center', backgroundColor:'gray', margin:'auto'}}>
+                                justifyContent:'center', backgroundColor:'gray', margin:'auto', flexDirection:'column'}}>
                             <Button sx = {{width:'50px', height:'50px', borderRadius:'50%', backgroundColor: '#585454', margin:'10px'}}>
                                 <label>
-                                    <input multiple type="file" style={{ display: 'none' }}/>
-                                    <Add sx={{color:'black'}}></Add>
+                                    <input multiple type="file" style={{ display: 'none' }} onChange={handleGeoJsonChange}/>
+                                    {geoJsonButton}
                                 </label>
                             </Button>
+                            {geoJsonConfirm}
                         </Box>
                     </Box>
                 </Grid>
@@ -84,6 +111,7 @@ export default function AddMapDialog(props){
                                     {dbfButton}
                                 </label>
                             </Button>
+                            {shpdbfConfirm}
                         </Box>
                     </Box>
                 </Grid>
