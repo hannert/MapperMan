@@ -21,11 +21,16 @@ export const createMap = createSlice({
         createNewMap: (state, action) => {
             console.log("New active map is " + action.payload);
             state.activeMap = action.payload;
+        },
+
+        renameMap: (state, action) =>{
+            console.log("renamed map " + action.payload);
+            state.activeMap = action.payload
         }
     }
 
 
 })
 
-export const { loginUser, createNewMap } = createMap.actions
+export const { loginUser, createNewMap, renameMap } = createMap.actions
 export default createMap.reducer

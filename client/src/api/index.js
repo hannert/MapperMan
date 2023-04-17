@@ -11,6 +11,7 @@ export const AuthActionType = {
     LOGIN_USER: "LOGIN_USER",
     LOGOUT_USER: "LOGOUT_USER",
     REGISTER_USER: "REGISTER_USER",
+    CHANGE_PASSWORD: "CHANGE_PASSWORD",
     REGISTER_USER_ERROR: "REGISTER_USER_ERROR",
     LOGIN_USER_ERROR: "LOGIN_USER_ERROR",
     CLOSE_MODAL: "CLOSE_MODAL"
@@ -79,6 +80,13 @@ function AuthContextProvider(props) {
                     modalActive: false
                 })
             }
+            case AuthActionType.CHANGE_PASSWORD: {
+                return setAuth({
+                    user: payload.user,
+                    loggedIn: false,
+                    errorMessage: payload.errorMEssage
+                })
+            }
             default:
                 return auth;
         }
@@ -95,6 +103,33 @@ function AuthContextProvider(props) {
                 }
             });
         }
+    }
+    auth.forgotPassword = async function(email, newpassword, passwordVerify){
+        console.log("Changing Password");
+        try {
+            const response = await api.changePassword(email, newpassword, passwordVerify);
+            if (response.status === 200){
+                authReducer({
+                    type: AuthActionType.CHANGE_PASSWORD,
+                    payload: {
+                        user: response.data.user,
+                        loggedIn: false,
+                        errorMessage: null
+                    }
+                })
+            }
+        }catch(error){
+            authReducer({
+                type: AuthActionType.CHANGE_PASSWORD,
+                payload: {
+                    user: auth.user,
+                    loggedIn: false,
+                    errorMessage: error.response.data.errorMessage
+                }
+            })
+        }
+    }
+    auth.registerUser = async function(firstName, lastName, email, password, passwordVerify) {
     }
 
     auth.registerUser = async function(firstName, lastName, username, email, password, passwordVerify) {
@@ -199,4 +234,3 @@ function AuthContextProvider(props) {
 
 export default AuthContext;
 export { AuthContextProvider };
-

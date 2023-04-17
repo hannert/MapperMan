@@ -30,11 +30,19 @@ export const registerUser = (firstName, lastName,username, email, password, pass
         passwordVerify : passwordVerify
     })
 }
+export const forgotPassword = (email, newpassword, passwordVerify) => {
+    return api.put(`/forgotPassword/`, {
+        email: email,
+        newpassword: newpassword,
+        passwordVerify: passwordVerify
+    })
+}
 const apis = {
     getLoggedIn,
     registerUser,
     loginUser,
-    logoutUser
+    logoutUser,
+    forgotPassword
 }
 
 export default apis
