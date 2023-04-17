@@ -7,7 +7,7 @@ createMap = (req, res) => {
 
     console.log("createMap body: " + JSON.stringify(body))
 
-    
+
     let newMap = new Map(body)
     newMap
         .save()
@@ -47,6 +47,7 @@ deleteMapById = async (req, res) => {
 }
 
 getPublicMaps = async (req, res) => {
+    console.log("Getting public maps");
     await Map.find({}, '_id').then((maps) => {
         return res.status(200).json({success: true, maps: maps})
     }).catch(err => console.log(err))

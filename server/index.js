@@ -21,7 +21,13 @@ app.use((req, res, next) => {
     "Access-Control-Allow-Methods",
     "GET, POST, PATCH, PUT, DELETE, OPTIONS"
   );
+  next()
 });
+
+app.use(cors({
+  origin: ["http://localhost:3000", "http://localhost:4000"],
+  credentials: true
+}))
 
 
 app.use(express.json({limit:'2000kb'}))

@@ -14,8 +14,9 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
+import apis from '../app/store-requests/auth_requests'
+
 export default function RegisterScreen() {
-    const { auth } = useContext(AuthContext);
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -29,7 +30,7 @@ export default function RegisterScreen() {
         const email = formData.get('email')
         const password = formData.get('password')
         const passwordVerify = formData.get('passwordVerify')
-        auth.registerUser(
+        apis.registerUser(
             firstname,
             lastname,
             username,
