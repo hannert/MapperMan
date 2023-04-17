@@ -10,7 +10,8 @@ export const AuthActionType = {
     GET_LOGGED_IN: "GET_LOGGED_IN",
     LOGIN_USER: "LOGIN_USER",
     LOGOUT_USER: "LOGOUT_USER",
-    REGISTER_USER: "REGISTER_USER"
+    REGISTER_USER: "REGISTER_USER",
+    CHANGE_PASSWORD: "CHANGE_PASSWORD"
 }
 
 function AuthContextProvider(props) {
@@ -56,6 +57,13 @@ function AuthContextProvider(props) {
                     errorMessage: payload.errorMessage
                 })
             }
+            case AuthActionType.CHANGE_PASSWORD: {
+                return setAuth({
+                    user: payload.user,
+                    loggedIn: false,
+                    errorMessage: payload.errorMEssage
+                })
+            }
             default:
                 return auth;
         }
@@ -73,7 +81,31 @@ function AuthContextProvider(props) {
             });
         }
     }
-
+    auth.forgotPassword = async function(email, newpassword, passwordVerify){
+        console.log("Changing Password");
+        try {
+            const response = await api.changePassword(email, newpassword, passwordVerify);
+            if (response.status === 200){
+                authReducer({
+                    type: AuthActionType.CHANGE_PASSWORD,
+                    payload: {
+                        user: response.data.user,
+                        loggedIn: false,
+                        errorMessage: null
+                    }
+                })
+            }
+        }catch(error){
+            authReducer({
+                type: AuthActionType.CHANGE_PASSWORD,
+                payload: {
+                    user: auth.user,
+                    loggedIn: false,
+                    errorMessage: error.response.data.errorMessage
+                }
+            })
+        }
+    }
     auth.registerUser = async function(firstName, lastName, email, password, passwordVerify) {
         console.log("REGISTERING USER");
         console.log(email)

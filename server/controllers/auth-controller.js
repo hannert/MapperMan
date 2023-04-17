@@ -110,7 +110,56 @@ logoutUser = async (req, res) => {
         sameSite: "none"
     }).send();
 }
+forgotPassword = async (req, res) => {
+    console.log("CHANGING PASSWORD");
+    try {
+        const { email, newpassword, passwordVerify } = req.body;
+        console.log("Email and new passwords: " + email + " " + newpassword + " " + passwordVerify);
+        if (!email || !newpassword || !passwordVerify){
+            console.log("Nope");
+            return res
+                .status(400)
+                .json({errorMessage: "Please enter all required fields." });
+        }
+        console.log("All fields filled out");
+        if (newpassword.length < 8){
+            return res
+                .status(400)
+                .json({errorMessage: "Please enter a new password of at least 8 characters. "});
+        }
+        console.log("Password long enough.");
+        if (newpassword !== passwordVerify){
+            return res
+                .status(400)
+                .json({
+                    errorMessage: "Passwords do not match."
+                });
+        }
+        console.log("Both passwords match");
+        const existingUser = await Account.findOne({ email: email });
+        console.log("existingUser: " + existingUser);
+        if (!existingUser) {
+            return res
+                .status(400)
+                .json({
+                    success: false,
+                    errorMessage: "There is no account in the database."
+                })
+        }
+        const saltRounds = 10;
+        const salt = await bcrypt.genSalt(saltRounds);
+        const newpasswordHash = await bcrypt.hash(newpassword, salt);
+        console.log("passwordHash: " + newpasswordHash);
+        existingUser.passwordHash = newpasswordHash;
+        await existingUser.save();
 
+        res.status(200).json({success: true});
+
+    } catch (err) {
+        console.error(err);
+        res.status(500).send();
+    }
+}
 registerUser = async (req, res) => {
     console.log("REGISTERING USER IN BACKEND");
     try {
@@ -194,5 +243,6 @@ module.exports = {
     getLoggedIn,
     registerUser,
     loginUser,
-    logoutUser
+    logoutUser,
+    forgotPassword
 }

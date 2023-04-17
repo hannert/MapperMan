@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 // import AuthContext from '../auth'
 // import MUIErrorModal from './MUIErrorModal'
-
+import apis from '../api/auth-request-api';
 
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
@@ -23,8 +23,21 @@ export default function ForgotPasswordScreen() {
     const handleSubmit = (event) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
-        // auth.changePassword(email, new password, new password confirm);
-
+        console.log("formdata: ")
+        console.log(formData);
+        
+        const email = formData.get('email')
+        const password = formData.get('newpassword')
+        const passwordVerify = formData.get('confirm-newpassword')
+        console.log(password)
+        console.log(passwordVerify)
+        console.log(email)
+        apis.forgotPassword(
+            email,
+            password,
+            passwordVerify
+        );
+        
     };
 
     // let modalJSX = "";
@@ -91,7 +104,7 @@ export default function ForgotPasswordScreen() {
                             name="confirm-newpassword"
                             label="Confirm New Password"
                             type="password"
-                            id="confirm-new-password"
+                            id="confirm-newpassword"
                             autoComplete="confirm-new-password"
                         />
                         <Button
@@ -99,6 +112,7 @@ export default function ForgotPasswordScreen() {
                             fullWidth
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
+                            /*href='/login/' */
                         >
                             Change Password
                         </Button>
