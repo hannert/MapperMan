@@ -17,7 +17,7 @@ import Typography from '@mui/material/Typography';
 import { useContext, useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import AuthContext from '../api';
-import AccountCircle from '@mui/icons-material/AccountCircle';
+import {AccountCircle} from '@mui/icons-material';
 import { useSelector, useDispatch } from 'react-redux';
 import apis from '../app/store-requests/store_requests';
 import { renameMap } from '../app/store-actions/editMapList';
