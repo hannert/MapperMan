@@ -1,4 +1,5 @@
-// import AuthContext from '../auth'
+import AuthContext from '../auth'
+import { useContext } from 'react';
 // import MUIErrorModal from './MUIErrorModal'
 
 
@@ -13,15 +14,15 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 export default function LoginScreen() {
-    // const { auth } = useContext(AuthContext);
+    const { auth } = useContext(AuthContext);
 
     const handleSubmit = (event) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
-        // auth.loginUser(
-        //     formData.get('email'),
-        //     formData.get('password')
-        // );
+        auth.loginUser(
+            formData.get('email'),
+            formData.get('password')
+        );
 
     };
 

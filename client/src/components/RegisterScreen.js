@@ -1,7 +1,7 @@
 import { useContext } from 'react';
-// import AuthContext from '../auth'
+import AuthContext from '../auth'
 // import MUIErrorModal from './MUIErrorModal'
-// import Copyright from './Copyright'
+import Copyright from './Copyright'
 
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
@@ -15,7 +15,7 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
 export default function RegisterScreen() {
-    // const { auth } = useContext(AuthContext);
+    const { auth } = useContext(AuthContext);
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -23,14 +23,17 @@ export default function RegisterScreen() {
         console.log("formdata: ")
         console.log(formData);
         console.log("formData password verify: " + formData.get('passwordVerify'))
-        // auth.registerUser(
-        //     formData.get('firstName'),
-        //     formData.get('lastName'),
-        //     formData.get('username'),
-        //     formData.get('email'),
-        //     formData.get('password'),
-        //     formData.get('passwordVerify')
-        // );
+        const firstname = formData.get('firstName')
+        const lastname = formData.get('lastName')
+        const email = formData.get('email')
+        const password = formData.get('password')
+        const passwordVerify = formData.get('passwordVerify')
+        auth.registerUser(
+            firstname,
+            lastname,
+            email,
+            password,
+            passwordVerify)
     };
 
     // let modalJSX = ""
@@ -84,16 +87,6 @@ export default function RegisterScreen() {
                                 <TextField
                                     required
                                     fullWidth
-                                    id="username"
-                                    label="Username"
-                                    name="username"
-                                    autoComplete="username"
-                                />
-                            </Grid>
-                            <Grid item xs={12}>
-                                <TextField
-                                    required
-                                    fullWidth
                                     id="email"
                                     label="Email Address"
                                     name="email"
@@ -140,7 +133,7 @@ export default function RegisterScreen() {
                         </Grid>
                     </Box>
                 </Box>
-                {/* <Copyright sx={{ mt: 5 }} /> */}
+                {<Copyright sx={{ mt: 5 }} /> }
                 {/* { modalJSX } */}
             </Container>
     );

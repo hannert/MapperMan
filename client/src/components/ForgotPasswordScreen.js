@@ -17,7 +17,7 @@ import Paper from '@mui/material/Paper';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 
-export default function LoginScreen() {
+export default function ForgotPasswordScreen() {
     // const { auth } = useContext(AuthContext);
 
     const handleSubmit = (event) => {

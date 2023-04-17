@@ -11,6 +11,7 @@ import LoginScreen from './components/LoginScreen';
 import MapsScreen from './components/MapListScreen/MapsScreen';
 import RegisterScreen from './components/RegisterScreen';
 import ViewMapScreen from './components/ViewMapScreen';
+import { AuthContextProvider } from './auth';
 
 const { palette } = createTheme();
 const { augmentColor } = palette;
@@ -51,22 +52,24 @@ function App() {
 
     // </div>
     <BrowserRouter>
-      <ThemeProvider theme={themeOptions}>
-        <Box sx={{display: "flex", height:"100%", flexDirection:"column"}}>
-          <AppBanner />
-          <Routes>
-            <Route path="/" element={<HomeWrapper />} />
-            <Route path='/home' element = {<HomeScreen />}/>
-            <Route path="/login" element={<LoginScreen />} />
-            <Route path="/register" element={<RegisterScreen />} />
-            <Route path='/maps/edit' element={<EditScreen/>}/>
-            <Route path='/maps' element = {<MapsScreen/>}/>
-            <Route path='/maps/view/:id' element = {<ViewMapScreen />} />
-            <Route path='/forgotPassword/' element ={<ForgotPasswordScreen/>}/>
-          </Routes>          
-        </Box>
+      <AuthContextProvider>
+        <ThemeProvider theme={themeOptions}>
+          <Box sx={{display: "flex", height:"100%", flexDirection:"column"}}>
+            <AppBanner />
+            <Routes>
+              <Route path="/" element={<HomeWrapper />} />
+              <Route path='/home' element = {<HomeScreen />}/>
+              <Route path="/login" element={<LoginScreen />} />
+              <Route path="/register" element={<RegisterScreen />} />
+              <Route path='/maps/edit' element={<EditScreen/>}/>
+              <Route path='/maps' element = {<MapsScreen/>}/>
+              <Route path='/maps/view/:id' element = {<ViewMapScreen />} />
+              <Route path='/forgotPassword/' element ={<ForgotPasswordScreen/>}/>
+            </Routes>          
+          </Box>
 
-      </ThemeProvider>
+        </ThemeProvider>
+      </AuthContextProvider>
     </BrowserRouter>
   );
 }

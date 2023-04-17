@@ -2,6 +2,7 @@
 const express = require('express')
 const cors = require('cors')
 const dotenv = require('dotenv')
+const cookieParser = require('cookie-parser')
 
 // CREATE OUR SERVER
 dotenv.config()
@@ -11,7 +12,7 @@ const app = express()
 // SETUP THE MIDDLEWARE
 app.use(express.urlencoded({limit: '2000kb', extended: true, parameterLimit:50000}));
 app.use(cors({
-    origin: '*',
+    origin: ['localhost:3000'],
     credentials: false
 
 }))
@@ -28,11 +29,13 @@ app.use((req, res, next) => {
     next();
   });
 app.use(express.json({limit:'2000kb'}))
+app.use(cookieParser())
 
 // SETUP OUR OWN ROUTERS AS MIDDLEWARE
 const mapsRouter = require('./routes/maps-router')
 app.use('/api', mapsRouter)
-
+const authRouter = require('./routes/auth-router')
+app.use('/auth', authRouter)
 // INITIALIZE OUR DATABASE OBJECT
 const db = require('./db')
 db.on('error', console.error.bind(console, 'MongoDB connection error:'))
