@@ -1,6 +1,7 @@
 // import MUIErrorModal from './MUIErrorModal'
-import Copyright from './Copyright'
+import Copyright from './Copyright';
 
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -8,20 +9,20 @@ import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-import { useDispatch, useSelector } from 'react-redux';
-import apis from '../api/auth-request-api';
+import { useContext } from 'react';
+import { useDispatch } from 'react-redux';
+import AuthErrorModal from './Modals/AuthErrorModal';
+import AuthContext from '../api';
+
 export default function RegisterScreen() {
     const dispatch = useDispatch();
+    const {auth} = useContext(AuthContext)
 
     const handleSubmit = (event) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
-        console.log("formdata: ")
-        console.log(formData);
-        console.log("formData password verify: " + formData.get('passwordVerify'))
         const firstname = formData.get('firstName')
         const lastname = formData.get('lastName')
         const username = formData.get('username')
@@ -29,14 +30,14 @@ export default function RegisterScreen() {
         const password = formData.get('password')
         const passwordVerify = formData.get('passwordVerify')
         console.log(email)
-        apis.registerUser(
+        auth.registerUser(
             firstname,
             lastname,
             username,
             email,
             password,
             passwordVerify
-        );
+        )
         
     };
 
@@ -50,6 +51,7 @@ export default function RegisterScreen() {
     return (
             <Container component="main" maxWidth="xs">
                 <CssBaseline />
+                <AuthErrorModal />
                 <Box
                     sx={{
                         marginTop: 8,
