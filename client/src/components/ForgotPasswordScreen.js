@@ -1,8 +1,8 @@
 import { useContext } from 'react';
-// import AuthContext from '../auth'
+import AuthContext from '../api'
 // import MUIErrorModal from './MUIErrorModal'
 import apis from '../api/auth-request-api';
-
+import AuthErrorModal from './Modals/AuthErrorModal';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -19,20 +19,19 @@ import Typography from '@mui/material/Typography';
 
 export default function ForgotPasswordScreen() {
     // const { auth } = useContext(AuthContext);
-
+    const {auth} = useContext(AuthContext)
     const handleSubmit = (event) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
         console.log("formdata: ")
         console.log(formData);
-        
         const email = formData.get('email')
         const password = formData.get('newpassword')
         const passwordVerify = formData.get('confirm-newpassword')
         console.log(password)
         console.log(passwordVerify)
         console.log(email)
-        apis.forgotPassword(
+        auth.forgotPassword(
             email,
             password,
             passwordVerify
@@ -50,6 +49,7 @@ export default function ForgotPasswordScreen() {
     return (
         <Grid container  bgcolor='#2B2B2B' component="main" direction="column" justify="flex-end" alignItems="center" >
             <CssBaseline />
+            <AuthErrorModal />
             <Grid item>
                 <Box
                     sx={{

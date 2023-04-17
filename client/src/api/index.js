@@ -14,6 +14,7 @@ export const AuthActionType = {
     CHANGE_PASSWORD: "CHANGE_PASSWORD",
     REGISTER_USER_ERROR: "REGISTER_USER_ERROR",
     LOGIN_USER_ERROR: "LOGIN_USER_ERROR",
+    FORGOT_PASSWORD_ERROR: "FORGOT_PASSWORD_ERROR",
     CLOSE_MODAL: "CLOSE_MODAL"
 }
 
@@ -74,6 +75,13 @@ function AuthContextProvider(props) {
                     modalActive: true
                 })
             }
+            case AuthActionType.FORGOT_PASSWORD_ERROR: {
+                return setAuth({
+                    ...auth,
+                    errorMessage: payload.errorMessage,
+                    modalActive: true
+                })
+            }
             case AuthActionType.CLOSE_MODAL: {
                 return setAuth({
                     ...auth, 
@@ -82,9 +90,9 @@ function AuthContextProvider(props) {
             }
             case AuthActionType.CHANGE_PASSWORD: {
                 return setAuth({
+                    ...auth,
                     user: payload.user,
-                    loggedIn: false,
-                    errorMessage: payload.errorMEssage
+                    loggedIn: payload.loggedIn,
                 })
             }
             default:
@@ -107,7 +115,7 @@ function AuthContextProvider(props) {
     auth.forgotPassword = async function(email, newpassword, passwordVerify){
         console.log("Changing Password");
         try {
-            const response = await api.changePassword(email, newpassword, passwordVerify);
+            const response = await api.forgotPassword(email, newpassword, passwordVerify);
             if (response.status === 200){
                 authReducer({
                     type: AuthActionType.CHANGE_PASSWORD,
@@ -117,19 +125,16 @@ function AuthContextProvider(props) {
                         errorMessage: null
                     }
                 })
+                navigate("/login");
             }
         }catch(error){
             authReducer({
-                type: AuthActionType.CHANGE_PASSWORD,
+                type: AuthActionType.FORGOT_PASSWORD_ERROR,
                 payload: {
-                    user: auth.user,
-                    loggedIn: false,
                     errorMessage: error.response.data.errorMessage
                 }
             })
         }
-    }
-    auth.registerUser = async function(firstName, lastName, email, password, passwordVerify) {
     }
 
     auth.registerUser = async function(firstName, lastName, username, email, password, passwordVerify) {
