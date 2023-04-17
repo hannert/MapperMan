@@ -16,6 +16,7 @@ export default function MapsScreen(){
 
     const dispatch = useDispatch();
     const user = useSelector((state) => state.editMapList.user);
+    const maps = useSelector((state) => state.editMapList.mapList);
 
     useEffect(() => {
         if (user) {
@@ -26,6 +27,12 @@ export default function MapsScreen(){
             }
         )}   
     }, [user])
+
+    useEffect(() => {
+        if(maps){
+            setCurrentList(maps);
+        }
+    }, [maps]);
 
     
     return (
