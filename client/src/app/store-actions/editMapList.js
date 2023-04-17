@@ -30,12 +30,16 @@ export const editMapList = createSlice({
         renameMap: (state, action) =>{
             console.log("renamed map " + action.payload);
             state.activeMap = action.payload
+        },
+        deleteMap: (state, action) =>{
+            console.log("deleted map!");
+            state.activeMap=null;
         }
     }
 
 
 })
 
-export const { loginUser, createNewMap, setMapList, renameMap } = editMapList.actions
+export const { loginUser, createNewMap, setMapList, renameMap, deleteMap } = editMapList.actions
 export default editMapList.reducer
 

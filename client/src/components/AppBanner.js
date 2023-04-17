@@ -1,4 +1,4 @@
-import { Comment, ContentCopy, GroupAdd, Map, Save, Upload } from '@mui/icons-material';
+import { Comment, ContentCopy, GroupAdd, Map, Save, Upload, Delete } from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
 import Face5Icon from '@mui/icons-material/Face5';
 import { Alert, Avatar, Button, Snackbar, TextField } from '@mui/material';
@@ -18,7 +18,7 @@ import { useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import AuthContext from '../api';
-import { renameMap } from '../app/store-actions/editMapList';
+import { renameMap, deleteMap } from '../app/store-actions/editMapList';
 import apis from '../app/store-requests/store_requests';
 
 
@@ -155,10 +155,6 @@ function AppBanner() {
         apis.renameMap(currMapId, newName).then((res)=>{
             if(res.data.success===true){
                 console.log("map renamed successfully");
-                /**I think this dispatch sets the current map to the
-                 * map we just renamed in attempts to rerender the name part
-                 * thats visible on top of the screen... not working though
-                 */
                 dispatch(renameMap(res.data.id));
                 setMapName(mapRenameField);
             }else{
@@ -173,6 +169,28 @@ function AppBanner() {
         setMapRenameField(event.target.value);
     }
     
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const handleOpenDeleteMapDialog = () =>{
+        setDeleteDialogOpen(true);
+    }
+    const handleCloseDeleteMapDialog = () =>{
+        setDeleteDialogOpen(false)
+    }
+
+    const handleDeleteMapConfirm = () =>{
+        let currMapId = map;
+        apis.deleteMapById(currMapId).then((res)=>{
+            if(res.data.success===true){
+                console.log("map deleted successfully");
+                dispatch(deleteMap());
+            }else{
+                console.log("map delete failed");
+                console.log(res);
+            }
+        });
+        navigate("/");
+        setDeleteDialogOpen(false);
+    }
 
     
 
@@ -274,6 +292,16 @@ function AppBanner() {
             <DialogActions>
                 <Button  onClick={handleMapRenameClose}>Cancel</Button>
                 <Button  variant='contained'onClick={handleRenameSubmit}>Confirm</Button>
+            </DialogActions>
+        </Dialog>
+    )
+
+    const deleteDialog = (
+        <Dialog open={deleteDialogOpen} onClose={handleCloseDeleteMapDialog} fullWidth maxWidth='sm'>
+            <DialogTitle>Delete {mapName}?</DialogTitle>
+            <DialogActions>
+                <Button  onClick={handleCloseDeleteMapDialog}>Cancel</Button>
+                <Button  variant='contained'onClick={handleDeleteMapConfirm}>Confirm</Button>
             </DialogActions>
         </Dialog>
     )
@@ -388,6 +416,9 @@ function AppBanner() {
                 <IconButton>
                     <EditIcon onClick={handleMapRenameOpen}/>
                 </IconButton>
+                <IconButton>
+                    <Delete onClick={handleOpenDeleteMapDialog}/>
+                </IconButton>
             </Typography>
             
             </Box>
@@ -457,6 +488,7 @@ function AppBanner() {
             {publishMapDialog}
             {collabDialog}
             {renameDialog}
+            {deleteDialog}
             <Snackbar>
 
             </Snackbar>
