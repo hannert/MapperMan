@@ -35,8 +35,15 @@ export default function MapCard(props) {
     function mouseDown(e){
         e.stopPropagation ();
     }
-
-
+    let date = 'N/A'
+    if(map.published){
+        let dateObj = new Date(map.createdAt);
+        let month = dateObj.getUTCMonth() + 1; //months from 1-12
+        let day = dateObj.getUTCDate();
+        let year = dateObj.getUTCFullYear();
+        date = year + "/" + month + "/" + day;
+        console.log(date);
+    }
 
     return (
         <Box sx = {{'&:hover': {
@@ -53,7 +60,7 @@ export default function MapCard(props) {
                         </Typography>
                     </Grid>
                     <Grid item xs = {6} sx={{textAlign:'right'}}>
-                        <MapCardActions map={map}></MapCardActions>
+                        <MapCardActions published={map.published}></MapCardActions>
                     </Grid>
                 </Grid>          
             </Box>  
@@ -69,12 +76,12 @@ export default function MapCard(props) {
                 <Grid container rowSpacing={0}>
                     <Grid item xs = {6} sx={{textAlign:'left'}}>
                         <Typography sx = {{margin: '3px',fontSize: 14}}>
-                            {'By: Bob'}
+                            {'By: ' + map.owner}
                         </Typography>
                     </Grid>
                     <Grid item xs = {6} sx={{textAlign:'right'}}>
                         <Typography sx = {{margin: '3px', fontSize: 14}}>
-                            {'Published: ' + map.published}
+                            {'Published: ' + date}
                         </Typography>
                     </Grid>
                 </Grid>

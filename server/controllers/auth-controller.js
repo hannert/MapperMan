@@ -143,7 +143,7 @@ forgotPassword = async (req, res) => {
                 .status(400)
                 .json({
                     success: false,
-                    errorMessage: "There is no account in the database."
+                    errorMessage: "That account is not in the database."
                 })
         }
         const saltRounds = 10;
