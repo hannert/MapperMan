@@ -138,7 +138,8 @@ getMapsDataByAccount = async (req, res) => {
                     id: map._id,
                     name: map.name,
                     owner: account[0].username,
-                    createdAt: map.createdAt
+                    createdAt: map.createdAt,
+                    published: map.published
                 };
                 console.log("Map Entry: ");
                 console.log(mapEntry);
