@@ -1,7 +1,7 @@
-import { Comment, ContentCopy, GroupAdd, Map, Save, Upload } from '@mui/icons-material';
+import { Comment, ContentCopy, Edit, GroupAdd, Map, Save, Upload} from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
 import Face5Icon from '@mui/icons-material/Face5';
-import { Alert, Avatar, Button, Snackbar, TextField } from '@mui/material';
+import { Alert, Avatar, Button, Icon, Snackbar, TextField } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Dialog from '@mui/material/Dialog';
@@ -14,12 +14,14 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import AuthContext from '../api';
 import AccountCircle from '@mui/icons-material/AccountCircle';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import apis from '../app/store-requests/store_requests';
+import { renameMap } from '../app/store-actions/editMapList';
+
 
 
 
@@ -32,10 +34,36 @@ function AppBanner() {
     const map = useSelector((state) => state.editMapList.activeMap);
     const navigate = useNavigate();
     const location = useLocation();
+    const dispatch = useDispatch();
+
 
 
     const [anchorEl, setAnchorEl] = useState(null);
+    const [mapName, setMapName] = useState("");
+    const [mapRenameField, setMapRenameField]=useState("");
+    // const [mapFile, setMapFile] = useState({
+    //     "type": "FeatureCollection",
+    //     "name": "jsontemplate",
+    //     "features": [
+    //     { "type": "Feature", "properties": { "a1": "", "a2": "", "a3": "", "a4": ""}, "geometry": null }
+    //     ]
+    // });
+
+
     const isMenuOpen = Boolean(anchorEl);
+
+
+    /** trying to use state for the map name that is displayed on the editing screen */
+    useEffect(() => {
+        if (map) {
+            apis.getMapById(map).then((response) => {
+                console.log(response.data.map.mapData);
+                console.log(response.data.map.name);
+                setMapName(response.data.map.name);
+                // setMapFile(response.data.map.mapData);
+            }
+        )}   
+    }, [map])
 
 
     // ! - State for dialogs
@@ -106,6 +134,47 @@ function AppBanner() {
         handleMenuClose();
         navigate('/register/')
     }
+
+    const [mapRenameOpen, setMapRenameOpen] = useState(false);
+    const resetRenameTextField = () =>{
+        setMapRenameField("");
+    }
+
+    const handleMapRenameOpen = () =>{
+        setMapRenameOpen(true);
+    }
+    const handleMapRenameClose = () =>{
+        resetRenameTextField();
+        setMapRenameOpen(false);
+    }
+
+    const handleRenameSubmit = () =>{
+        let currMapId = map;
+        let newName = mapRenameField;
+        apis.renameMap(currMapId, newName).then((res)=>{
+            if(res.data.success===true){
+                console.log("map renamed successfully");
+                /**I think this dispatch sets the current map to the
+                 * map we just renamed in attempts to rerender the name part
+                 * thats visible on top of the screen... not working though
+                 */
+                dispatch(renameMap(res.data.id));
+                setMapName(mapRenameField);
+            }else{
+                console.log("map rename failed");
+                console.log(res);
+            }
+        });
+        resetRenameTextField();
+        setMapRenameOpen(false);
+        navigate(`/maps/edit`)
+    }
+    const handleRenameTextFieldChange = (event) =>{
+        setMapRenameField(event.target.value);
+    }
+    
+
+    
 
 
     // ! Areas for placeholder functions as Store is not implemented yet, 
@@ -191,6 +260,24 @@ function AppBanner() {
       </Dialog>
     )
 
+    const renameDialog = (
+        <Dialog open={mapRenameOpen} onClose={handleMapRenameClose} fullWidth maxWidth='sm'>
+            <DialogTitle>Enter new name for: {mapName}</DialogTitle>
+            <DialogContent>
+                <TextField 
+                    fullWidth
+                    label='New Map Name'
+                    onChange={handleRenameTextFieldChange}
+                    value={mapRenameField}
+                />
+            </DialogContent>
+            <DialogActions>
+                <Button  onClick={handleMapRenameClose}>Cancel</Button>
+                <Button  variant='contained'onClick={handleRenameSubmit}>Confirm</Button>
+            </DialogActions>
+        </Dialog>
+    )
+
     // ! ------------- End for placeholder modals
 
 
@@ -253,16 +340,16 @@ function AppBanner() {
 
     }
 
-    /** Gets the current map name from the store */
-    function getCurrentMapName(){
-        if(map){
-            apis.getMapById(map).then((response) => {
-                console.log(response.data.map.name);
-                return response.data.map.name;
-            }
-        )}
-        return "unknown"
-    }
+    // /** Gets the current map name from the store */
+    // const getCurrentMapName = () => {
+    //     // if(map){
+    //     //     apis.getMapById(map).then((response) => {
+    //     //         console.log(response.data.map.name);
+    //     //         return response.data.map.name;
+    //     //     }
+    //     // )}
+    //     return "unknown"
+    // }
 
     // Since we dont have auth set up, this will always return account circle
 
@@ -295,9 +382,15 @@ function AppBanner() {
         )
         
         nowEditingText = (
+            <Box>
             <Typography>
-                Now Editing: {getCurrentMapName}
+                Now Editing: {mapName}
+                <IconButton>
+                    <EditIcon onClick={handleMapRenameOpen}/>
+                </IconButton>
             </Typography>
+            
+            </Box>
         )
 
     }
@@ -363,6 +456,7 @@ function AppBanner() {
             {copyMapDialog}
             {publishMapDialog}
             {collabDialog}
+            {renameDialog}
             <Snackbar>
 
             </Snackbar>

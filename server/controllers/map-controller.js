@@ -125,10 +125,47 @@ getMapsDataByAccount = async (req, res) => {
     }).catch(err => console.log(err))
 }
 
+/** TODO: try to add user authentication here i.e. check if the map belongs to
+ * them
+ */
+renameMap = async (req,res) =>{
+    const body = req.body
+    console.log("new name: " + req.body.newName);
+    console.log(req.params.id)
+    if(!body){
+        return res.status(400).json({
+            success: false,
+            error: 'You must provide a body to update',
+        })
+    }
+    Map.findOne({_id: req.params.id}).then((map) => {
+        console.log("map found: " + JSON.stringify(map));
+        map.name = body.newName;
+        map
+            .save()
+            .then(() =>{
+                console.log("successfully renamed!");
+                return res.status(200).json({
+                    success: true,
+                    id: map._id,
+                    message: 'map name updated!',
+                })
+            })
+            .catch(error =>{
+                console.log("Failed to rename");
+                return res.status(404).json({
+                    error,
+                    message: 'Map name not updated!',
+                })
+            })
+    })
+}
+
 module.exports = {
     createMap,
     getMapById,
     deleteMapById,
     getPublicMaps,
-    getMapsDataByAccount
+    getMapsDataByAccount,
+    renameMap
 }
