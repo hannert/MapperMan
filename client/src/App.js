@@ -2,7 +2,7 @@ import { Box, ThemeProvider, createTheme } from '@mui/material';
 import { React } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
-import { AuthContextProvider } from '../api/auth-request-api';
+import { AuthContextProvider } from './api'
 
 import AppBanner from './components/AppBanner';
 import EditScreen from './components/EditScreen';
