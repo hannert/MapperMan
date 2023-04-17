@@ -36,10 +36,6 @@ export const editMapList = createSlice({
 
 })
 
-<<<<<<< HEAD
-export const { loginUser, createNewMap, setMapList } = editMapList.actions
+export const { loginUser, createNewMap, setMapList, renameMap } = editMapList.actions
 export default editMapList.reducer
-=======
-export const { loginUser, createNewMap, renameMap } = createMap.actions
-export default createMap.reducer
->>>>>>> 619ea7e46421a71b3258fc7b2972b4c590295578
+
