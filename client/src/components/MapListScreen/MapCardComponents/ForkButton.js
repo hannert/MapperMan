@@ -1,5 +1,7 @@
 import ForkRightIcon from '@mui/icons-material/ForkRight';
 import { Button } from '@mui/material';
+import { useSelector } from 'react-redux';
+import apis from '../../../app/store-requests/store_requests';
 
 /**
  * This component forks a map. Will call store commands to change the map to go into the repository
@@ -14,9 +16,21 @@ import { Button } from '@mui/material';
 export default function ForkButton(props){
 
     const id = props.mapId
+    const user = useSelector((state) => state.editMapList.user);
+
+
     function handleDelete(e){
         e.stopPropagation();
         console.log(id)
+
+        apis.forkMap(id, user).then((res) => {
+            if(res.data.success===true){
+                console.log("map forked successfully");
+            }else{
+                console.log("map fork failed");
+                console.log(res);
+            }
+        })
     }
 
     function mouseDown(e){

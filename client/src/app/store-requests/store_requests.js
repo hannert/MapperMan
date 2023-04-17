@@ -53,6 +53,12 @@ export const renameMap = (id, newName) =>{
         id, newName
     })
 }
+export const forkMap = (id, user) => {
+    return api.post(`/fork/`, {
+        map: id, 
+        user: user
+    })
+}
 
 const apis = {
     createMap,
@@ -60,7 +66,8 @@ const apis = {
     getMapById,
     getPublicMaps,
     getMapsDataByAccount,
-    renameMap
+    renameMap,
+    forkMap
 }
 
 export default apis

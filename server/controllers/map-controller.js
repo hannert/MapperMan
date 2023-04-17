@@ -194,11 +194,66 @@ renameMap = async (req,res) =>{
     })
 }
 
+forkMap = async (req, res) => {
+    const body = req.body
+    const mapId = req.body.map
+    const user = req.body.user
+    console.log(body)
+    if(!body){
+        return res.status(400).json({
+            success: false,
+            error: 'You must provide a body to update',
+        })
+    }
+    // Find the map we want to fork
+    Map.findOne({_id: mapId}).then((map) => {
+        console.log("map found: " + JSON.stringify(map));
+
+        Account.findOne({ email: user.email}).then((account) => {
+            if (account){
+                console.log("Found account");
+    
+                console.log("AWESOME!!!!!!")
+
+                let newMap = new Map({
+                    name: 'Copy of ' + map.name,
+                    owner: account._id,
+                    mapData: map.mapData,
+                    published: false,
+                    comments: [],
+                    tags: []
+                })
+                newMap
+                    .save()
+                    .then(() => {
+                        account.mapsOwned.push(newMap.id);
+                        account
+                            .save()
+                            .catch(err => {
+                                console.log(err)
+                                return res.status(400).json({success:false, error: err});
+                            })
+                })
+
+    
+            }
+    
+    
+    
+        })
+        
+    })
+
+
+
+}
+
 module.exports = {
     createMap,
     getMapById,
     deleteMapById,
     getPublicMaps,
     getMapsDataByAccount,
-    renameMap
+    renameMap,
+    forkMap
 }
