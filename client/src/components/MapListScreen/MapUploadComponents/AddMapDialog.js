@@ -1,7 +1,7 @@
-import { Button, Dialog, DialogTitle, Grid, Typography } from "@mui/material";
-import { useState } from "react";
-import { Box } from "@mui/system";
 import { Add, Check } from '@mui/icons-material';
+import { Button, Dialog, DialogTitle, Grid, Typography } from "@mui/material";
+import { Box } from "@mui/system";
+import { useState } from "react";
 
 
 export default function AddMapDialog(props){
@@ -10,6 +10,7 @@ export default function AddMapDialog(props){
     const [shapefile, setShapefile]=useState(null);
     const [dbfFile, setdbfFile]=useState(null);
     const [geoJsonFile, setGeoJsonFile]=useState(null);
+    const [active, setActive]=useState('none')
 
     const handleClose = () => {
         onClose(selectedValue);
@@ -72,15 +73,73 @@ export default function AddMapDialog(props){
             }
         }
 
+
+    
+
+    
     return (
-        <Dialog maxWidth='lg' open={open} onClose={handleClose}>
-            <DialogTitle sx={{textAlign: 'center'}}>Upload GeoJSON or SHP/DBF</DialogTitle>
-            <Grid container columnSpacing={4} sx={{alignItems:"center", height:'300px', width:'500px'}}>
-                <Grid item xs={6} sx={{ display:'flex', height:'100%', alignItems:"center", justifyContent:'center'}}>
-                    <Box sx ={{width:'100%', height:'100%'}}>
-                        <Typography sx={{width:'80%', textAlign:'center', backgroundColor:'gray', margin:'auto'}}>GeoJSON</Typography>
-                        <Box sx={{display:'flex', height:'80%', width:'80%', alignItems:"center", 
-                                justifyContent:'center', backgroundColor:'gray', margin:'auto', flexDirection:'column'}}>
+        <Dialog 
+            maxWidth='md' 
+            fullWidth
+            open={open} 
+            onClose={handleClose}
+            sx={{
+                borderRadius: '10px',
+            }}
+        >
+            <DialogTitle 
+                sx={{
+                    textAlign: 'center',
+                }}
+            >
+                Upload GeoJSON or SHP/DBF
+            </DialogTitle>
+            <Grid 
+                container 
+                columnSpacing={4} 
+                sx={{
+                    alignItems:"center", 
+                    height:'400px', 
+                    backgroundColor: '#393C44'
+                }}
+            >
+                <Grid 
+                    item 
+                    xs={6} 
+                    sx={{ display:'flex', height:'100%', alignItems:"center", justifyContent:'center'}}
+                >
+                    <Box 
+                        sx ={{
+                            width:'100%', 
+                            height:'100%',
+                            borderRadius:'10px',
+                            backgroundColor: 'red',
+                            marginTop: '15px',
+                            marginBottom: '15px',
+                            margin: '15px'
+                        }}
+                    >
+                        <Typography 
+                            sx={{
+                                textAlign:'center', 
+                                margin:'auto',
+                                fontFamily: 'koulen, lato, courier'
+                            }}
+                        >
+                            GeoJSON
+                        </Typography>
+                        <Box 
+                            sx={{
+                                display:'flex', 
+                                height:'80%', 
+                                width:'80%', 
+                                alignItems:"center", 
+                                justifyContent:'center', 
+                                backgroundColor:'gray', 
+                                margin:'auto', 
+                                flexDirection:'column'
+                            }}
+                        >
                             <Button sx = {{width:'50px', height:'50px', borderRadius:'50%', backgroundColor: '#585454', margin:'10px'}}>
                                 <label>
                                     <input multiple type="file" style={{ display: 'none' }} onChange={handleGeoJsonChange}/>

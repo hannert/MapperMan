@@ -2,16 +2,16 @@ import { Box, ThemeProvider, createTheme } from '@mui/material';
 import { React } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
+import { AuthContextProvider } from './auth';
 import AppBanner from './components/AppBanner';
 import EditScreen from './components/EditScreen';
 import ForgotPasswordScreen from './components/ForgotPasswordScreen';
-import HomeWrapper from './components/HomeWrapper';
 import HomeScreen from './components/HomeScreen';
+import HomeWrapper from './components/HomeWrapper';
 import LoginScreen from './components/LoginScreen';
 import MapsScreen from './components/MapListScreen/MapsScreen';
 import RegisterScreen from './components/RegisterScreen';
 import ViewMapScreen from './components/ViewMapScreen';
-import { AuthContextProvider } from './auth';
 
 const { palette } = createTheme();
 const { augmentColor } = palette;
@@ -41,6 +41,16 @@ const themeOptions = createTheme({
       color: 'red'
     }
   },
+  components: {
+    MuiDialogTitle: {
+      styleOverrides: {
+        root: {
+          fontFamily: 'koulen'
+        }
+      }
+    }
+  }
+  
 });
 
 function App() {
