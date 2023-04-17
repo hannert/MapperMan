@@ -31,7 +31,7 @@ export const registerUser = (firstName, lastName,username, email, password, pass
     })
 }
 export const forgotPassword = (email, newpassword, passwordVerify) => {
-    return api.post(`/forgotPassword/`, {
+    return api.put(`/forgotPassword/`, {
         email: email,
         newpassword: newpassword,
         passwordVerify: passwordVerify

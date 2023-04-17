@@ -130,6 +130,7 @@ function AuthContextProvider(props) {
         }
     }
     auth.registerUser = async function(firstName, lastName, email, password, passwordVerify) {
+    }
 
     auth.registerUser = async function(firstName, lastName, username, email, password, passwordVerify) {
         console.log("REGISTERING USER");

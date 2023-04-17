@@ -153,7 +153,17 @@ forgotPassword = async (req, res) => {
         existingUser.passwordHash = newpasswordHash;
         await existingUser.save();
 
-        res.status(200).json({success: true});
+        res.status(200).json({success: true, 
+            user: {
+            username: existingUser.username,
+            passwordHash: newpasswordHash,
+            email: existingUser.email,             
+            firstName: existingUser.firstName,
+            lastName: existingUser.lastName,  
+            mapsOwned: existingUser.mapsOwned,
+            mapAccess: existingUser.mapAccess
+        }
+    });
 
     } catch (err) {
         console.error(err);
