@@ -13,5 +13,5 @@ router.post('/maps', MapController.getMapsDataByAccount)
  */
 router.put('/map/:id', MapController.renameMap)
 // router.put('/map/', MapController.editMap)
-
+router.post('/fork', MapController.forkMap)
 module.exports = router
