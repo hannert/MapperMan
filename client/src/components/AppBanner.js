@@ -188,7 +188,7 @@ function AppBanner() {
                 console.log(res);
             }
         });
-        navigate("/");
+        navigate("/maps");
         setDeleteDialogOpen(false);
     }
 
