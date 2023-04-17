@@ -18,8 +18,13 @@ import { useDispatch } from 'react-redux';
 import { loginUser } from '../app/store-actions/editMapList';
 import apis from '../api/auth-request-api';
 import { useNavigate } from 'react-router-dom';
+import AuthErrorModal from './Modals/AuthErrorModal';
 
 export default function LoginScreen() {
+    const { auth } = useContext(AuthContext);
+
+
+
     const style = {
         position: 'absolute',
         top: '50%',
@@ -41,39 +46,16 @@ export default function LoginScreen() {
     const handleSubmit = (event) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
-        // auth.loginUser(
-        //     formData.get('email'),
-        //     formData.get('password')
-        // );
-        console.log("Trying to login")
-        try {
-            apis.loginUser(
-                formData.get('email'),
-                formData.get('password')
-            ).then((response) => {
-                if(response.data.success === true){
-                    console.log("Login successful");
-                    console.log(response.data.user);
-                    dispatch(loginUser({
-                        user: response.data.user,
-                        loggedIn: true,
-                    }))
-                    navigator('/maps')
-                }
-            })} catch(error) {
-                console.log("Login failed");
-                modalJSX = <Modal>
-                <Alert sx={style} severity="warning">Invalid username or password
-                <Button sx={{color:"black", mt:"20px", ml:"85px", fontSize: 13, fontWeight: 'bold', border: 2}}variant="outlined" onClick={handleCloseButton}>Close</Button>
-                </Alert>
-               </Modal>;
-               console.log(modalJSX)
-        }
+        auth.loginUser(
+            formData.get('email'),
+            formData.get('password')
+        );
     }
 
     return (
         <Grid container  component="main" direction="column" justify="flex-end" alignItems="center" >
             <CssBaseline />
+            <AuthErrorModal/>
             <Grid item>
                 <Box
                     sx={{
