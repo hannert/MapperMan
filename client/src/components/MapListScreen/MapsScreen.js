@@ -18,7 +18,7 @@ export default function MapsScreen(){
         {map: 'United States', published: '2/16/2023', index: 8},
         {map: 'Iceland', published: '2/16/2023', index: 9}
     ]
-
+    
     
     return (
         <Grid container rowSpacing={0} sx={{backgroundColor: '#2B2B2B',

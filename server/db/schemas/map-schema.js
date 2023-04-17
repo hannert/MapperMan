@@ -8,7 +8,9 @@ const ObjectId = Schema.Types.ObjectId
     owner: Who made the map, has a type of 'Account'
     mapData: Reference to GeoJSON schema that holds map data for leaflet
     published: Boolean for if a map was published
-    comments: Array of Strings to hold comments
+
+    //TODO: Make comments a reference to comment schema
+    comments: Array of Comments to hold comments
     tags: Map of Strings that owner attached to the map, for searching purposes
 */
 const mapSchema = new Schema(
@@ -17,7 +19,7 @@ const mapSchema = new Schema(
         owner: { type: ObjectId, ref: 'Account', required: true },
         mapData: { type: Object, required: true },
         published: {type: Boolean, required: true},
-        comments: {type: [ObjectId], ref: 'Comment', required: true },
+        comments: {type: [String], ref: 'Comment', required: true },
         tags: {type: Map, of: String, required: true},
     },
     { timestamps: true },

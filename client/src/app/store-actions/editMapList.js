@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    mapsOwned: [],
+    loggedIn: false,
     activeMap: null,
     mapMarkedForDeletion: null,
     user: null
@@ -12,13 +12,20 @@ export const createMap = createSlice({
     name: 'editMapList',
     initialState,
     reducers: {
+        loginUser: (state, action) => {
+            state.user = action.payload.user;
+            state.loggedIn = true;
+            console.log(action.payload.user);
+        },
+
         createNewMap: (state, action) => {
-            state.loggedIn = true
+            console.log("New active map is " + action.payload);
+            state.activeMap = action.payload;
         }
     }
 
 
 })
 
-export const { createNewMap } = createMap.actions
+export const { loginUser, createNewMap } = createMap.actions
 export default createMap.reducer

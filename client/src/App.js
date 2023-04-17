@@ -13,7 +13,8 @@ import LoginScreen from './components/LoginScreen';
 import MapsScreen from './components/MapListScreen/MapsScreen';
 import RegisterScreen from './components/RegisterScreen';
 import ViewMapScreen from './components/ViewMapScreen';
-
+import store from './app/store';
+import { Provider } from 'react-redux'
 const { palette } = createTheme();
 const { augmentColor } = palette;
 const createColor = (mainColor) => augmentColor({ color: { main: mainColor } });
@@ -65,6 +66,7 @@ function App() {
     <BrowserRouter>
       <AuthContextProvider>
         <ThemeProvider theme={themeOptions}>
+        <Provider store={store}>
           <Box sx={{display: "flex", height:"100%", flexDirection:"column"}}>
             <AppBanner />
             <Routes>
@@ -78,7 +80,7 @@ function App() {
               <Route path='/forgotPassword/' element ={<ForgotPasswordScreen/>}/>
             </Routes>          
           </Box>
-
+        </Provider>
         </ThemeProvider>
       </AuthContextProvider>
     </BrowserRouter>

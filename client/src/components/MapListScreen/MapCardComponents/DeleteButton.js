@@ -3,7 +3,9 @@ import DeleteIcon from '@mui/icons-material/Delete';
 
 /**
  * This component deletes a map. Will call store commands to delete the map from the database and the user's repository
- * as well as the public repository. 
+ * as well as the public repository. This should only be rendered when the user is on their own repository. Just delete
+ * the map in the backend. When clicked it should open a dialog for confirmation.
+ * 
  * @returns Delete Button for Map Card Actions
  */
 export default function DeleteButton(){

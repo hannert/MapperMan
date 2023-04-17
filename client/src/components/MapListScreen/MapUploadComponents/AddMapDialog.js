@@ -4,7 +4,10 @@ import { Box } from "@mui/system";
 import { useState } from "react";
 import * as shp from 'shpjs';
 import * as turf from '@turf/turf';
-
+import { useNavigate } from 'react-router-dom';
+import apis from '../../../app/store-requests/store_requests';
+import { useDispatch, useSelector } from 'react-redux';
+import { createNewMap } from '../../../app/store-actions/editMapList';
 /**
  * This component is a dialog that allows the user to upload a map to the user repository in either
  * GeoJSON or SHP/DBF format. 
@@ -18,6 +21,10 @@ export default function AddMapDialog(props){
     const [dbfFile, setdbfFile]=useState(null);
     const [geoJsonFile, setGeoJsonFile]=useState(null);
     const [active, setActive]=useState('none')
+
+    const dispatch = useDispatch();
+    const navigator = useNavigate();
+    const user = useSelector((state) => state.editMapList.user);
 
     const handleClose = () => {
         setShapefile(null);
@@ -63,7 +70,7 @@ export default function AddMapDialog(props){
 
         var reader = new FileReader();
         reader.onload = function() {
-        setdbfFile(reader.result);
+            setdbfFile( reader.result);
         }
         reader.readAsArrayBuffer(event.target.files[0])
         setGeoJsonFile(null);
@@ -72,13 +79,13 @@ export default function AddMapDialog(props){
     }
     const handleGeoJsonChange = (event) =>{
             if(event.target.files){
+                console.log(event.target.files);
                 setGeoJsonFile(event.target.files[0]);
                 var reader = new FileReader();
                 reader.onload = function() {
-                setGeoJsonFile(reader.result);
+                    setGeoJsonFile(reader.result);
                 }
-                reader.readAsArrayBuffer(event.target.files[0])
-
+                reader.readAsText(event.target.files[0])
                 setShapefile(null);
                 setdbfFile(null);
             }
@@ -102,12 +109,31 @@ export default function AddMapDialog(props){
     /*Confirm button for GeoJSON file, should:
         1. Compress the file (idk if this is necessary)
         2. Send the file to database
-        3. Send the user to the edit map page of the map they just uploaded
+        3. If user is loggedin , add the map to the user's owned maps, as it's ObjectId hashed
+        4. Set the editMapList activeMap to the id of the map just uploaded
+        5. Send the user to the edit map page
     */
     function handleGeoJsonConfirm(){
         console.log("confirm button for geojson");
+        
         let options = {tolerance: 0.01, highQuality: false};
-        let simplified = turf.simplify(geoJsonFile, options);
+        // let simplified = turf.simplify(geoJsonFile, options);
+        console.log(geoJsonFile);
+        if(user !== null){
+            apis.createMap(user, geoJsonFile).then((res) => {
+                console.log("map created");
+                if(res.data.success===true){
+                    console.log("map created successfully");
+                    dispatch(createNewMap(res.data.id));
+                    navigator(`/maps/edit`);
+                }else{
+                    console.log("map creation failed");
+                    console.log(res);
+                }
+            }).catch((err) => {
+                console.log(err);
+            });
+        }
     }
 
 

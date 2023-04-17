@@ -12,7 +12,6 @@ export const createMap = createSlice({
     reducers: {
         createNewMap: (state, action) => {
             apis.createMap(action.payload);
-            
         }
     }
 

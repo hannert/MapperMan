@@ -1,5 +1,3 @@
-import { useContext } from 'react';
-import AuthContext from '../api'
 // import MUIErrorModal from './MUIErrorModal'
 import Copyright from './Copyright'
 
@@ -13,10 +11,10 @@ import Link from '@mui/material/Link';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
-
-import apis from '../app/store-requests/auth_requests'
-
+import { useDispatch, useSelector } from 'react-redux';
+import apis from '../api/auth-request-api';
 export default function RegisterScreen() {
+    const dispatch = useDispatch();
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -30,13 +28,15 @@ export default function RegisterScreen() {
         const email = formData.get('email')
         const password = formData.get('password')
         const passwordVerify = formData.get('passwordVerify')
+        console.log(email)
         apis.registerUser(
             firstname,
             lastname,
             username,
             email,
             password,
-            passwordVerify)
+            passwordVerify
+        );
     };
 
     // let modalJSX = ""

@@ -3,7 +3,12 @@ import { Button } from '@mui/material';
 
 /**
  * This component publishes a map. Will call store commands to change the map's published status
- * in the database
+ * in the database. This should only be rendered when the user is on their own repository AND
+ * the map is private. When clicked it should open a dialog for confirmation.
+ * 
+ * Call function to the backend to change the published status of the map to true. 
+ * 
+ * 
  * @returns Publish Button for Map Card Actions
  */
 export default function PublishButton(){

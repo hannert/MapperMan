@@ -4,6 +4,7 @@ const api = axios.create({
     baseURL: 'http://localhost:4000/auth',
 })
 
+
 // THESE ARE ALL THE REQUESTS WE`LL BE MAKING, ALL REQUESTS HAVE A
 // REQUEST METHOD (like get) AND PATH (like /register). SOME ALSO
 // REQUIRE AN id SO THAT THE SERVER KNOWS ON WHICH LIST TO DO ITS
@@ -13,7 +14,7 @@ const api = axios.create({
 
 export const getLoggedIn = () => api.get(`/loggedIn/`);
 export const loginUser = (email, password) => {
-    return api.post(`/login/`, {
+    return api.post(`/login`, {
         email : email,
         password : password
     })

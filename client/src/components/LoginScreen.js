@@ -12,26 +12,40 @@ import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { useDispatch } from 'react-redux';
+import { loginUser } from '../app/store-actions/editMapList';
+import apis from '../api/auth-request-api';
+import { useNavigate } from 'react-router-dom';
 
 export default function LoginScreen() {
-    const { auth } = useContext(AuthContext);
-
+    const dispatch = useDispatch();
+    const navigator = useNavigate();
     const handleSubmit = (event) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
-        auth.loginUser(
+        // auth.loginUser(
+        //     formData.get('email'),
+        //     formData.get('password')
+        // );
+        console.log("Trying to login")
+        apis.loginUser(
             formData.get('email'),
             formData.get('password')
-        );
-
+        ).then((response) => {
+            if(response.data.success === true){
+                console.log("Login successful");
+                console.log(response.data.user);
+                dispatch(loginUser({
+                    user: response.data.user,
+                    loggedIn: true,
+                }))
+                navigator('/maps')
+            }else{
+                console.log("Login failed");
+                console.log(response.data);
+            }
+        })
     };
-
-    // let modalJSX = "";
-    // console.log(auth);
-    // if (auth.errorMessage !== null){
-    //     modalJSX = <MUIErrorModal />;
-    // }
-    // console.log(modalJSX);
 
     return (
         <Grid container  component="main" direction="column" justify="flex-end" alignItems="center" >

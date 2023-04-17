@@ -1,9 +1,16 @@
-const auth = require('../auth')
+// const auth = require('../auth')
 // const User = require('../models/user-model')
-
 const Account = require('../db/schemas/account-schema')
 const bcrypt = require('bcryptjs')
+const jwt = require("jsonwebtoken")
+const dotenv = require('dotenv')
+dotenv.config()
 
+signToken = (userId) => {
+    return jwt.sign({
+        userId: userId
+    }, process.env.JWT_SECRET);
+}
 
 getLoggedIn = async (req, res) => {
     try {
@@ -16,7 +23,7 @@ getLoggedIn = async (req, res) => {
             })
         }
 
-        const loggedInUser = await User.findOne({ _id: userId });
+        const loggedInUser = await Account.findOne({ _id: userId });
         console.log("loggedInUser: " + loggedInUser);
 
         return res.status(200).json({
@@ -35,6 +42,7 @@ getLoggedIn = async (req, res) => {
 
 loginUser = async (req, res) => {
     console.log("loginUser");
+    console.log(req.body);
     try {
         const { email, password } = req.body;
 
@@ -44,7 +52,7 @@ loginUser = async (req, res) => {
                 .json({ errorMessage: "Please enter all required fields." });
         }
 
-        const existingUser = await User.findOne({ email: email });
+        const existingUser = await Account.findOne({ email: email });
         console.log("existingUser: " + existingUser);
         if (!existingUser) {
             return res
@@ -63,10 +71,12 @@ loginUser = async (req, res) => {
                 .json({
                     errorMessage: "Wrong email or password provided."
                 })
+        }else{
+            console.log("Correct password");
         }
 
         // LOGIN THE USER
-        const token = auth.signToken(existingUser._id);
+        const token = signToken(existingUser._id);
         console.log(token);
 
         res.cookie("token", token, {
@@ -76,9 +86,13 @@ loginUser = async (req, res) => {
         }).status(200).json({
             success: true,
             user: {
+                username: existingUser.username,
+                passwordHash: existingUser.passwordHash,
+                email: existingUser.email,             
                 firstName: existingUser.firstName,
                 lastName: existingUser.lastName,  
-                email: existingUser.email              
+                mapsOwned: existingUser.mapsOwned,
+                mapAccess: existingUser.mapAccess
             }
         })
 
@@ -100,6 +114,7 @@ logoutUser = async (req, res) => {
 registerUser = async (req, res) => {
     console.log("REGISTERING USER IN BACKEND");
     try {
+        console.log(req.body);
         const { firstName, lastName, username, email, password, passwordVerify } = req.body;
         console.log("create user: " + firstName + " " + lastName + " " + email + " " + username + " " + password + " " + passwordVerify);
         if (!firstName || !lastName || !username || !email || !password || !passwordVerify) {
@@ -125,7 +140,7 @@ registerUser = async (req, res) => {
                 })
         }
         console.log("password and password verify match");
-        const existingUser = await User.findOne({ email: email });
+        const existingUser = await Account.findOne({ email: email });
         console.log("existingUser: " + existingUser);
         if (existingUser) {
             return res
@@ -135,19 +150,19 @@ registerUser = async (req, res) => {
                     errorMessage: "An account with this email address already exists."
                 })
         }
-
+        
         const saltRounds = 10;
         const salt = await bcrypt.genSalt(saltRounds);
         const passwordHash = await bcrypt.hash(password, salt);
         console.log("passwordHash: " + passwordHash);
         const mapsOwned = []
         const mapAccess = []
-        const newUser = new User({firstName, lastName, username, email, passwordHash, mapsOwned, mapAccess});
+        const newUser = new Account({firstName, lastName, username, email, passwordHash, mapsOwned, mapAccess});
         const savedUser = await newUser.save();
         console.log("new user saved: " + savedUser._id);
 
         // LOGIN THE USER
-        const token = auth.signToken(savedUser._id);
+        const token = signToken(savedUser._id);
         console.log("token:" + token);
 
         await res.cookie("token", token, {

@@ -1,7 +1,7 @@
 import axios from 'axios';
 axios.defaults.withCredentials = false;
 const api = axios.create({
-    baseURL: process.env.BASE_URL, //our server we are deploying on
+    baseURL:'http://localhost:4000/api', //our server we are deploying on
 })
 
 // name: { type: String, required: true },
@@ -10,12 +10,15 @@ const api = axios.create({
 //         published: {type: Boolean, required: true},
 //         comments: {type: [ObjectId], ref: 'Comment', required: true },
 //         tags: {type: Map, of: String, required: true},
-export const createMap = (name, owner, mapData) => {
-    return api.post('/newmap/', 
+export const createMap = (owner, mapData) => {
+    return api.post('/newmap', 
     {
-        name: name,
+        name: 'Untitled',
         owner: owner,
-        mapData: mapData
+        mapData: mapData,
+        published: false,
+        comments: [],
+        tags: []
     })
 }
 
