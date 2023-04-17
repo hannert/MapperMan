@@ -2,13 +2,13 @@ import { Add, Check } from '@mui/icons-material';
 import { Button, Dialog, DialogTitle, Grid, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import * as turf from '@turf/turf';
-import { useState } from "react";
-import { useDispatch, useSelector } from 'react-redux';
+import { useContext, useState } from "react";
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import * as shp from 'shpjs';
+import AuthContext from '../../../api';
 import { createNewMap } from '../../../app/store-actions/editMapList';
 import apis from '../../../app/store-requests/store_requests';
-
 /**
  * This component is a dialog that allows the user to upload a map to the user repository in either
  * GeoJSON or SHP/DBF format. 
@@ -16,6 +16,8 @@ import apis from '../../../app/store-requests/store_requests';
  * @returns Dialog for uploading a map
  */
 export default function AddMapDialog(props){
+    const { auth } = useContext(AuthContext);
+
     const { onClose, selectedValue, open } = props;
 
     const [shapefile, setShapefile]=useState(null);
@@ -25,7 +27,7 @@ export default function AddMapDialog(props){
 
     const dispatch = useDispatch();
     const navigator = useNavigate();
-    const user = useSelector((state) => state.editMapList.user);
+    // const user = useSelector((state) => state.editMapList.user);
 
     const handleClose = () => {
         setShapefile(null);
@@ -103,8 +105,8 @@ export default function AddMapDialog(props){
         let combinedGeoJSON = shp.combine([shp.parseShp(shapefile),shp.parseDbf(dbfFile)]);
         let options = {tolerance: 0.01, highQuality: false};
         let simplified = turf.simplify(combinedGeoJSON, options);
-        if(user !== null){
-            apis.createMap(user, simplified).then((res) => {
+        if(auth.user !== null){
+            apis.createMap(auth.user, simplified).then((res) => {
                 console.log("map created");
                 if(res.data.success===true){
                     console.log("map created successfully");
@@ -135,8 +137,8 @@ export default function AddMapDialog(props){
         let options = {tolerance: 0.01, highQuality: false};
         let simplified = turf.simplify(geoJsonFile, options);
         console.log(geoJsonFile);
-        if(user !== null){
-            apis.createMap(user, geoJsonFile).then((res) => {
+        if(auth.user !== null){
+            apis.createMap(auth.user, geoJsonFile).then((res) => {
                 console.log("map created");
                 if(res.data.success===true){
                     console.log("map created successfully");
