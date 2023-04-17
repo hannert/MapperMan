@@ -16,7 +16,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { useContext, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import AuthContext from '.././api';
+import AuthContext from '../api/auth-request-api';
 
 
 // import PlaylisterToolbar from './PlaylisterToolbar';
@@ -79,13 +79,12 @@ function AppBanner() {
 
     const handleMenuClose = () => {
         setAnchorEl(null);
-        auth.logoutUser();
     };
 
     // Handles logout of a logged-in user
     const handleLogout = () => {
         handleMenuClose();
-        // auth.logoutUser();
+        auth.logoutUser();
     }
 
     const handleHouseClick = () => {
