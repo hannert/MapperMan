@@ -1,13 +1,14 @@
 import { Add, Check } from '@mui/icons-material';
 import { Button, Dialog, DialogTitle, Grid, Typography } from "@mui/material";
 import { Box } from "@mui/system";
-import { useState } from "react";
-import * as shp from 'shpjs';
 import * as turf from '@turf/turf';
+import { useContext, useState } from "react";
+import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import apis from '../../../app/store-requests/store_requests';
-import { useDispatch, useSelector } from 'react-redux';
+import * as shp from 'shpjs';
+import AuthContext from '../../../api';
 import { createNewMap } from '../../../app/store-actions/editMapList';
+import apis from '../../../app/store-requests/store_requests';
 /**
  * This component is a dialog that allows the user to upload a map to the user repository in either
  * GeoJSON or SHP/DBF format. 
@@ -15,6 +16,8 @@ import { createNewMap } from '../../../app/store-actions/editMapList';
  * @returns Dialog for uploading a map
  */
 export default function AddMapDialog(props){
+    const { auth } = useContext(AuthContext);
+
     const { onClose, selectedValue, open } = props;
 
     const [shapefile, setShapefile]=useState(null);
@@ -24,7 +27,7 @@ export default function AddMapDialog(props){
 
     const dispatch = useDispatch();
     const navigator = useNavigate();
-    const user = useSelector((state) => state.editMapList.user);
+    // const user = useSelector((state) => state.editMapList.user);
 
     const handleClose = () => {
         setShapefile(null);
@@ -102,8 +105,8 @@ export default function AddMapDialog(props){
         let combinedGeoJSON = shp.combine([shp.parseShp(shapefile),shp.parseDbf(dbfFile)]);
         let options = {tolerance: 0.01, highQuality: false};
         let simplified = turf.simplify(combinedGeoJSON, options);
-        if(user !== null){
-            apis.createMap(user, simplified).then((res) => {
+        if(auth.user !== null){
+            apis.createMap(auth.user, simplified).then((res) => {
                 console.log("map created");
                 if(res.data.success===true){
                     console.log("map created successfully");
@@ -134,8 +137,8 @@ export default function AddMapDialog(props){
         let options = {tolerance: 0.01, highQuality: false};
         let simplified = turf.simplify(geoJsonFile, options);
         console.log(geoJsonFile);
-        if(user !== null){
-            apis.createMap(user, geoJsonFile).then((res) => {
+        if(auth.user !== null){
+            apis.createMap(auth.user, geoJsonFile).then((res) => {
                 console.log("map created");
                 if(res.data.success===true){
                     console.log("map created successfully");
@@ -168,6 +171,7 @@ export default function AddMapDialog(props){
             <DialogTitle 
                 sx={{
                     textAlign: 'center',
+                    backgroundColor: '#393C44'
                 }}
             >
                 Upload GeoJSON or SHP/DBF
@@ -178,7 +182,7 @@ export default function AddMapDialog(props){
                 sx={{
                     alignItems:"center", 
                     height:'400px', 
-                    backgroundColor: '#393C44'
+                    backgroundColor: '#393C44',
                 }}
             >
                 <Grid 
@@ -190,18 +194,17 @@ export default function AddMapDialog(props){
                         sx ={{
                             width:'100%', 
                             height:'100%',
-                            borderRadius:'10px',
-                            backgroundColor: 'red',
-                            marginTop: '15px',
-                            marginBottom: '15px',
-                            margin: '15px'
+
                         }}
                     >
                         <Typography 
                             sx={{
                                 textAlign:'center', 
                                 margin:'auto',
-                                fontFamily: 'koulen, lato, courier'
+                                width: '80%',
+                                fontFamily: 'koulen, lato, courier',
+                                backgroundColor: '#2F343D',
+                                borderRadius: '5px 5px 0 0'
                             }}
                         >
                             GeoJSON
@@ -213,7 +216,7 @@ export default function AddMapDialog(props){
                                 width:'80%', 
                                 alignItems:"center", 
                                 justifyContent:'center', 
-                                backgroundColor:'gray', 
+                                backgroundColor:'#4A4A4F', 
                                 margin:'auto', 
                                 flexDirection:'column'
                             }}
@@ -228,12 +231,36 @@ export default function AddMapDialog(props){
                         </Box>
                     </Box>
                 </Grid>
-                <Grid item xs={6} sx={{ display:'flex', height:'100%', alignItems:"center", justifyContent:'center'}}>
+                <Grid 
+                    item 
+                    xs={6} 
+                    sx={{ display:'flex', height:'100%', alignItems:"center", justifyContent:'center'}}>
                     <Box sx ={{width:'100%', height:'100%'}}>
-                    <Typography sx={{width:'80%', textAlign:'center', backgroundColor:'gray', margin:'auto'}}>SHP/DBF</Typography>
-                        <Box sx={{display:'flex', height:'80%', width:'80%', alignItems:"center", 
-                                justifyContent:'center', backgroundColor:'gray', margin:'auto', flexDirection:'column'}}>
+                    <Typography 
+                        sx={{
+                            textAlign:'center', 
+                            margin:'auto',
+                            width: '80%',
+                            fontFamily: 'koulen, lato, courier',
+                            backgroundColor: '#2F343D',
+                            borderRadius: '5px 5px 0 0'
+                        }}
+                        >
+                            SHP/DBF
+                            </Typography>
+                        <Box                             
+                            sx={{
+                                display:'flex', 
+                                height:'80%', 
+                                width:'80%', 
+                                alignItems:"center", 
+                                justifyContent:'center', 
+                                backgroundColor:'#4A4A4F', 
+                                margin:'auto', 
+                                flexDirection:'column'
+                            }}>
                             SHP FILE:
+
                             <Button sx = {{width:'50px', height:'50px', borderRadius:'50%', backgroundColor: '#585454', margin:'10px'}}>
                                 <label>
                                     <input multiple type="file" onChange={handleShapefileChange} style={{ display: 'none' }}/>
