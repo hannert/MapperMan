@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import AuthContext from '../auth'
+import AuthContext from '../api/auth-request-api'
 // import MUIErrorModal from './MUIErrorModal'
 import Copyright from './Copyright'
 
