@@ -1,24 +1,46 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    mapsOwned: [],
+    loggedIn: false,
     activeMap: null,
+    mapList: [],
+    publicRepo: false,
     mapMarkedForDeletion: null,
     user: null
 }
 
 
-export const createMap = createSlice({
+export const editMapList = createSlice({
     name: 'editMapList',
     initialState,
     reducers: {
+        loginUser: (state, action) => {
+            state.user = action.payload.user;
+            state.loggedIn = true;
+            console.log(action.payload.user);
+        },
         createNewMap: (state, action) => {
-            state.loggedIn = true
+            console.log("New active map is " + action.payload);
+            state.activeMap = action.payload;
+        },
+        setMapList: (state, action) => {
+            console.log("Map list set to ");
+            console.log(action.payload);
+            state.mapList = action.payload;
+        },
+        renameMap: (state, action) =>{
+            console.log("renamed map " + action.payload);
+            state.activeMap = action.payload
+        },
+        deleteMap: (state, action) =>{
+            console.log("deleted map!");
+            state.activeMap=null;
         }
     }
 
 
 })
 
-export const { createNewMap } = createMap.actions
-export default createMap.reducer
+export const { loginUser, createNewMap, setMapList, renameMap, deleteMap } = editMapList.actions
+export default editMapList.reducer
+

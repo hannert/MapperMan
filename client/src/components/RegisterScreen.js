@@ -1,8 +1,7 @@
-import { useContext } from 'react';
-// import AuthContext from '../auth'
 // import MUIErrorModal from './MUIErrorModal'
-// import Copyright from './Copyright'
+import Copyright from './Copyright';
 
+import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -10,27 +9,45 @@ import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { useDispatch, useSelector } from 'react-redux';
+import apis from '../api/auth-request-api';
+import { useNavigate } from 'react-router-dom';
+import AuthErrorModal from './Modals/AuthErrorModal';
+import AuthContext from '../api';
+import { useContext } from 'react';
+
 
 export default function RegisterScreen() {
-    // const { auth } = useContext(AuthContext);
+    const dispatch = useDispatch();
+    const navigator = useNavigate();
+    const {auth} = useContext(AuthContext)
 
     const handleSubmit = (event) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
-        console.log("formdata: ")
-        console.log(formData);
-        console.log("formData password verify: " + formData.get('passwordVerify'))
-        // auth.registerUser(
-        //     formData.get('firstName'),
-        //     formData.get('lastName'),
-        //     formData.get('username'),
-        //     formData.get('email'),
-        //     formData.get('password'),
-        //     formData.get('passwordVerify')
-        // );
+        const firstname = formData.get('firstName')
+        const lastname = formData.get('lastName')
+        const username = formData.get('username')
+        const email = formData.get('email')
+        const password = formData.get('password')
+        const passwordVerify = formData.get('passwordVerify')
+        console.log(email)
+        auth.registerUser(
+            firstname,
+            lastname,
+            username,
+            email,
+            password,
+            passwordVerify
+        ).then((response) => {
+            console.log(response);
+            if(response.status === 200){
+                navigator('/login');
+            }
+        })
+        
     };
 
     // let modalJSX = ""
@@ -43,6 +60,7 @@ export default function RegisterScreen() {
     return (
             <Container component="main" maxWidth="xs">
                 <CssBaseline />
+                <AuthErrorModal />
                 <Box
                     sx={{
                         marginTop: 8,
@@ -85,7 +103,7 @@ export default function RegisterScreen() {
                                     required
                                     fullWidth
                                     id="username"
-                                    label="Username"
+                                    label="User Name"
                                     name="username"
                                     autoComplete="username"
                                 />
@@ -140,7 +158,7 @@ export default function RegisterScreen() {
                         </Grid>
                     </Box>
                 </Box>
-                {/* <Copyright sx={{ mt: 5 }} /> */}
+                {<Copyright sx={{ mt: 5 }} /> }
                 {/* { modalJSX } */}
             </Container>
     );

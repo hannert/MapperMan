@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import apis from '../store-requests/store_requests'
 
 const initialState = {
     loggedIn: null,
@@ -10,7 +11,7 @@ export const createMap = createSlice({
     initialState,
     reducers: {
         createNewMap: (state, action) => {
-            state.loggedIn = true
+            apis.createMap(action.payload);
         }
     }
 

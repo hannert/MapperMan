@@ -1,40 +1,77 @@
-// import AuthContext from '../auth'
-// import MUIErrorModal from './MUIErrorModal'
+import AuthContext from '../api'
 
 
+import { useContext, useState } from 'react'
+import * as React from 'react';
+import Modal from '@mui/material/Modal';
+import Alert from '@mui/material/Alert';
+import Button from '@mui/material/Button';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import { useDispatch } from 'react-redux';
+import { loginUser } from '../app/store-actions/editMapList';
+import apis from '../api/auth-request-api';
+import { useNavigate } from 'react-router-dom';
+import AuthErrorModal from './Modals/AuthErrorModal';
 
 export default function LoginScreen() {
-    // const { auth } = useContext(AuthContext);
+    const { auth } = useContext(AuthContext);
 
+
+
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        height: 200,
+        width: 400,
+        border: '5px solid yellow',
+        fontSize: "20px",
+        p: 4
+    };
+    let modalJSX = "";
+    const dispatch = useDispatch();
+    const navigator = useNavigate();
+
+    const handleCloseButton = () => {
+        modalJSX = "";
+    }
     const handleSubmit = (event) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
-        // auth.loginUser(
-        //     formData.get('email'),
-        //     formData.get('password')
-        // );
-
-    };
-
-    // let modalJSX = "";
-    // console.log(auth);
-    // if (auth.errorMessage !== null){
-    //     modalJSX = <MUIErrorModal />;
-    // }
-    // console.log(modalJSX);
+        
+        apis.loginUser(
+                formData.get('email'),
+                formData.get('password')
+            ).then((response) => {
+                if(response.data.success === true){
+                    console.log("Login successful");
+                    console.log(response.data.user);
+                    dispatch(loginUser({
+                        user: response.data.user,
+                        loggedIn: true,
+                    }))
+                    navigator('/maps')
+                }else{
+                    console.log("Login failed");
+                    console.log(response.data);
+                }
+            })
+        };
+        
+    
 
     return (
         <Grid container  component="main" direction="column" justify="flex-end" alignItems="center" >
             <CssBaseline />
+            <AuthErrorModal/>
             <Grid item>
                 <Box
                     sx={{
@@ -94,7 +131,7 @@ export default function LoginScreen() {
                     </Box>
                 </Box>
             </Grid>
-            {/* { modalJSX } */}
+            {  modalJSX  }
         </Grid>
     );
 }

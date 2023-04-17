@@ -3,13 +3,36 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { Button, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip, Typography } from '@mui/material';
 import { Box } from "@mui/system";
 import hash from 'object-hash';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { GeoJSON, MapContainer, TileLayer } from "react-leaflet";
 import file from './NA.json';
+import { useSelector } from 'react-redux';
+
+import apis from '../app/store-requests/store_requests';
 
 export default function EditScreen(){
 
     const [propertyOpen, setPropertyOpen] = useState(false)
+    const map = useSelector((state) => state.editMapList.activeMap);
+    // the default value in the usestate is just blank
+    const [mapFile, setMapFile] = useState({
+            "type": "FeatureCollection",
+            "name": "jsontemplate",
+            "features": [
+            { "type": "Feature", "properties": { "a1": "", "a2": "", "a3": "", "a4": ""}, "geometry": null }
+            ]
+        });
+
+    useEffect(() => {
+        if (map) {
+            apis.getMapById(map).then((response) => {
+                console.log(response.data.map.mapData);
+                console.log(response.data.map.name);
+                setMapFile(response.data.map.mapData);
+                console.log(mapFile);
+            }
+        )}   
+    }, [map])
 
     let leafletSize = ''
     if (propertyOpen === true) {
@@ -155,8 +178,8 @@ export default function EditScreen(){
                         id="mapId" style={{width:'100%', height:'100%'}}>
                             <TileLayer url='http://{s}.tile.osm.org/{z}/{x}/{y}.png' attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' />
                             <GeoJSON 
-                                key={hash(file)} 
-                                data={file} 
+                                key={hash(mapFile)} 
+                                data={mapFile} 
                                 />
                     </MapContainer>
 

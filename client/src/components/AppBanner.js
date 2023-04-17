@@ -1,7 +1,4 @@
-import { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-// import AuthContext from '../auth';
-import { AccountCircle, Comment, ContentCopy, GroupAdd, Map, Save, Upload } from '@mui/icons-material';
+import { Comment, ContentCopy, Delete, ForkRight, GroupAdd, Map, Save, Upload } from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
 import Face5Icon from '@mui/icons-material/Face5';
 import { Alert, Avatar, Button, Snackbar, TextField } from '@mui/material';
@@ -17,19 +14,48 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { useTheme } from '@mui/material/styles';
+import { useContext, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import AuthContext from '../api';
+import { deleteMap, renameMap } from '../app/store-actions/editMapList';
+import apis from '../app/store-requests/store_requests';
+
+
+
+
 
 // import PlaylisterToolbar from './PlaylisterToolbar';
 
 function AppBanner() {
-    // const { auth } = useContext(AuthContext);
-    // const { store } = useContext(GlobalStoreContext);
+    const { auth } = useContext(AuthContext);
+
+    const map = useSelector((state) => state.editMapList.activeMap);
+    const user = useSelector((state) => state.editMapList.user);
     const navigate = useNavigate();
     const location = useLocation();
+    const dispatch = useDispatch();
 
 
     const [anchorEl, setAnchorEl] = useState(null);
+    const [mapName, setMapName] = useState("");
+    const [mapRenameField, setMapRenameField]=useState("");
+
+
     const isMenuOpen = Boolean(anchorEl);
+
+
+    /** trying to use state for the map name that is displayed on the editing screen */
+    useEffect(() => {
+        if (map) {
+            apis.getMapById(map).then((response) => {
+                console.log(response.data.map.mapData);
+                console.log(response.data.map.name);
+                setMapName(response.data.map.name);
+                // setMapFile(response.data.map.mapData);
+            }
+        )}   
+    }, [map])
 
 
     // ! - State for dialogs
@@ -71,21 +97,25 @@ function AppBanner() {
 
     // ! ------------------ End of State for dialogs
 
+    // Handle click for top right user icon in banner
     const handleProfileMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
+        auth.getUserInitials();
     };
 
     const handleMenuClose = () => {
         setAnchorEl(null);
     };
 
+    // Handles logout of a logged-in user
     const handleLogout = () => {
         handleMenuClose();
-        // auth.logoutUser();
+        auth.logoutUser();
     }
 
     const handleHouseClick = () => {
         // store.closeCurrentList();
+
     }
 
     const handleToLogin = () => {
@@ -98,12 +128,94 @@ function AppBanner() {
         navigate('/register/')
     }
 
+    const [mapRenameOpen, setMapRenameOpen] = useState(false);
+    const resetRenameTextField = () =>{
+        setMapRenameField("");
+    }
+
+    const handleMapRenameOpen = () =>{
+        setMapRenameOpen(true);
+    }
+    const handleMapRenameClose = () =>{
+        resetRenameTextField();
+        setMapRenameOpen(false);
+    }
+
+    const handleRenameSubmit = () =>{
+        let currMapId = map;
+        let newName = mapRenameField;
+        apis.renameMap(currMapId, newName).then((res)=>{
+            if(res.data.success===true){
+                console.log("map renamed successfully");
+                dispatch(renameMap(res.data.id));
+                setMapName(mapRenameField);
+            }else{
+                console.log("map rename failed");
+                console.log(res);
+            }
+        });
+        resetRenameTextField();
+        setMapRenameOpen(false);
+    }
+    const handleRenameTextFieldChange = (event) =>{
+        setMapRenameField(event.target.value);
+    }
+    
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const handleOpenDeleteMapDialog = () =>{
+        setDeleteDialogOpen(true);
+    }
+    const handleCloseDeleteMapDialog = () =>{
+        setDeleteDialogOpen(false)
+    }
+
+    const handleDeleteMapConfirm = () =>{
+        let currMapId = map;
+        apis.deleteMapById(currMapId).then((res)=>{
+            if(res.data.success===true){
+                console.log("map deleted successfully");
+                dispatch(deleteMap());
+            }else{
+                console.log("map delete failed");
+                console.log(res);
+            }
+        });
+        navigate("/maps");
+        setDeleteDialogOpen(false);
+    }
+
+
+    const [forkDialogOpen, setForkDialogOpen] = useState(false);
+    const handleOpenForkMapDialog = () =>{
+        setForkDialogOpen(true);
+    }
+    const handleCloseForkMapDialog = () =>{
+        setForkDialogOpen(false)
+    }
+
+    const handleForkMapConfirm = () =>{
+        let currMapId = map;
+        apis.forkMap(currMapId, user).then((res)=>{
+            if(res.data.success===true){
+                console.log("map deleted successfully");
+                dispatch(deleteMap());
+            }else{
+                console.log("map delete failed");
+                console.log(res);
+            }
+        });
+        navigate("/maps");
+        setForkDialogOpen(false);
+    }
+
+    
+
 
     // ! Areas for placeholder functions as Store is not implemented yet, 
     // ! Have components bunched up in AppBanner: Modals for Copy, Delete, Add Collaborator
 
     const copyMapDialog = (
-        <Dialog open={copyMap} onClose={handleCopyClose} sx>
+        <Dialog open={copyMap} onClose={handleCopyClose}>
         <DialogTitle>Fork Map</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -119,7 +231,7 @@ function AppBanner() {
     )
 
     const publishMapDialog = (
-        <Dialog open={publishMap} onClose={handlePublishClose} sx>
+        <Dialog open={publishMap} onClose={handlePublishClose}>
         <DialogTitle>Fork Map</DialogTitle>
         <DialogContent>
           <DialogContentText>
@@ -182,6 +294,44 @@ function AppBanner() {
       </Dialog>
     )
 
+    const renameDialog = (
+        <Dialog open={mapRenameOpen} onClose={handleMapRenameClose} fullWidth maxWidth='sm'>
+            <DialogTitle>Enter new name for: {mapName}</DialogTitle>
+            <DialogContent>
+                <TextField 
+                    fullWidth
+                    label='New Map Name'
+                    onChange={handleRenameTextFieldChange}
+                    value={mapRenameField}
+                />
+            </DialogContent>
+            <DialogActions>
+                <Button  onClick={handleMapRenameClose}>Cancel</Button>
+                <Button  variant='contained'onClick={handleRenameSubmit}>Confirm</Button>
+            </DialogActions>
+        </Dialog>
+    )
+
+    const deleteDialog = (
+        <Dialog open={deleteDialogOpen} onClose={handleCloseDeleteMapDialog} fullWidth maxWidth='sm'>
+            <DialogTitle>Delete {mapName}?</DialogTitle>
+            <DialogActions>
+                <Button  onClick={handleCloseDeleteMapDialog}>Cancel</Button>
+                <Button  variant='contained'onClick={handleDeleteMapConfirm}>Confirm</Button>
+            </DialogActions>
+        </Dialog>
+    )
+
+
+    const forkDialog = (
+        <Dialog open={forkDialogOpen} onClose={handleCloseForkMapDialog} fullWidth maxWidth='sm'>
+            <DialogTitle>Fork {mapName}?</DialogTitle>
+            <DialogActions>
+                <Button  onClick={handleCloseForkMapDialog}>Cancel</Button>
+                <Button  variant='contained'onClick={handleForkMapConfirm}>Confirm</Button>
+            </DialogActions>
+        </Dialog>
+    )
     // ! ------------- End for placeholder modals
 
 
@@ -218,47 +368,58 @@ function AppBanner() {
             </MenuItem>
         </Menu>
     );
-    // const loggedInMenu = 
-    //     <Menu
-    //         anchorEl={anchorEl}
-    //         anchorOrigin={{
-    //             vertical: 'top',
-    //             horizontal: 'right',
-    //         }}
-    //         id={menuId}
-    //         keepMounted
-    //         transformOrigin={{
-    //             vertical: 'top',
-    //             horizontal: 'right',
-    //         }}
-    //         open={isMenuOpen}
-    //         onClose={handleMenuClose}
-    //     >
-    //         <MenuItem onClick={handleLogout}>Logout</MenuItem>
-    //     </Menu>        
+    const loggedInMenu = 
+        <Menu
+            anchorEl={anchorEl}
+            anchorOrigin={{
+                vertical: 'bottom',
+                horizontal: 'center',
+            }}
+            id={menuId}
+            keepMounted
+            transformOrigin={{
+                vertical: 'top',
+                horizontal: 'center',
+            }}
+            open={isMenuOpen}
+            onClose={handleMenuClose}
+        >
+            <MenuItem onClick={handleLogout}>Logout</MenuItem>
+        </Menu>        
 
     let playListerToolbar = "";
     let menu = loggedOutMenu;
-    // if (auth.loggedIn) {
-    //     menu = loggedInMenu;
-    //     playListerToolbar = <PlaylisterToolbar />;
+    if (user) {
+        menu = loggedInMenu;
 
+    }
+
+    // /** Gets the current map name from the store */
+    // const getCurrentMapName = () => {
+    //     // if(map){
+    //     //     apis.getMapById(map).then((response) => {
+    //     //         console.log(response.data.map.name);
+    //     //         return response.data.map.name;
+    //     //     }
+    //     // )}
+    //     return "unknown"
     // }
 
+    // Since we dont have auth set up, this will always return account circle
 
-
-    //Since we dont have auth set up, this will always return account circle
-    // function getAccountMenu(loggedIn) {
-    //     // let userInitials = auth.getUserInitials();
-    //     // console.log("userInitials: " + userInitials);
-    //     // if (loggedIn) 
-    //     //     return <div>{userInitials}</div>;
-    //     // else
-    //         return <AccountCircle />;
-    // }
+    /** TODO: connect this to the auth,make it display the user initials */
+    function getAccountMenu(loggedIn) {
+        let userInitials = auth.getUserInitials();
+        console.log("userInitials: " + userInitials);
+        if (loggedIn) 
+            return <div>{userInitials}</div>;
+        else
+            return <Face5Icon/>;
+    }
 
     let screen = location.pathname;
     let tempToolbar = '';
+    let nowEditingText='';
     if(screen === '/maps/edit') {
         tempToolbar = (
             <Box>
@@ -273,6 +434,25 @@ function AppBanner() {
                 </IconButton>
             </Box>
         )
+        
+        nowEditingText = (
+            <Box>
+            <Typography>
+                Now Editing: {mapName}
+                <IconButton>
+                    <EditIcon onClick={handleMapRenameOpen}/>
+                </IconButton>
+                <IconButton>
+                    <Delete onClick={handleOpenDeleteMapDialog}/>
+                </IconButton>
+                <IconButton>
+                    <ForkRight onClick={handleOpenForkMapDialog}/>
+                </IconButton>
+            </Typography>
+            
+            </Box>
+        )
+
     }
     if(screen.startsWith('/maps/view/') === true) {
         tempToolbar = (
@@ -309,7 +489,12 @@ function AppBanner() {
                     <Link to='/maps'>
                         <Map />
                     </Link>
-                    <Box sx={{ flexGrow: 1 }}></Box>
+                    <Box sx={{ flexGrow: 1, ml: 50}}>
+                    {nowEditingText}
+                    </Box>
+
+                    
+                    
                     {tempToolbar}
                     <Box sx={{ height: "50px", display: { xs: 'none', md: 'flex' } }}>
                         <IconButton
@@ -321,8 +506,8 @@ function AppBanner() {
                             onClick={handleProfileMenuOpen}
                             color="inherit"
                         >
-                            <Face5Icon />
-                            {/* { getAccountMenu(auth.loggedIn) } */}
+                            {/* <Face5Icon /> */}
+                            { getAccountMenu(auth.loggedIn) }
                         </IconButton>
                     </Box>
                 </Toolbar>
@@ -331,6 +516,9 @@ function AppBanner() {
             {copyMapDialog}
             {publishMapDialog}
             {collabDialog}
+            {renameDialog}
+            {deleteDialog}
+            {forkDialog}
             <Snackbar>
 
             </Snackbar>

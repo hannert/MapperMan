@@ -1,13 +1,18 @@
 import SplashScreen from "./SplashScreen";
+import MapsScreen from "./MapListScreen/MapsScreen";
+import AuthContext from "../api";
+import {useContext} from 'react'
 
 function HomeWrapper() {
-    
-    let loggedIn=false;
+    const { auth } = useContext(AuthContext);
 
-    if (loggedIn)
+    if (auth.loggedIn){
         //RETURN HOME SCREEN
-        return
-    else
+        console.log("logged in when checking in homewrapper")
+        return <MapsScreen />
+    }
+    else{
         return <SplashScreen />
+    }
 }
 export default HomeWrapper;
