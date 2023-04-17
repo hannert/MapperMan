@@ -4,6 +4,7 @@ const initialState = {
     loggedIn: false,
     activeMap: null,
     mapList: [],
+    publicRepo: false,
     mapMarkedForDeletion: null,
     user: null
 }

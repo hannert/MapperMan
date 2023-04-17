@@ -15,10 +15,21 @@ export default function MapCard(props) {
     const { map } = props;
     const id = "id-belongs-here"
 
+    const [dialogOpen, setOpen] = React.useState(false);
+    const [anchorEl, setAnchorEl] = React.useState(null);
+    const open = Boolean(anchorEl);
+
     function handleDelete(e){
         e.stopPropagation();
     }
 
+    const handleClick = () => {
+      setOpen(true);
+    };
+
+    const handleDialogClose = (value) => {
+      setOpen(false);
+    };
     function handleMapClick(){
         console.log('Map clicked');
         
