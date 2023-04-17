@@ -1,7 +1,4 @@
-import { useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-// import AuthContext from '../auth';
-import { AccountCircle, Comment, ContentCopy, GroupAdd, Map, Save, Upload } from '@mui/icons-material';
+import { Comment, ContentCopy, GroupAdd, Map, Save, Upload } from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
 import Face5Icon from '@mui/icons-material/Face5';
 import { Alert, Avatar, Button, Snackbar, TextField } from '@mui/material';
@@ -17,12 +14,15 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { useTheme } from '@mui/material/styles';
+import { useContext, useState } from 'react';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import AuthContext from '../auth';
+
 
 // import PlaylisterToolbar from './PlaylisterToolbar';
 
 function AppBanner() {
-    // const { auth } = useContext(AuthContext);
+    const { auth } = useContext(AuthContext);
     // const { store } = useContext(GlobalStoreContext);
     const navigate = useNavigate();
     const location = useLocation();
@@ -71,14 +71,18 @@ function AppBanner() {
 
     // ! ------------------ End of State for dialogs
 
+    // Handle click for top right user icon in banner
     const handleProfileMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
+        auth.getUserInitials();
     };
 
     const handleMenuClose = () => {
         setAnchorEl(null);
+        auth.logoutUser();
     };
 
+    // Handles logout of a logged-in user
     const handleLogout = () => {
         handleMenuClose();
         // auth.logoutUser();
@@ -218,32 +222,31 @@ function AppBanner() {
             </MenuItem>
         </Menu>
     );
-    // const loggedInMenu = 
-    //     <Menu
-    //         anchorEl={anchorEl}
-    //         anchorOrigin={{
-    //             vertical: 'top',
-    //             horizontal: 'right',
-    //         }}
-    //         id={menuId}
-    //         keepMounted
-    //         transformOrigin={{
-    //             vertical: 'top',
-    //             horizontal: 'right',
-    //         }}
-    //         open={isMenuOpen}
-    //         onClose={handleMenuClose}
-    //     >
-    //         <MenuItem onClick={handleLogout}>Logout</MenuItem>
-    //     </Menu>        
+    const loggedInMenu = 
+        <Menu
+            anchorEl={anchorEl}
+            anchorOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+            }}
+            id={menuId}
+            keepMounted
+            transformOrigin={{
+                vertical: 'top',
+                horizontal: 'right',
+            }}
+            open={isMenuOpen}
+            onClose={handleMenuClose}
+        >
+            <MenuItem onClick={handleLogout}>Logout</MenuItem>
+        </Menu>        
 
     let playListerToolbar = "";
     let menu = loggedOutMenu;
-    // if (auth.loggedIn) {
-    //     menu = loggedInMenu;
-    //     playListerToolbar = <PlaylisterToolbar />;
+    if (auth.loggedIn) {
+        menu = loggedInMenu;
 
-    // }
+    }
 
 
 
