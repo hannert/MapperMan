@@ -46,11 +46,26 @@ export default function LoginScreen() {
     const handleSubmit = (event) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
-        auth.loginUser(
-            formData.get('email'),
-            formData.get('password')
-        );
-    }
+        apis.loginUser(
+                formData.get('email'),
+                formData.get('password')
+            ).then((response) => {
+                if(response.data.success === true){
+                    console.log("Login successful");
+                    console.log(response.data.user);
+                    dispatch(loginUser({
+                        user: response.data.user,
+                        loggedIn: true,
+                    }))
+                    navigator('/maps')
+                }else{
+                    console.log("Login failed");
+                    console.log(response.data);
+                }
+            })
+        };
+        
+    
 
     return (
         <Grid container  component="main" direction="column" justify="flex-end" alignItems="center" >
