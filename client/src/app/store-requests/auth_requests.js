@@ -1,7 +1,7 @@
-import axios from 'axios'
+import axios from 'axios';
 axios.defaults.withCredentials = true;
 const api = axios.create({
-    baseURL: 'http://localhost:4000/auth',
+    baseURL: 'https://mapperman.herokuapp.com/auth',
 })
 
 
