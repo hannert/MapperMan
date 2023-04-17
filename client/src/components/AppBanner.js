@@ -231,14 +231,14 @@ function AppBanner() {
         <Menu
             anchorEl={anchorEl}
             anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
+                vertical: 'bottom',
+                horizontal: 'center',
             }}
             id={menuId}
             keepMounted
             transformOrigin={{
                 vertical: 'top',
-                horizontal: 'right',
+                horizontal: 'center',
             }}
             open={isMenuOpen}
             onClose={handleMenuClose}
