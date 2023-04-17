@@ -95,6 +95,8 @@ export default function AddMapDialog(props){
         let combinedGeoJSON = shp.combine([shp.parseShp(shapefile),shp.parseDbf(dbfFile)]);
         let options = {tolerance: 0.01, highQuality: false};
         let simplified = turf.simplify(combinedGeoJSON, options);
+
+        
     }
 
     /*Confirm button for GeoJSON file, should:

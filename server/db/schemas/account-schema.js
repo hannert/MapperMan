@@ -19,8 +19,8 @@ const accountSchema = new Schema(
         email: { type: String,  required: true },
         firstName: { type: String,  required: true },
         lastName: { type: String,  required: true },
-        mapsOwned: {type: Map, of: String, required: true},
-        mapAccess: {type: [{map: String, values: Number}], required: true}
+        mapsOwned: {type: [String], required: true},
+        mapAccess: {type: [String], required: true}
     },
     { timestamps: true },
 )

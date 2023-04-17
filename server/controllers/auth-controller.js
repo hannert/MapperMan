@@ -1,6 +1,9 @@
 const auth = require('../auth')
-const User = require('../models/user-model')
+// const User = require('../models/user-model')
+
+const Account = require('../db/schemas/account-schema')
 const bcrypt = require('bcryptjs')
+
 
 getLoggedIn = async (req, res) => {
     try {
@@ -97,9 +100,9 @@ logoutUser = async (req, res) => {
 registerUser = async (req, res) => {
     console.log("REGISTERING USER IN BACKEND");
     try {
-        const { firstName, lastName, email, password, passwordVerify } = req.body;
-        console.log("create user: " + firstName + " " + lastName + " " + email + " " + password + " " + passwordVerify);
-        if (!firstName || !lastName || !email || !password || !passwordVerify) {
+        const { firstName, lastName, username, email, password, passwordVerify } = req.body;
+        console.log("create user: " + firstName + " " + lastName + " " + email + " " + username + " " + password + " " + passwordVerify);
+        if (!firstName || !lastName || !username || !email || !password || !passwordVerify) {
             console.log("Why?");
             return res
                 .status(400)
@@ -137,8 +140,9 @@ registerUser = async (req, res) => {
         const salt = await bcrypt.genSalt(saltRounds);
         const passwordHash = await bcrypt.hash(password, salt);
         console.log("passwordHash: " + passwordHash);
-
-        const newUser = new User({firstName, lastName, email, passwordHash});
+        const mapsOwned = []
+        const mapAccess = []
+        const newUser = new User({firstName, lastName, username, email, passwordHash, mapsOwned, mapAccess});
         const savedUser = await newUser.save();
         console.log("new user saved: " + savedUser._id);
 
@@ -154,8 +158,12 @@ registerUser = async (req, res) => {
             success: true,
             user: {
                 firstName: savedUser.firstName,
-                lastName: savedUser.lastName,  
-                email: savedUser.email              
+                lastName: savedUser.lastName,
+                username: savedUser.username,  
+                email: savedUser.email,
+                passwordHash: savedUser.passwordHash,
+                mapsOwned: savedUser.mapsOwned,
+                mapAccess: savedUser.mapAccess       
             }
         })
 

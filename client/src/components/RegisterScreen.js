@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import AuthContext from '../auth'
+import AuthContext from '.././api';
 // import MUIErrorModal from './MUIErrorModal'
 import Copyright from './Copyright'
 
@@ -25,12 +25,14 @@ export default function RegisterScreen() {
         console.log("formData password verify: " + formData.get('passwordVerify'))
         const firstname = formData.get('firstName')
         const lastname = formData.get('lastName')
+        const username = formData.get('username')
         const email = formData.get('email')
         const password = formData.get('password')
         const passwordVerify = formData.get('passwordVerify')
         auth.registerUser(
             firstname,
             lastname,
+            username,
             email,
             password,
             passwordVerify)
@@ -81,6 +83,16 @@ export default function RegisterScreen() {
                                     label="Last Name"
                                     name="lastName"
                                     autoComplete="lname"
+                                />
+                            </Grid>
+                            <Grid item xs={12}>
+                                <TextField
+                                    required
+                                    fullWidth
+                                    id="username"
+                                    label="User Name"
+                                    name="username"
+                                    autoComplete="username"
                                 />
                             </Grid>
                             <Grid item xs={12}>

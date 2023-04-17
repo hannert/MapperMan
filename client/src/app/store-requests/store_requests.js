@@ -4,12 +4,18 @@ const api = axios.create({
     baseURL: process.env.BASE_URL, //our server we are deploying on
 })
 
-
-export const createMap = (mapname, mapData) => {
+// name: { type: String, required: true },
+//         owner: { type: ObjectId, ref: 'Account', required: true },
+//         mapData: { type: Object, required: true },
+//         published: {type: Boolean, required: true},
+//         comments: {type: [ObjectId], ref: 'Comment', required: true },
+//         tags: {type: Map, of: String, required: true},
+export const createMap = (name, owner, mapData) => {
     return api.post('/newmap/', 
     {
-        name: mapname,
-        mapData: mapData,
+        name: name,
+        owner: owner,
+        mapData: mapData
     })
 }
 

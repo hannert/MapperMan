@@ -16,7 +16,7 @@ import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { useContext, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import AuthContext from '../auth';
+import AuthContext from '.././api';
 
 
 // import PlaylisterToolbar from './PlaylisterToolbar';

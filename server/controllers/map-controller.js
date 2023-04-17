@@ -1,23 +1,25 @@
-const Map = require('../models/map-model')
+// const Map = require('../models/map-model')
+const Map = require('../db/schemas/map-schema')
 
 createMap = (req, res) => {
     // Temporary method to add some map to the database, not attached to a specific user yet
     const body = req.body;
+
     console.log("createMap body: " + JSON.stringify(body))
 
-
+    
     let newMap = new Map(body)
     newMap
         .save()
         .then(() => {
+            //gonna just use actual object id for now
+            //add security later
             return res.status(201).json({
-                success: true
+                success: true,
+                id: newMap.id
             })
         }).catch(error => { return res.status(400).json({success:false, error: error})}) 
-
-
-}
-
+    }
 
 
 getMapById = async (req, res) => {
