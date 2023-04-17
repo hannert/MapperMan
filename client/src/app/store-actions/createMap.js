@@ -11,11 +11,7 @@ export const createMap = createSlice({
     reducers: {
         createNewMap: (state, action) => {
             state.loggedIn = true
-            // write an axios request stub for me
-
             
-
-
         }
     }
 
