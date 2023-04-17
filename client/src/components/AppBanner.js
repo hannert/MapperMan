@@ -167,7 +167,6 @@ function AppBanner() {
         });
         resetRenameTextField();
         setMapRenameOpen(false);
-        navigate(`/maps/edit`)
     }
     const handleRenameTextFieldChange = (event) =>{
         setMapRenameField(event.target.value);
