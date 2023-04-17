@@ -27,6 +27,7 @@ export default function EditScreen(){
         if (map) {
             apis.getMapById(map).then((response) => {
                 console.log(response.data.map.mapData);
+                console.log(response.data.map.name);
                 setMapFile(response.data.map.mapData);
                 console.log(mapFile);
             }

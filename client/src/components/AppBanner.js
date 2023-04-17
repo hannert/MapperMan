@@ -17,6 +17,11 @@ import Typography from '@mui/material/Typography';
 import { useContext, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import AuthContext from '../api';
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import { useSelector } from 'react-redux';
+import apis from '../app/store-requests/store_requests';
+
+
 
 
 // import PlaylisterToolbar from './PlaylisterToolbar';
@@ -24,6 +29,7 @@ import AuthContext from '../api';
 function AppBanner() {
     const { auth } = useContext(AuthContext);
     // const { store } = useContext(GlobalStoreContext);
+    const map = useSelector((state) => state.editMapList.activeMap);
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -247,20 +253,32 @@ function AppBanner() {
 
     }
 
+    /** Gets the current map name from the store */
+    function getCurrentMapName(){
+        if(map){
+            apis.getMapById(map).then((response) => {
+                console.log(response.data.map.name);
+                return response.data.map.name;
+            }
+        )}
+        return "unknown"
+    }
 
+    // Since we dont have auth set up, this will always return account circle
 
-    //Since we dont have auth set up, this will always return account circle
-    // function getAccountMenu(loggedIn) {
-    //     // let userInitials = auth.getUserInitials();
-    //     // console.log("userInitials: " + userInitials);
-    //     // if (loggedIn) 
-    //     //     return <div>{userInitials}</div>;
-    //     // else
-    //         return <AccountCircle />;
-    // }
+    /** TODO: connect this to the auth,make it display the user initials */
+    function getAccountMenu(loggedIn) {
+        let userInitials = auth.getUserInitials();
+        console.log("userInitials: " + userInitials);
+        if (loggedIn) 
+            return <div>{userInitials}</div>;
+        else
+            return <Face5Icon/>;
+    }
 
     let screen = location.pathname;
     let tempToolbar = '';
+    let nowEditingText='';
     if(screen === '/maps/edit') {
         tempToolbar = (
             <Box>
@@ -275,6 +293,13 @@ function AppBanner() {
                 </IconButton>
             </Box>
         )
+        
+        nowEditingText = (
+            <Typography>
+                Now Editing: {getCurrentMapName}
+            </Typography>
+        )
+
     }
     if(screen.startsWith('/maps/view/') === true) {
         tempToolbar = (
@@ -311,7 +336,12 @@ function AppBanner() {
                     <Link to='/maps'>
                         <Map />
                     </Link>
-                    <Box sx={{ flexGrow: 1 }}></Box>
+                    <Box sx={{ flexGrow: 1, ml: 50}}>
+                    {nowEditingText}
+                    </Box>
+
+                    
+                    
                     {tempToolbar}
                     <Box sx={{ height: "50px", display: { xs: 'none', md: 'flex' } }}>
                         <IconButton
@@ -323,8 +353,8 @@ function AppBanner() {
                             onClick={handleProfileMenuOpen}
                             color="inherit"
                         >
-                            <Face5Icon />
-                            {/* { getAccountMenu(auth.loggedIn) } */}
+                            {/* <Face5Icon /> */}
+                            { getAccountMenu(auth.loggedIn) }
                         </IconButton>
                     </Box>
                 </Toolbar>
