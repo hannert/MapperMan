@@ -37,6 +37,7 @@ export default function RegisterScreen() {
             password,
             passwordVerify
         );
+        
     };
 
     // let modalJSX = ""

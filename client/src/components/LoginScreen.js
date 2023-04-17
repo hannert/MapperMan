@@ -1,12 +1,14 @@
 import AuthContext from '../api'
-import { useContext } from 'react';
-// import MUIErrorModal from './MUIErrorModal'
 
 
+import { useContext, useState } from 'react'
+import * as React from 'react';
+import Modal from '@mui/material/Modal';
+import Alert from '@mui/material/Alert';
+import Button from '@mui/material/Button';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
@@ -18,8 +20,24 @@ import apis from '../api/auth-request-api';
 import { useNavigate } from 'react-router-dom';
 
 export default function LoginScreen() {
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        height: 200,
+        width: 400,
+        border: '5px solid yellow',
+        fontSize: "20px",
+        p: 4
+    };
+    let modalJSX = "";
     const dispatch = useDispatch();
     const navigator = useNavigate();
+
+    const handleCloseButton = () => {
+        modalJSX = "";
+    }
     const handleSubmit = (event) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
@@ -28,24 +46,30 @@ export default function LoginScreen() {
         //     formData.get('password')
         // );
         console.log("Trying to login")
-        apis.loginUser(
-            formData.get('email'),
-            formData.get('password')
-        ).then((response) => {
-            if(response.data.success === true){
-                console.log("Login successful");
-                console.log(response.data.user);
-                dispatch(loginUser({
-                    user: response.data.user,
-                    loggedIn: true,
-                }))
-                navigator('/maps')
-            }else{
+        try {
+            apis.loginUser(
+                formData.get('email'),
+                formData.get('password')
+            ).then((response) => {
+                if(response.data.success === true){
+                    console.log("Login successful");
+                    console.log(response.data.user);
+                    dispatch(loginUser({
+                        user: response.data.user,
+                        loggedIn: true,
+                    }))
+                    navigator('/maps')
+                }
+            })} catch(error) {
                 console.log("Login failed");
-                console.log(response.data);
-            }
-        })
-    };
+                modalJSX = <Modal>
+                <Alert sx={style} severity="warning">Invalid username or password
+                <Button sx={{color:"black", mt:"20px", ml:"85px", fontSize: 13, fontWeight: 'bold', border: 2}}variant="outlined" onClick={handleCloseButton}>Close</Button>
+                </Alert>
+               </Modal>;
+               console.log(modalJSX)
+        }
+    }
 
     return (
         <Grid container  component="main" direction="column" justify="flex-end" alignItems="center" >
@@ -109,7 +133,7 @@ export default function LoginScreen() {
                     </Box>
                 </Box>
             </Grid>
-            {/* { modalJSX } */}
+            {  modalJSX  }
         </Grid>
     );
 }
