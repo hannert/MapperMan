@@ -47,6 +47,8 @@
   },
   "devDependencies": {
     "@mui/material": "^5.11.16",
-    "cypress": "^12.9.0"
+    "@turf/turf": "^6.5.0",
+    "cypress": "^12.9.0",
+    "shpjs": "^4.0.4"
   }
 }

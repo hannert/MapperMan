@@ -2,6 +2,8 @@ import { Button, Dialog, DialogTitle, Grid, Typography } from "@mui/material";
 import { useState } from "react";
 import { Box } from "@mui/system";
 import { Add, Check } from '@mui/icons-material';
+import * as shp from 'shpjs';
+import * as turf from '@turf/turf';
 
 
 export default function AddMapDialog(props){
@@ -12,6 +14,9 @@ export default function AddMapDialog(props){
     const [geoJsonFile, setGeoJsonFile]=useState(null);
 
     const handleClose = () => {
+        setShapefile(null);
+        setdbfFile(null);
+        setGeoJsonFile(null);
         onClose(selectedValue);
     };
 
@@ -22,13 +27,13 @@ export default function AddMapDialog(props){
 
 
     /*Handles the confirm button for the same thing */
-    const shpdbfConfirm =(shapefile && dbfFile) ? <Button variant="contained">Confirm</Button> : <Button disabled variant="contained">Confirm</Button>
+    const shpdbfConfirm =(shapefile && dbfFile) ? <Button variant="contained" onClick={handleShpDbfConfirm}>Confirm</Button> : <Button disabled variant="contained">Confirm</Button>
 
 
     /*Handles the button icon for geoJSON*/
     const geoJsonButton = (geoJsonFile) ? <Check/> : <Add/>;
     /* Handles the confirm button for the same thing */
-    const geoJsonConfirm = (geoJsonFile) ? <Button variant="contained">Confirm</Button> : <Button disabled variant="contained">Confirm</Button>
+    const geoJsonConfirm = (geoJsonFile) ? <Button variant="contained" onClick={handleGeoJsonConfirm}>Confirm</Button> : <Button disabled variant="contained">Confirm</Button>
 
 
     
@@ -56,7 +61,7 @@ export default function AddMapDialog(props){
         }
         reader.readAsArrayBuffer(event.target.files[0])
         setGeoJsonFile(null);
-    }
+        }
     }
     const handleGeoJsonChange = (event) =>{
             if(event.target.files){
@@ -70,7 +75,31 @@ export default function AddMapDialog(props){
                 setShapefile(null);
                 setdbfFile(null);
             }
-        }
+    }
+
+    /*Confirm button for Shp/Dbf file, should:
+        1. Combine the files into GeoJson
+        2. Compress the file (idk if this is necessary)
+        3. Send the file to database
+        4. Send the user to the edit map page of the map they just uploaded
+    */
+    function handleShpDbfConfirm(){
+        console.log("confirm button for shp");
+        let combinedGeoJSON = shp.combine([shp.parseShp(shapefile),shp.parseDbf(dbfFile)]);
+        let options = {tolerance: 0.01, highQuality: false};
+        let simplified = turf.simplify(combinedGeoJSON, options);
+    }
+
+    /*Confirm button for GeoJSON file, should:
+        1. Compress the file (idk if this is necessary)
+        2. Send the file to database
+        3. Send the user to the edit map page of the map they just uploaded
+    */
+    function handleGeoJsonConfirm(){
+        console.log("confirm button for geojson");
+        let options = {tolerance: 0.01, highQuality: false};
+        let simplified = turf.simplify(geoJsonFile, options);
+    }
 
     return (
         <Dialog maxWidth='lg' open={open} onClose={handleClose}>
