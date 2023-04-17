@@ -6,7 +6,6 @@ createMap = async (req, res) => {
     // Temporary method to add some map to the database, not attached to a specific user yet
     const {owner, mapData} = req.body;
     console.log(req.body);
-    console.log(req);
     console.log("createMap body: " + JSON.stringify(mapData))
 
     let user = new Account({

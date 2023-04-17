@@ -1,7 +1,7 @@
-import { Comment, ContentCopy, Edit, GroupAdd, Map, Save, Upload} from '@mui/icons-material';
+import { Comment, ContentCopy, GroupAdd, Map, Save, Upload } from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
 import Face5Icon from '@mui/icons-material/Face5';
-import { Alert, Avatar, Button, Icon, Snackbar, TextField } from '@mui/material';
+import { Alert, Avatar, Button, Snackbar, TextField } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Dialog from '@mui/material/Dialog';
@@ -14,13 +14,12 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { useContext, useState, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import AuthContext from '../api';
-import {AccountCircle} from '@mui/icons-material';
-import { useSelector, useDispatch } from 'react-redux';
-import apis from '../app/store-requests/store_requests';
 import { renameMap } from '../app/store-actions/editMapList';
+import apis from '../app/store-requests/store_requests';
 
 
 
@@ -32,6 +31,7 @@ function AppBanner() {
     const { auth } = useContext(AuthContext);
     // const { store } = useContext(GlobalStoreContext);
     const map = useSelector((state) => state.editMapList.activeMap);
+    const user = useSelector((state) => state.editMapList.user);
     const navigate = useNavigate();
     const location = useLocation();
     const dispatch = useDispatch();
@@ -123,6 +123,7 @@ function AppBanner() {
 
     const handleHouseClick = () => {
         // store.closeCurrentList();
+
     }
 
     const handleToLogin = () => {
@@ -334,7 +335,7 @@ function AppBanner() {
 
     let playListerToolbar = "";
     let menu = loggedOutMenu;
-    if (auth.loggedIn) {
+    if (user) {
         menu = loggedInMenu;
 
     }

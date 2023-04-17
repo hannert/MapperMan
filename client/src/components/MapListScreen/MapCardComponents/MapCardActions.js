@@ -9,7 +9,8 @@ import PublishButton from './PublishButton';
  * Responsible for conditional rendering of the buttons. 
  * @returns Box of all of the Map Card Actions
  */
-export default function MapCardActions(){
+export default function MapCardActions(props){
+    const { map } = props;
 
     function handleDelete(e){
         e.stopPropagation();
@@ -22,7 +23,7 @@ export default function MapCardActions(){
     return (
         <Box>
             <PublishButton></PublishButton>
-            <ForkButton></ForkButton>
+            <ForkButton mapId={map.id}></ForkButton>
             <DeleteButton></DeleteButton>
         </Box>
 

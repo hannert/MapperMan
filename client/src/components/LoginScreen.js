@@ -46,6 +46,7 @@ export default function LoginScreen() {
     const handleSubmit = (event) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
+        
         apis.loginUser(
                 formData.get('email'),
                 formData.get('password')
