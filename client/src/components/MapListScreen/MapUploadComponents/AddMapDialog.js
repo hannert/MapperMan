@@ -102,6 +102,21 @@ export default function AddMapDialog(props){
         let combinedGeoJSON = shp.combine([shp.parseShp(shapefile),shp.parseDbf(dbfFile)]);
         let options = {tolerance: 0.01, highQuality: false};
         let simplified = turf.simplify(combinedGeoJSON, options);
+        if(user !== null){
+            apis.createMap(user, simplified).then((res) => {
+                console.log("map created");
+                if(res.data.success===true){
+                    console.log("map created successfully");
+                    dispatch(createNewMap(res.data.id));
+                    navigator(`/maps/edit`);
+                }else{
+                    console.log("map creation failed");
+                    console.log(res);
+                }
+            }).catch((err) => {
+                console.log(err);
+            });
+        }
 
         
     }
