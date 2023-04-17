@@ -1,8 +1,8 @@
 import { useContext } from 'react';
-// import AuthContext from '../auth'
+import AuthContext from '../api'
 // import MUIErrorModal from './MUIErrorModal'
-
-
+import apis from '../api/auth-request-api';
+import AuthErrorModal from './Modals/AuthErrorModal';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
@@ -19,12 +19,24 @@ import Typography from '@mui/material/Typography';
 
 export default function ForgotPasswordScreen() {
     // const { auth } = useContext(AuthContext);
-
+    const {auth} = useContext(AuthContext)
     const handleSubmit = (event) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
-        // auth.changePassword(email, new password, new password confirm);
-
+        console.log("formdata: ")
+        console.log(formData);
+        const email = formData.get('email')
+        const password = formData.get('newpassword')
+        const passwordVerify = formData.get('confirm-newpassword')
+        console.log(password)
+        console.log(passwordVerify)
+        console.log(email)
+        auth.forgotPassword(
+            email,
+            password,
+            passwordVerify
+        );
+        
     };
 
     // let modalJSX = "";
@@ -37,6 +49,7 @@ export default function ForgotPasswordScreen() {
     return (
         <Grid container  bgcolor='#2B2B2B' component="main" direction="column" justify="flex-end" alignItems="center" >
             <CssBaseline />
+            <AuthErrorModal />
             <Grid item>
                 <Box
                     sx={{
@@ -91,7 +104,7 @@ export default function ForgotPasswordScreen() {
                             name="confirm-newpassword"
                             label="Confirm New Password"
                             type="password"
-                            id="confirm-new-password"
+                            id="confirm-newpassword"
                             autoComplete="confirm-new-password"
                         />
                         <Button

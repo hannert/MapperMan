@@ -26,11 +26,20 @@ export const editMapList = createSlice({
             console.log("Map list set to ");
             console.log(action.payload);
             state.mapList = action.payload;
+        },
+        renameMap: (state, action) =>{
+            console.log("renamed map " + action.payload);
+            state.activeMap = action.payload
         }
     }
 
 
 })
 
+<<<<<<< HEAD
 export const { loginUser, createNewMap, setMapList } = editMapList.actions
 export default editMapList.reducer
+=======
+export const { loginUser, createNewMap, renameMap } = createMap.actions
+export default createMap.reducer
+>>>>>>> 619ea7e46421a71b3258fc7b2972b4c590295578

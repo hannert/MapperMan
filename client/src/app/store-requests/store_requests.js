@@ -48,12 +48,19 @@ export const deleteFeature = (mapEdit) => {
     })
 }
 
+export const renameMap = (id, newName) =>{
+    return api.put(`/map/${id}`, {
+        id, newName
+    })
+}
+
 const apis = {
     createMap,
     deleteMapById,
     getMapById,
     getPublicMaps,
-    getMapsDataByAccount
+    getMapsDataByAccount,
+    renameMap
 }
 
 export default apis
