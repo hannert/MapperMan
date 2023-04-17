@@ -1,16 +1,40 @@
 import { Button, Menu, MenuItem } from "@mui/material";
 import FolderIcon from '@mui/icons-material/Folder';
 import React from "react";
+import { useDispatch, useSelector } from 'react-redux';
+import { setMapList } from "../../../app/store-actions/editMapList";
+import apis from "../../../app/store-requests/store_requests";
+
 
 export default function RepoSelectButton(){
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
+    const user = useSelector((state) => state.editMapList.user);
+
+    const dispatch = useDispatch();
     const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
     };
     const handleClose = () => {
       setAnchorEl(null);
     };
+
+    const handleLoadUserMaps = () => {
+        console.log('load user maps');
+        if (user) {
+          apis.getMapsDataByAccount(user).then((response) => {
+              console.log(response.data.maps);
+              dispatch(setMapList(response.data.maps));
+          }
+      )}   
+    }
+
+    const handleLoadPublicMaps = () => {
+        console.log('load public maps');
+        apis.getPublicMaps().then((response) => {
+          dispatch(setMapList(response.data.maps));
+        })
+    }
 
     return (
       <div>
@@ -33,8 +57,8 @@ export default function RepoSelectButton(){
             'aria-labelledby': 'basic-button',
           }}
         >
-          <MenuItem onClick={handleClose}>Your Maps</MenuItem>
-          <MenuItem onClick={handleClose}>Public Maps</MenuItem>
+          <MenuItem onClick={handleLoadUserMaps}>Your Maps</MenuItem>
+          <MenuItem onClick={handleLoadPublicMaps}>Public Maps</MenuItem>
         </Menu>
       </div>
     );

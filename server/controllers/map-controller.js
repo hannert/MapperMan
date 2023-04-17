@@ -107,8 +107,24 @@ deleteMap = async (req, res) => {
 
 getPublicMaps = async (req, res) => {
     console.log("Getting public maps");
-    await Map.find({published:true}, '_id').then((maps) => {
-        return res.status(200).json({success: true, maps: maps})
+    let data = []
+    await Map.find({published:true}).then(async(maps) => {
+        console.log(maps);
+
+        for (const map of maps){
+            await Account.find({_id: map.owner}).then((account) => {
+                let mapEntry = {
+                    id: map._id,
+                    name: map.name,
+                    owner: account[0].username,
+                    createdAt: map.createdAt,
+                    published: map.published
+                };
+                data.push(mapEntry);
+            })
+        }
+
+        return res.status(200).json({success: true, maps: data})
     }).catch(err => console.log(err))
 }
 
