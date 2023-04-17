@@ -3,12 +3,15 @@ import { Button, Dialog, DialogTitle, Grid, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import * as turf from '@turf/turf';
 import { useContext, useState } from "react";
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import * as shp from 'shpjs';
 import AuthContext from '../../../api';
 import { createNewMap } from '../../../app/store-actions/editMapList';
 import apis from '../../../app/store-requests/store_requests';
+
+
+
 /**
  * This component is a dialog that allows the user to upload a map to the user repository in either
  * GeoJSON or SHP/DBF format. 
@@ -27,7 +30,7 @@ export default function AddMapDialog(props){
 
     const dispatch = useDispatch();
     const navigator = useNavigate();
-    // const user = useSelector((state) => state.editMapList.user);
+    const user = useSelector((state) => state.editMapList.user);
 
     const handleClose = () => {
         setShapefile(null);
@@ -105,8 +108,8 @@ export default function AddMapDialog(props){
         let combinedGeoJSON = shp.combine([shp.parseShp(shapefile),shp.parseDbf(dbfFile)]);
         let options = {tolerance: 0.01, highQuality: false};
         let simplified = turf.simplify(combinedGeoJSON, options);
-        if(auth.user !== null){
-            apis.createMap(auth.user, simplified).then((res) => {
+        if(user !== null){
+            apis.createMap(user, simplified).then((res) => {
                 console.log("map created");
                 if(res.data.success===true){
                     console.log("map created successfully");
@@ -137,8 +140,9 @@ export default function AddMapDialog(props){
         let options = {tolerance: 0.01, highQuality: false};
         let simplified = turf.simplify(geoJsonFile, options);
         console.log(geoJsonFile);
-        if(auth.user !== null){
-            apis.createMap(auth.user, geoJsonFile).then((res) => {
+        console.log(auth.user)
+        if(user !== null){
+            apis.createMap(user, geoJsonFile).then((res) => {
                 console.log("map created");
                 if(res.data.success===true){
                     console.log("map created successfully");

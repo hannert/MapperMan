@@ -11,15 +11,18 @@ import { Button } from '@mui/material';
  * 
  * @returns Fork Button for Map Card Actions
  */
-export default function ForkButton(){
+export default function ForkButton(props){
+
+    const id = props.mapId
     function handleDelete(e){
         e.stopPropagation();
+        console.log(id)
     }
 
     function mouseDown(e){
         e.stopPropagation ();
     }
-
+    
     return (
         <Button onClick={handleDelete} onMouseDown={mouseDown} style={{maxWidth: '35px', maxHeight: '35px', minWidth: '35px', minHeight: '35px'}}>
             <ForkRightIcon style={{fontSize:'16pt', color:'gray'}} />

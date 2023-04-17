@@ -14,4 +14,6 @@ export default configureStore({
         createMap: createMapReducer,
         editMapList: editMapListReducer
     },
+
+
 })

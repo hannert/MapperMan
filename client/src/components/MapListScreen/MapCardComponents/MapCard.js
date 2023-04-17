@@ -1,6 +1,5 @@
-import { CardActionArea, IconButton, Typography } from '@mui/material';
-import React from 'react'
-import { Grid, Box, Button } from '@mui/material';
+import { Box, CardActionArea, Grid, Typography } from '@mui/material';
+import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import dummy from '../../na.png';
 import MapCardActions from './MapCardActions';
@@ -27,8 +26,8 @@ export default function MapCard(props) {
         used to GET the map from the backend. We should set up proper authentication
         when using this, so users cannot just go to a url and access a map that is
         not published or that they dont own */
-
-        navigate(`/maps/view/${id}`)
+        console.log(map)
+        // navigate(`/maps/view/${id}`)
     }
 
     function mouseDown(e){
