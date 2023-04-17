@@ -12,9 +12,6 @@ import MapCardActions from './MapCardActions';
  */
 export default function MapCard(props) {
     const navigate = useNavigate();
-    
-
-
     const { map } = props;
     const id = "id-belongs-here"
 
@@ -29,7 +26,8 @@ export default function MapCard(props) {
         used to GET the map from the backend. We should set up proper authentication
         when using this, so users cannot just go to a url and access a map that is
         not published or that they dont own */
-        navigate(`/maps/view/${id}`)
+        console.log(map)
+        // navigate(`/maps/view/${id}`)
     }
 
     function mouseDown(e){
@@ -50,7 +48,6 @@ export default function MapCard(props) {
             opacity: [0.9, 0.8, 0.7],
         }}}
             onClick={handleMapClick}>
-
             {/* Title with delete */}
             <Box sx={{backgroundColor: '#d2d4d9', color: 'black', display: 'flex', height:'35px'}}>
                 <Grid container rowSpacing={0}>

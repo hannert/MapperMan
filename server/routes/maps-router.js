@@ -12,9 +12,6 @@ router.post('/maps', MapController.getMapsDataByAccount)
  * build 2 for now
  */
 router.put('/map/:id', MapController.renameMap)
-router.post('/fork', MapController.forkMap)
-
-
 // router.put('/map/', MapController.editMap)
 
 module.exports = router
