@@ -13,8 +13,12 @@ import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useDispatch, useSelector } from 'react-redux';
 import apis from '../api/auth-request-api';
+import { useNavigate } from 'react-router-dom';
+
+
 export default function RegisterScreen() {
     const dispatch = useDispatch();
+    const navigator = useNavigate();
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -36,7 +40,12 @@ export default function RegisterScreen() {
             email,
             password,
             passwordVerify
-        );
+        ).then((response) => {
+            console.log(response);
+            if(response.status === 200){
+                navigator('/login');
+            }
+        })
     };
 
     // let modalJSX = ""

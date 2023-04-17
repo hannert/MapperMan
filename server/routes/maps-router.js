@@ -6,7 +6,7 @@ router.post('/newmap', MapController.createMap)
 router.get('/map/:id', MapController.getMapById)
 router.delete('/map/:id', MapController.deleteMapById)
 router.get('/publicmaps', MapController.getPublicMaps)
-router.get('/maps', MapController.getMapsDataByAccount)
+router.post('/maps', MapController.getMapsDataByAccount)
 // router.put('/map/', MapController.editMap)
 
 module.exports = router

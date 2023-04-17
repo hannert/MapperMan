@@ -4,21 +4,29 @@ import AddMapButton from './MapUploadComponents/AddMapButton';
 import Pagination from '@mui/material/Pagination';
 import { Grid, Box, Paper } from '@mui/material';
 import Pages from './SearchComponents/Pages';
+import { useEffect, useState } from 'react';
+import apis from '../../app/store-requests/store_requests';
+import { useDispatch, useSelector } from 'react-redux';
+import {setMapList} from '../../app/store-actions/editMapList';
 
 export default function MapsScreen(){
-    const currentList = [
-        {map: 'Africa', published: '3/7/2023', index: 0},
-        {map: 'South America', published: '3/4/2023', index: 1},
-        {map: 'Germany', published: '3/3/2023', index: 2},
-        {map: 'Netherlands', published: '2/27/2023', index: 3},
-        {map: 'France', published: '2/20/2023', index: 4},
-        {map: 'New Zealand', published: '2/19/2023', index: 5},
-        {map: 'China', published: '2/16/2023', index: 6},
-        {map: 'Japan', published: '2/16/2023', index: 7},
-        {map: 'United States', published: '2/16/2023', index: 8},
-        {map: 'Iceland', published: '2/16/2023', index: 9}
-    ]
-    
+    const [currentList, setCurrentList] = useState([
+        {name: 'Africa', published: '3/7/2023', index: 0},
+    ])
+
+    const dispatch = useDispatch();
+    const user = useSelector((state) => state.editMapList.user);
+
+    useEffect(() => {
+        if (user) {
+            apis.getMapsDataByAccount(user).then((response) => {
+                console.log(response.data.maps);
+                dispatch(setMapList(response.data.maps));
+                setCurrentList(response.data.maps);
+            }
+        )}   
+    }, [user])
+
     
     return (
         <Grid container rowSpacing={0} sx={{backgroundColor: '#2B2B2B',

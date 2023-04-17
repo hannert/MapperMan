@@ -6,7 +6,7 @@ createMap = async (req, res) => {
     // Temporary method to add some map to the database, not attached to a specific user yet
     const {owner, mapData} = req.body;
     console.log(req.body);
-
+    console.log(req);
     console.log("createMap body: " + JSON.stringify(mapData))
 
     let user = new Account({
@@ -114,15 +114,48 @@ getPublicMaps = async (req, res) => {
 }
 
 getMapsDataByAccount = async (req, res) => {
-    const {user} = req.body;
+    console.log('req');
+    console.log(req.body);
+    const user = req.body;
+    console.log('User')
+    console.log(user);
 
     //below is wrong, returns array of ids
     //need to iterate through ids, get info for each one,
     //then return a big JSON of all the maps with things we need
     //for the map list like Name, Owner, createdAt for published, etc.
-    await Account.find({owner: user.email}, 'mapsOwned').then((maps) => {
-        return res.status(200).json({success: true, maps: maps})
-    }).catch(err => console.log(err))
+    let data = []
+    await Account.find({email: user.email}).then(async (account) => {
+        console.log('Username: ' + account[0].username);
+        console.log("Maps: ")
+        console.log(account[0].mapsOwned);
+        for(const map of account[0].mapsOwned){
+            console.log(map);
+            await Map.findById(map).then((map) => {
+                console.log("Map: ");
+                console.log(map);
+                let mapEntry = {
+                    id: map._id,
+                    name: map.name,
+                    owner: account[0].username,
+                    createdAt: map.createdAt
+                };
+                console.log("Map Entry: ");
+                console.log(mapEntry);
+
+                data.push(mapEntry);
+
+                console.log('data');
+                console.log(data);
+            });
+        }
+    }).then(() => {
+        console.log('data at the end');
+        console.log(data);
+        return res.status(200).json({success: true, maps: data})
+    })
+
+    .catch(err => console.log(err))
 }
 
 module.exports = {

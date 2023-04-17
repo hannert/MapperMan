@@ -21,11 +21,11 @@ export const createMap = (owner, mapData) => {
         tags: []
     })
 }
-
 export const deleteMapById = (id) => api.delete(`/map/${id}`)
 export const getMapById = (id) => api.get(`/map/${id}`)
 export const getUserMaps = (id) => api.get(`/userMaps/${id}`)
 export const getPublicMaps = () => api.get(`/publicMaps/`)
+export const getMapsDataByAccount = (user) => api.post(`/maps`, user);
 
 export const addVertex = (mapEdit) => {
     return api.post('/map/', {
@@ -52,7 +52,8 @@ const apis = {
     createMap,
     deleteMapById,
     getMapById,
-    getPublicMaps
+    getPublicMaps,
+    getMapsDataByAccount
 }
 
 export default apis

@@ -47,7 +47,7 @@ export default function MapCard(props) {
                 <Grid container rowSpacing={0}>
                     <Grid item xs = {6} sx={{textAlign:'left', fontSize:'24px'}}>
                         <Typography sx = {{margin:'5px', fontSize: 18}}>
-                            {map.map}
+                            {map.name}
                         </Typography>
                     </Grid>
                     <Grid item xs = {6} sx={{textAlign:'right'}}>
