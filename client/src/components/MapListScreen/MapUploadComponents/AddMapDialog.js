@@ -3,7 +3,12 @@ import { useState } from "react";
 import { Box } from "@mui/system";
 import { Add, Check } from '@mui/icons-material';
 
-
+/**
+ * This component is a dialog that allows the user to upload a map to the user repository in either
+ * GeoJSON or SHP/DBF format. 
+ * @param {*} props onClose: Closes dialog, open: Opens dialog
+ * @returns Dialog for uploading a map
+ */
 export default function AddMapDialog(props){
     const { onClose, selectedValue, open } = props;
 
@@ -57,6 +62,7 @@ export default function AddMapDialog(props){
         reader.readAsArrayBuffer(event.target.files[0])
         setGeoJsonFile(null);
     }
+    
     }
     const handleGeoJsonChange = (event) =>{
             if(event.target.files){

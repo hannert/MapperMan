@@ -1,10 +1,16 @@
 import { CardActionArea, IconButton, Typography } from '@mui/material';
 import React from 'react'
-import DeleteIcon from '@mui/icons-material/Delete';
 import { Grid, Box, Button } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-import dummy from '../na.png';
+import dummy from '../../na.png';
+import MapCardActions from './MapCardActions';
 
+/**
+ * This component is a card that displays a map in the Map List Screen. Deals with actions
+ * relating to the map, such as deleting, forking, and publishing.
+ * @param {*} props Map object from the Database
+ * @returns Map Card to display in the Map List Screen
+ */
 export default function MapCard(props) {
     const navigate = useNavigate();
     const { map } = props;
@@ -45,9 +51,7 @@ export default function MapCard(props) {
                         </Typography>
                     </Grid>
                     <Grid item xs = {6} sx={{textAlign:'right'}}>
-                        <Button onClick={handleDelete} onMouseDown={mouseDown} sx={{width:'5px', justifyContent: 'center'}}>
-                            <DeleteIcon style={{fontSize:'16pt', color:'gray', marginLeft:'auto'}} />
-                        </Button>  
+                        <MapCardActions></MapCardActions>
                     </Grid>
                 </Grid>          
             </Box>  

@@ -1,21 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-    loggedIn: null,
+    user: null,
 }
 
 
 export const createMap = createSlice({
-    name: 'modifyMaps',
+    name: 'accountHandler',
     initialState,
     reducers: {
-        createNewMap: (state, action) => {
+        setuser: (state, action) => {
             state.loggedIn = true
-            // write an axios request stub for me
-
-            
-
-
         }
     }
 

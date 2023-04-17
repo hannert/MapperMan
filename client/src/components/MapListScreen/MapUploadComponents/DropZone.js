@@ -1,5 +1,11 @@
 import React from "react";
 
+/**
+ * This is a component for later use in the map upload process. It is a dropzone for files to be uploaded.
+ * It is not currently used in the application. Found it in a tutorial. 
+ * @param {*} param0 
+ * @returns 
+ */
 const Banner = ({ onClick, onDrop }) => {
   const handleDragOver = (ev) => {
     ev.preventDefault();

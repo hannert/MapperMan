@@ -1,4 +1,4 @@
-import MapCard from './MapCard';
+import MapCard from './MapCardComponents/MapCard';
 import FilterMaps from './SearchComponents/FilterMaps';
 import AddMapButton from './MapUploadComponents/AddMapButton';
 import Pagination from '@mui/material/Pagination';

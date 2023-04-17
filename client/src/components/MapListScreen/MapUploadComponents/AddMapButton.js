@@ -3,6 +3,11 @@ import { Button, Menu, MenuItem } from "@mui/material";
 import React from "react";
 import AddMapDialog from './AddMapDialog';
 
+/**
+ * Adds a map for the user repository, defaulting the privacy to private. 
+ * Calls store functions to add the map to the database and the user's repository.
+ * @returns Add Map Button for Map List Screen
+ */
 export default function AddMapButton(){
     const [anchorEl, setAnchorEl] = React.useState(null);
 
