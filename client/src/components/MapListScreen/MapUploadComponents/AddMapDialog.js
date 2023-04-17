@@ -83,7 +83,7 @@ export default function AddMapDialog(props){
                 setGeoJsonFile(event.target.files[0]);
                 var reader = new FileReader();
                 reader.onload = function() {
-                    setGeoJsonFile(reader.result);
+                    setGeoJsonFile(JSON.parse(reader.result));
                 }
                 reader.readAsText(event.target.files[0])
                 setShapefile(null);
@@ -132,7 +132,7 @@ export default function AddMapDialog(props){
         console.log("confirm button for geojson");
         
         let options = {tolerance: 0.01, highQuality: false};
-        // let simplified = turf.simplify(geoJsonFile, options);
+        let simplified = turf.simplify(geoJsonFile, options);
         console.log(geoJsonFile);
         if(user !== null){
             apis.createMap(user, geoJsonFile).then((res) => {
