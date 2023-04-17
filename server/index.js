@@ -25,8 +25,8 @@ app.use((req, res, next) => {
 });
 
 app.use(cors({
-  origin: ["http://localhost:3000", "http://localhost:4000"],
-  credentials: true
+  origin: ['*'],
+  credentials: false
 }))
 
 
