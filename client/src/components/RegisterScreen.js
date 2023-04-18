@@ -41,12 +41,7 @@ export default function RegisterScreen() {
             email,
             password,
             passwordVerify
-        ).then((response) => {
-            console.log(response);
-            if(response.status === 200){
-                navigator('/login');
-            }
-        })
+        );
         
     };
 
