@@ -46,24 +46,9 @@ export default function LoginScreen() {
     const handleSubmit = (event) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
-        
-        apis.loginUser(
-                formData.get('email'),
-                formData.get('password')
-            ).then((response) => {
-                if(response.data.success === true){
-                    console.log("Login successful");
-                    console.log(response.data.user);
-                    dispatch(loginUser({
-                        user: response.data.user,
-                        loggedIn: true,
-                    }))
-                    navigator('/maps')
-                }else{
-                    console.log("Login failed");
-                    console.log(response.data);
-                }
-            })
+        const email = formData.get('email')
+        const password = formData.get('password')
+        auth.loginUser(email, password)
         };
         
     
@@ -118,6 +103,7 @@ export default function LoginScreen() {
                             fullWidth
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
+                            id='sign-in-button'
                         >
                             Sign In
                         </Button>
