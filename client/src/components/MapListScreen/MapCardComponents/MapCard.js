@@ -38,8 +38,7 @@ export default function MapCard(props) {
         used to GET the map from the backend. We should set up proper authentication
         when using this, so users cannot just go to a url and access a map that is
         not published or that they dont own */
-        console.log(map)
-        // navigate(`/maps/view/${id}`)
+        navigate(`/maps/view/${id}`)
     }
 
     function mouseDown(e){

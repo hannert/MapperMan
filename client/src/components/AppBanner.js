@@ -1,4 +1,4 @@
-import { Comment, ContentCopy, GroupAdd, Map, Save, Upload, Delete } from '@mui/icons-material';
+import { Comment, ContentCopy, Delete, ForkRight, GroupAdd, Map, Save, Upload } from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
 import Face5Icon from '@mui/icons-material/Face5';
 import { Alert, Avatar, Button, Snackbar, TextField } from '@mui/material';
@@ -18,7 +18,7 @@ import { useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import AuthContext from '../api';
-import { renameMap, deleteMap } from '../app/store-actions/editMapList';
+import { deleteMap, renameMap } from '../app/store-actions/editMapList';
 import apis from '../app/store-requests/store_requests';
 
 
@@ -29,7 +29,7 @@ import apis from '../app/store-requests/store_requests';
 
 function AppBanner() {
     const { auth } = useContext(AuthContext);
-    // const { store } = useContext(GlobalStoreContext);
+
     const map = useSelector((state) => state.editMapList.activeMap);
     const user = useSelector((state) => state.editMapList.user);
     const navigate = useNavigate();
@@ -37,17 +37,9 @@ function AppBanner() {
     const dispatch = useDispatch();
 
 
-
     const [anchorEl, setAnchorEl] = useState(null);
     const [mapName, setMapName] = useState("");
     const [mapRenameField, setMapRenameField]=useState("");
-    // const [mapFile, setMapFile] = useState({
-    //     "type": "FeatureCollection",
-    //     "name": "jsontemplate",
-    //     "features": [
-    //     { "type": "Feature", "properties": { "a1": "", "a2": "", "a3": "", "a4": ""}, "geometry": null }
-    //     ]
-    // });
 
 
     const isMenuOpen = Boolean(anchorEl);
@@ -192,6 +184,30 @@ function AppBanner() {
         setDeleteDialogOpen(false);
     }
 
+
+    const [forkDialogOpen, setForkDialogOpen] = useState(false);
+    const handleOpenForkMapDialog = () =>{
+        setForkDialogOpen(true);
+    }
+    const handleCloseForkMapDialog = () =>{
+        setForkDialogOpen(false)
+    }
+
+    const handleForkMapConfirm = () =>{
+        let currMapId = map;
+        apis.forkMap(currMapId, user).then((res)=>{
+            if(res.data.success===true){
+                console.log("map deleted successfully");
+                dispatch(deleteMap());
+            }else{
+                console.log("map delete failed");
+                console.log(res);
+            }
+        });
+        navigate("/maps");
+        setForkDialogOpen(false);
+    }
+
     
 
 
@@ -306,6 +322,16 @@ function AppBanner() {
         </Dialog>
     )
 
+
+    const forkDialog = (
+        <Dialog open={forkDialogOpen} onClose={handleCloseForkMapDialog} fullWidth maxWidth='sm'>
+            <DialogTitle>Fork {mapName}?</DialogTitle>
+            <DialogActions>
+                <Button  onClick={handleCloseForkMapDialog}>Cancel</Button>
+                <Button  variant='contained'onClick={handleForkMapConfirm}>Confirm</Button>
+            </DialogActions>
+        </Dialog>
+    )
     // ! ------------- End for placeholder modals
 
 
@@ -419,6 +445,9 @@ function AppBanner() {
                 <IconButton>
                     <Delete onClick={handleOpenDeleteMapDialog}/>
                 </IconButton>
+                <IconButton>
+                    <ForkRight onClick={handleOpenForkMapDialog}/>
+                </IconButton>
             </Typography>
             
             </Box>
@@ -489,6 +518,7 @@ function AppBanner() {
             {collabDialog}
             {renameDialog}
             {deleteDialog}
+            {forkDialog}
             <Snackbar>
 
             </Snackbar>

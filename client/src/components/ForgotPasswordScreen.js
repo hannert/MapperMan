@@ -112,6 +112,7 @@ export default function ForgotPasswordScreen() {
                             fullWidth
                             variant="contained"
                             sx={{ mt: 3, mb: 2 }}
+                            id="confirm-change-password-button"
                         >
                             Change Password
                         </Button>
