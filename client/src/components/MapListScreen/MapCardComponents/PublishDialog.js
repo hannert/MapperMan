@@ -8,23 +8,24 @@ export default function PublishDialog(props){
     };
 
     return (
-        <Dialog
-        maxWidth='md' 
-        fullWidth
-        open={open} 
-        onClose={handleClose}
-        sx={{
-            borderRadius: '10px',
-        }}
-    >
-        <DialogTitle 
-            sx={{
-                textAlign: 'center',
-                backgroundColor: '#393C44'
-            }}
-        >
-            Publish Map?
-        </DialogTitle>
-        </Dialog>
+        <div></div>
+    //     <Dialog
+    //     maxWidth='md' 
+    //     fullWidth
+    //     open={open} 
+    //     onClose={handleClose}
+    //     sx={{
+    //         borderRadius: '10px',
+    //     }}
+    // >
+    //     <DialogTitle 
+    //         sx={{
+    //             textAlign: 'center',
+    //             backgroundColor: '#393C44'
+    //         }}
+    //     >
+    //         Publish Map?
+    //     </DialogTitle>
+    //     </Dialog>
     )
 }
