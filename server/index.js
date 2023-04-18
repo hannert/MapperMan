@@ -2,7 +2,7 @@
 const express = require('express')
 const cors = require('cors')
 const dotenv = require('dotenv')
-const cookieParser = require('cookie-parser')
+// const cookieParser = require('cookie-parser')
 
 // CREATE OUR SERVER
 dotenv.config()
@@ -31,7 +31,7 @@ app.use(cors({
 
 
 app.use(express.json({limit:'2000kb'}))
-app.use(cookieParser())
+// app.use(cookieParser())
 
 // SETUP OUR OWN ROUTERS AS MIDDLEWARE
 const mapsRouter = require('./routes/maps-router')
