@@ -21,7 +21,7 @@ import apis from '../../../app/store-requests/store_requests';
 export default function AddMapDialog(props){
     const { auth } = useContext(AuthContext);
 
-    const { onClose, selectedValue, open } = props;
+    const { onClose, open } = props;
 
     const [shapefile, setShapefile]=useState(null);
     const [dbfFile, setdbfFile]=useState(null);
@@ -36,7 +36,7 @@ export default function AddMapDialog(props){
         setShapefile(null);
         setdbfFile(null);
         setGeoJsonFile(null);
-        onClose(selectedValue);
+        onClose();
     };
 
 

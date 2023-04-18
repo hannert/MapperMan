@@ -2,7 +2,7 @@ import { Button, Menu, MenuItem } from "@mui/material";
 import FolderIcon from '@mui/icons-material/Folder';
 import React from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import { setMapList } from "../../../app/store-actions/editMapList";
+import { setMapList, setPublicRepo } from "../../../app/store-actions/editMapList";
 import apis from "../../../app/store-requests/store_requests";
 
 
@@ -25,6 +25,7 @@ export default function RepoSelectButton(){
           apis.getMapsDataByAccount(user).then((response) => {
               console.log(response.data.maps);
               dispatch(setMapList(response.data.maps));
+              dispatch(setPublicRepo(false))
           }
       )}   
     }
@@ -33,6 +34,7 @@ export default function RepoSelectButton(){
         console.log('load public maps');
         apis.getPublicMaps().then((response) => {
           dispatch(setMapList(response.data.maps));
+          dispatch(setPublicRepo(true))
         })
     }
 

@@ -4,15 +4,25 @@ import AddMapButton from './MapUploadComponents/AddMapButton';
 import Pagination from '@mui/material/Pagination';
 import { Grid, Box, Paper } from '@mui/material';
 import Pages from './SearchComponents/Pages';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import apis from '../../app/store-requests/store_requests';
 import { useDispatch, useSelector } from 'react-redux';
 import {setMapList} from '../../app/store-actions/editMapList';
+import PublishDialog from './MapCardComponents/PublishDialog';
 
 export default function MapsScreen(){
     const [currentList, setCurrentList] = useState([
         {name: 'Africa', published: '3/7/2023', index: 0},
     ])
+    const [publishDialogOpen, setPublishDialogOpen] = React.useState(false);
+
+    const handlePublishClick = () => {
+        setPublishDialogOpen(true);
+    };
+
+    const handlePublishDialogClose = (value) => {
+        setPublishDialogOpen(false);
+    };
 
     const dispatch = useDispatch();
     const user = useSelector((state) => state.editMapList.user);
@@ -61,6 +71,8 @@ export default function MapsScreen(){
             <Grid container sx={{ alignItems:"center", justifyContent:"center", margin:'10px'}}>
                 <Pages></Pages>
             </Grid>
+            
+            <PublishDialog></PublishDialog>
         </Grid>
 
     )

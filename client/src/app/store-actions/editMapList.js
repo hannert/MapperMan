@@ -35,12 +35,17 @@ export const editMapList = createSlice({
         deleteMap: (state, action) =>{
             console.log("deleted map!");
             state.activeMap=null;
+        },
+        setPublicRepo: (state, action) =>{
+            console.log("set public repo");
+            console.log(action.payload);
+            state.publicRepo = action.payload;
         }
     }
 
 
 })
 
-export const { loginUser, createNewMap, setMapList, renameMap, deleteMap } = editMapList.actions
+export const { loginUser, createNewMap, setMapList, renameMap, deleteMap, setPublicRepo } = editMapList.actions
 export default editMapList.reducer
 
