@@ -3,6 +3,7 @@ import { Box } from '@mui/system';
 import DeleteButton from './DeleteButton';
 import ForkButton from './ForkButton';
 import PublishButton from './PublishButton';
+import { useSelector } from 'react-redux';
 
 /**
  * This component is a container for the three buttons that appear on the top right of each map card.
@@ -11,6 +12,7 @@ import PublishButton from './PublishButton';
  */
 export default function MapCardActions(props){
     let {published} = props;
+    const publicRepo = useSelector((state) => state.editMapList.publicRepo);
 
     function handleDelete(e){
         e.stopPropagation();
@@ -23,8 +25,8 @@ export default function MapCardActions(props){
     return (
         <Box>
             {!published && <PublishButton></PublishButton>}
-            {published && <ForkButton></ForkButton>}
-            <DeleteButton></DeleteButton>
+            {published && publicRepo && <ForkButton></ForkButton>}
+            {!publicRepo &&<DeleteButton></DeleteButton>}
         </Box>
 
     )

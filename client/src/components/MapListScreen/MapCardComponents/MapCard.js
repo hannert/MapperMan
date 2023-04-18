@@ -30,6 +30,7 @@ export default function MapCard(props) {
     const handleDialogClose = (value) => {
       setOpen(false);
     };
+    
     function handleMapClick(){
         console.log('Map clicked');
         
