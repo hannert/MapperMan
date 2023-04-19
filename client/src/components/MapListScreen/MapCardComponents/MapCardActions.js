@@ -11,7 +11,7 @@ import { useSelector } from 'react-redux';
  * @returns Box of all of the Map Card Actions
  */
 export default function MapCardActions(props){
-    let {published} = props;
+    let {published, togglePublishDialog, handleActionClick} = props;
     const publicRepo = useSelector((state) => state.editMapList.publicRepo);
 
     function handleDelete(e){
@@ -24,7 +24,7 @@ export default function MapCardActions(props){
 
     return (
         <Box>
-            {!published && <PublishButton></PublishButton>}
+            {!published && <PublishButton togglePublishDialog={togglePublishDialog} handleActionClick={handleActionClick}></PublishButton>}
             {published && publicRepo && <ForkButton></ForkButton>}
             {!publicRepo &&<DeleteButton></DeleteButton>}
         </Box>

@@ -16,4 +16,6 @@ router.put('/map/:id', MapController.renameMap)
 // router.put('/map/', MapController.editMap)
 router.post('/fork', MapController.forkMap)
 
+router.put('/map/:id/publish', MapController.publishMap)
+
 module.exports = router

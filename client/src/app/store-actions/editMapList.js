@@ -8,6 +8,7 @@ const initialState = {
     mapList: [],
     publicRepo: false,
     mapMarkedForDeletion: null,
+    mapCardClickedId: null
 }
 
 export const editMapList = createSlice({
@@ -37,6 +38,11 @@ export const editMapList = createSlice({
         setPublicRepo: (state, action) =>{
             state.publicRepo = action.payload;
         },
+
+        setMapCardClicked: (state,action) =>{
+            state.mapCardClickedId = action.payload.id;
+        },
+
         clear: (state, action) => {
             state.loggedIn = false;
             state.activeMapId = null;
@@ -44,11 +50,12 @@ export const editMapList = createSlice({
             state.mapList = [];
             state.publicRepo = false;
             state.mapMarkedForDeletion = null;
+            state.mapCardClickedId = null;
         }
     }
 })
 
-export const { createNewMap, setMapList, renameMap, deleteMap, setPublicRepo,setActiveMap, clear } = editMapList.actions
+export const { createNewMap, setMapList, renameMap, deleteMap, setPublicRepo,setActiveMap, setMapCardClicked, clear } = editMapList.actions
 export default editMapList.reducer
 
 export const createMapThunk = createAsyncThunk('/newmap', async (payload) => {
@@ -121,6 +128,16 @@ export const forkMapThunk = createAsyncThunk('/fork/', async (payload, {rejectWi
     try {
         const response = await mapApis.forkMap(payload.id, payload.user);
         return response.data;        
+    }catch(err){
+        return rejectWithValue(err.response.data.errorMessage);
+    }
+});
+
+export const publishMapThunk = createAsyncThunk('/map/:id/publish', async(payload, {rejectWithValue}) => {
+    console.log("id sent to publish map thunk: " + payload.id)
+    try{
+        const response = await mapApis.publishMap(payload.id);
+        return response.data
     }catch(err){
         return rejectWithValue(err.response.data.errorMessage);
     }
