@@ -12,17 +12,14 @@ import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useDispatch, useSelector } from 'react-redux';
-import apis from '../api/auth-request-api';
 import { useNavigate } from 'react-router-dom';
 import AuthErrorModal from './Modals/AuthErrorModal';
-import AuthContext from '../api';
-import { useContext } from 'react';
 
+import { registerUserThunk } from '../app/store-actions/accountAuth';
 
 export default function RegisterScreen() {
     const dispatch = useDispatch();
-    const navigator = useNavigate();
-    const {auth} = useContext(AuthContext)
+    const navigate = useNavigate();
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -33,20 +30,21 @@ export default function RegisterScreen() {
         const email = formData.get('email')
         const password = formData.get('password')
         const passwordVerify = formData.get('passwordVerify')
-        console.log(email)
-        auth.registerUser(
-            firstname,
-            lastname,
-            username,
-            email,
-            password,
-            passwordVerify
-        ).then((response) => {
+        dispatch(registerUserThunk({
+            firstName : firstname,
+            lastName : lastname,
+            username: username,
+            email : email,
+            password : password,
+            passwordVerify : passwordVerify
+        })).unwrap().then((response) => {
             console.log(response);
-            if(response.status === 200){
-                navigator('/login');
+            if(response.payload.success){
+                navigate('/login');
             }
-        })
+        }).catch((error) => {
+            console.log(error);
+        });
         
     };
 

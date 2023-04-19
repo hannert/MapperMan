@@ -4,33 +4,21 @@ import { useNavigate } from 'react-router-dom';
 import dummy from '../../na.png';
 import MapCardActions from './MapCardActions';
 
+import { setActiveMap } from '../../../app/store-actions/editMapList';
+import { useDispatch } from 'react-redux';
+
 /**
  * This component is a card that displays a map in the Map List Screen. Deals with actions
  * relating to the map, such as deleting, forking, and publishing.
  * @param {*} props Map object from the Database
  * @returns Map Card to display in the Map List Screen
  */
+
 export default function MapCard(props) {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     const { map } = props;
-    const id = "id-belongs-here"
 
-    const [dialogOpen, setOpen] = React.useState(false);
-    const [anchorEl, setAnchorEl] = React.useState(null);
-    const open = Boolean(anchorEl);
-
-    function handleDelete(e){
-        e.stopPropagation();
-    }
-
-    const handleClick = () => {
-      setOpen(true);
-    };
-
-    const handleDialogClose = (value) => {
-      setOpen(false);
-    };
-    
     function handleMapClick(){
         console.log('Map clicked');
         
@@ -38,7 +26,12 @@ export default function MapCard(props) {
         used to GET the map from the backend. We should set up proper authentication
         when using this, so users cannot just go to a url and access a map that is
         not published or that they dont own */
-        navigate(`/maps/view/${id}`)
+        // navigate(`/maps/view/${id}`)
+        dispatch(setActiveMap({
+            id: map.id,
+            name: map.name
+        }));
+        navigate('/maps/edit');
     }
 
     function mouseDown(e){

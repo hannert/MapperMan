@@ -4,43 +4,26 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
-import { useContext, useEffect, useState } from 'react';
-import AuthContext from '../../api';
-
-// Future location of the confirm fork map dialog component
+import { useDispatch, useSelector } from 'react-redux';
+import { setErrorMessage, setModalActive } from '../../app/store-actions/accountAuth';
 
 export default function DeleteMap () {
-    const [open, setOpen] = useState(false);
-    const [mapName, setMapName] = useState("Error Message goes here!")
+    const errorMessage = useSelector((state) => state.accountAuth.errorMessage);
+    const modalActive = useSelector((state) => state.accountAuth.modalActive);
+    const dispatch = useDispatch();
 
-    useEffect(() => {
-      setError(auth.errorMessage)
-    }, [auth.errorMessage])
-
-    useEffect(() => {
-      if(auth.modalActive === true) setOpen(true)
-      else setOpen(false)
-    }, [auth.modalActive])
-
-    const handleClickOpen = () => {
-      setOpen(true);
-      console.log(auth)
-    };
-  
     const handleClose = () => {
-      auth.closeModal()
+      dispatch(setErrorMessage(''));
+      dispatch(setModalActive(false));
     };
 
     return (
         <div>
-        {/* <Button variant="outlined" onClick={handleClickOpen}>
-          Open form dialog
-        </Button> */}
-        <Dialog open={open} onClose={handleClose}>
+        <Dialog open={modalActive} onClose={handleClose}>
           <DialogTitle>Error</DialogTitle>
           <DialogContent>
             <DialogContentText>
-              {error}
+              {errorMessage}
             </DialogContentText>
           </DialogContent>
           <DialogActions>

@@ -1,6 +1,3 @@
-import AuthContext from '../api'
-
-
 import { useContext, useState } from 'react'
 import * as React from 'react';
 import Modal from '@mui/material/Modal';
@@ -15,41 +12,36 @@ import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
 import { useDispatch } from 'react-redux';
-import { loginUser } from '../app/store-actions/editMapList';
-import apis from '../api/auth-request-api';
 import { useNavigate } from 'react-router-dom';
 import AuthErrorModal from './Modals/AuthErrorModal';
 
+import { loginThunk, setModalActive, setErrorMessage } from '../app/store-actions/accountAuth';
+import { loginUser } from '../app/store-actions/accountAuth';
+
 export default function LoginScreen() {
-    const { auth } = useContext(AuthContext);
-
-
-
-    const style = {
-        position: 'absolute',
-        top: '50%',
-        left: '50%',
-        transform: 'translate(-50%, -50%)',
-        height: 200,
-        width: 400,
-        border: '5px solid yellow',
-        fontSize: "20px",
-        p: 4
-    };
-    let modalJSX = "";
     const dispatch = useDispatch();
-    const navigator = useNavigate();
+    const navigate = useNavigate();
 
-    const handleCloseButton = () => {
-        modalJSX = "";
-    }
+    let modalJSX = "";
+
     const handleSubmit = (event) => {
         event.preventDefault();
         const formData = new FormData(event.currentTarget);
         const email = formData.get('email')
         const password = formData.get('password')
-        auth.loginUser(email, password)
-        };
+        console.log('Password: ' + password);
+        dispatch(loginThunk({email : email, password: password})).unwrap().then((response) => {
+            console.log('Response from login:');
+            console.log(response);
+            dispatch(loginUser(response.user));
+            navigate('/maps');
+        }).catch((error) => {
+            console.log(error);
+            dispatch(setErrorMessage(error));
+            dispatch(setModalActive(true));
+            modalJSX = <AuthErrorModal />;
+        });
+    };
         
     
 

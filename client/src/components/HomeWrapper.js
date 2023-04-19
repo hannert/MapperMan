@@ -1,18 +1,28 @@
 import SplashScreen from "./SplashScreen";
 import MapsScreen from "./MapListScreen/MapsScreen";
-import AuthContext from "../api";
-import {useContext} from 'react'
+import {useEffect, useState} from 'react'
+import { useDispatch, useSelector } from "react-redux";
+import { getLoggedInThunk } from "../app/store-actions/accountAuth";
+
+import { loginUser } from "../app/store-actions/accountAuth";
 
 function HomeWrapper() {
-    const { auth } = useContext(AuthContext);
+    const dispatch = useDispatch();
+    const loggedIn = useSelector((state) => state.accountAuth.loggedIn);
 
-    if (auth.loggedIn){
-        //RETURN HOME SCREEN
-        console.log("logged in when checking in homewrapper")
+    useEffect(() => {
+        dispatch(getLoggedInThunk()).unwrap().then((response) => {
+            console.log(response.loggedIn);
+            console.log(response)
+            dispatch(loginUser(response.user));
+        })
+    }, [])
+
+    if(loggedIn){
         return <MapsScreen />
-    }
-    else{
+    }else{
         return <SplashScreen />
     }
+
 }
 export default HomeWrapper;

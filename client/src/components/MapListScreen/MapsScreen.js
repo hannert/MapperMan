@@ -5,16 +5,19 @@ import Pagination from '@mui/material/Pagination';
 import { Grid, Box, Paper } from '@mui/material';
 import Pages from './SearchComponents/Pages';
 import React, { useEffect, useState } from 'react';
-import apis from '../../app/store-requests/store_requests';
 import { useDispatch, useSelector } from 'react-redux';
-import {setMapList} from '../../app/store-actions/editMapList';
 import PublishDialog from './MapCardComponents/PublishDialog';
+import { getMapsDataByAccountThunk } from '../../app/store-actions/editMapList';
+import { setMapList } from '../../app/store-actions/editMapList';
+import { useNavigate } from 'react-router-dom';
+import { getLoggedInThunk, loginUser } from '../../app/store-actions/accountAuth';
 
 export default function MapsScreen(){
     const [currentList, setCurrentList] = useState([
         {name: 'Africa', published: '3/7/2023', index: 0},
     ])
     const [publishDialogOpen, setPublishDialogOpen] = React.useState(false);
+    const loggedIn = useSelector((state) => state.accountAuth.loggedIn);
 
     const handlePublishClick = () => {
         setPublishDialogOpen(true);
@@ -24,18 +27,30 @@ export default function MapsScreen(){
         setPublishDialogOpen(false);
     };
 
+    const navigate = useNavigate();
     const dispatch = useDispatch();
-    const user = useSelector((state) => state.editMapList.user);
+    const user = useSelector((state) => state.accountAuth.user);
+    const guest = useSelector((state) => state.accountAuth.guest);
     const maps = useSelector((state) => state.editMapList.mapList);
+    useEffect(() => {
+        dispatch(getLoggedInThunk()).unwrap().then((response) => {
+            console.log(response.loggedIn);
+            console.log(response)
+            dispatch(loginUser(response.user));
+        })
+    }, [])
 
     useEffect(() => {
+        console.log(user);
         if (user) {
-            apis.getMapsDataByAccount(user).then((response) => {
-                console.log(response.data.maps);
-                dispatch(setMapList(response.data.maps));
-                setCurrentList(response.data.maps);
-            }
-        )}   
+            dispatch(getMapsDataByAccountThunk({user: user})).unwrap().then((response) => {
+                console.log("Get maps response")
+                console.log(response);
+                dispatch(setMapList(response.maps));
+            }).catch((error) => {
+                console.log(error);
+            });
+        }
     }, [user])
 
     useEffect(() => {
@@ -44,7 +59,11 @@ export default function MapsScreen(){
         }
     }, [maps]);
 
-    
+    //If user's aren't logged in don't let them see this
+    //If the user is not a guest AND not a user, don't let them see this
+    if (!loggedIn || (!guest && (user === null))) {
+        navigate('/');
+    }
     return (
         <Grid container rowSpacing={0} sx={{backgroundColor: '#2B2B2B',
                     alignItems:"center", justifyContent:"center", marginRight: '10px'}}>
@@ -61,8 +80,8 @@ export default function MapsScreen(){
                 <Grid container rowSpacing={6} columnSpacing={6}>
                     {      
                         currentList.map((map)=>(
-                            <Grid key={map.index} item xs = {6} sx={{align: 'center'}} >
-                                <MapCard key={map.index} sx = {{height: '400px', backgroundColor: '#282c34'}} map={map}/>
+                            <Grid key={map.id} item xs = {6} sx={{align: 'center'}} >
+                                <MapCard key={map.id} sx = {{height: '400px', backgroundColor: '#282c34'}} map={map}/>
                             </Grid>
                         ))
                     }

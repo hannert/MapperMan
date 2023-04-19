@@ -6,15 +6,17 @@ import hash from 'object-hash';
 import React, { useEffect, useState } from 'react';
 import { GeoJSON, MapContainer, TileLayer } from "react-leaflet";
 import file from './NA.json';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
-import apis from '../app/store-requests/store_requests';
+import { getMapByIdThunk } from '../app/store-actions/editMapList';
 
 export default function EditScreen(){
 
     const [propertyOpen, setPropertyOpen] = useState(false)
-    const map = useSelector((state) => state.editMapList.activeMap);
+    const map = useSelector((state) => state.editMapList.activeMapId);
     // the default value in the usestate is just blank
+    const dispatch = useDispatch();
+
     const [mapFile, setMapFile] = useState({
             "type": "FeatureCollection",
             "name": "jsontemplate",
@@ -25,13 +27,14 @@ export default function EditScreen(){
 
     useEffect(() => {
         if (map) {
-            apis.getMapById(map).then((response) => {
-                console.log(response.data.map.mapData);
-                console.log(response.data.map.name);
-                setMapFile(response.data.map.mapData);
-                console.log(mapFile);
-            }
-        )}   
+            dispatch(getMapByIdThunk({id: map})).unwrap().then((response) => {
+                console.log("Got map by id");
+                console.log(response.map);
+                setMapFile(response.map.mapData);
+            }).catch((error) => {
+                console.log(error);
+            });
+        }   
     }, [map])
 
     let leafletSize = ''

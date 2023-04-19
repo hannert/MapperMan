@@ -30,11 +30,12 @@ export const registerUser = (firstName, lastName,username, email, password, pass
         passwordVerify : passwordVerify
     })
 }
-const apis = {
+
+const authApis = {
     getLoggedIn,
     registerUser,
     loginUser,
     logoutUser
 }
 
-export default apis
+export default authApis
