@@ -12,7 +12,6 @@ export default function AuthErrorModal () {
     const errorMessage = useSelector((state) => state.accountAuth.errorMessage);
     const modalActiveVal = useSelector((state) => state.accountAuth.modalActive);
     const dispatch = useDispatch();
-  
     const handleClose = () => {
       dispatch(setErrorMessage(''));
       dispatch(setModalActive(false));
