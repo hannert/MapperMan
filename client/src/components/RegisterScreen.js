@@ -16,6 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import AuthErrorModal from './Modals/AuthErrorModal';
 
 import { registerUserThunk } from '../app/store-actions/accountAuth';
+import { setErrorMessage, setModalActive } from '../app/store-actions/accountAuth';
 
 export default function RegisterScreen() {
     const dispatch = useDispatch();
@@ -39,10 +40,10 @@ export default function RegisterScreen() {
             passwordVerify : passwordVerify
         })).unwrap().then((response) => {
             console.log(response);
-            if(response.payload.success){
-                navigate('/login');
-            }
+            navigate('/login');
         }).catch((error) => {
+            dispatch(setErrorMessage(error));
+            dispatch(setModalActive(true));
             console.log(error);
         });
         

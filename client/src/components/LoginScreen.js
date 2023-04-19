@@ -39,7 +39,6 @@ export default function LoginScreen() {
             console.log(error);
             dispatch(setErrorMessage(error));
             dispatch(setModalActive(true));
-            modalJSX = <AuthErrorModal />;
         });
     };
         
@@ -109,7 +108,6 @@ export default function LoginScreen() {
                     </Box>
                 </Box>
             </Grid>
-            {  modalJSX  }
         </Grid>
     );
 }
