@@ -1,5 +1,5 @@
 import { Box, ThemeProvider, createTheme } from '@mui/material';
-import { React, useEffect } from 'react';
+import { React } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
 
@@ -13,8 +13,6 @@ import LoginScreen from './components/LoginScreen';
 import MapsScreen from './components/MapListScreen/MapsScreen';
 import RegisterScreen from './components/RegisterScreen';
 import ViewMapScreen from './components/ViewMapScreen';
-import store from './app/store';
-import { Provider } from 'react-redux'
 
 const { palette } = createTheme();
 const { augmentColor } = palette;
