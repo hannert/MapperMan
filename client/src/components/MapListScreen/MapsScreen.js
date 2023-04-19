@@ -19,14 +19,6 @@ export default function MapsScreen(){
     const [publishDialogOpen, setPublishDialogOpen] = React.useState(false);
     const loggedIn = useSelector((state) => state.accountAuth.loggedIn);
 
-    const handlePublishClick = () => {
-        setPublishDialogOpen(true);
-    };
-
-    const handlePublishDialogClose = (value) => {
-        setPublishDialogOpen(false);
-    };
-
     const togglePublishDialog = () =>{
         setPublishDialogOpen(!publishDialogOpen);
         console.log("clicked on publish button!")

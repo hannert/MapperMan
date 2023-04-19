@@ -28,11 +28,20 @@ export default function MapCard(props) {
         when using this, so users cannot just go to a url and access a map that is
         not published or that they dont own */
         // navigate(`/maps/view/${id}`)
-        dispatch(setActiveMap({
-            id: map.id,
-            name: map.name
-        }));
-        navigate('/maps/edit');
+        if(!map.published){
+            dispatch(setActiveMap({
+                id: map.id,
+                name: map.name
+            }));
+            navigate('/maps/edit');
+        }
+        else if(map.published){
+            dispatch(setActiveMap({
+                id: map.id,
+                name: map.name
+            }));
+            navigate(`/maps/view/${map.id}`);
+        }
     }
 
     function mouseDown(e){
