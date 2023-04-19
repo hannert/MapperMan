@@ -2,14 +2,14 @@ import { Button, Menu, MenuItem } from "@mui/material";
 import FolderIcon from '@mui/icons-material/Folder';
 import React from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import { setMapList } from "../../../app/store-actions/editMapList";
-import apis from "../../../app/store-requests/store_requests";
+import { setMapList, setPublicRepo } from "../../../app/store-actions/editMapList";
 
+import { getMapsDataByAccountThunk, getPublicMapsThunk } from "../../../app/store-actions/editMapList";
 
 export default function RepoSelectButton(){
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
-    const user = useSelector((state) => state.editMapList.user);
+    const user = useSelector((state) => state.accountAuth.user);
 
     const dispatch = useDispatch();
     const handleClick = (event) => {
@@ -22,18 +22,27 @@ export default function RepoSelectButton(){
     const handleLoadUserMaps = () => {
         console.log('load user maps');
         if (user) {
-          apis.getMapsDataByAccount(user).then((response) => {
-              console.log(response.data.maps);
-              dispatch(setMapList(response.data.maps));
-          }
-      )}   
+          dispatch(getMapsDataByAccountThunk({user: user})).then((response) => {
+              console.log("Get maps response")
+              console.log(response);
+              if(response.payload.success){
+                  dispatch(setMapList(response.payload.maps));
+              }
+          });
+        }   
     }
 
     const handleLoadPublicMaps = () => {
         console.log('load public maps');
-        apis.getPublicMaps().then((response) => {
-          dispatch(setMapList(response.data.maps));
-        })
+        if (user) {
+          dispatch(getPublicMapsThunk()).then((response) => {
+              console.log("Get maps response")
+              console.log(response);
+              if(response.payload.success){
+                  dispatch(setMapList(response.payload.maps));
+              }
+          });
+        }   
     }
 
     return (

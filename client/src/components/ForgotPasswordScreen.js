@@ -1,7 +1,5 @@
 import { useContext } from 'react';
-import AuthContext from '../api'
 // import MUIErrorModal from './MUIErrorModal'
-import apis from '../api/auth-request-api';
 import AuthErrorModal from './Modals/AuthErrorModal';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
@@ -19,106 +17,106 @@ import Typography from '@mui/material/Typography';
 
 export default function ForgotPasswordScreen() {
     // const { auth } = useContext(AuthContext);
-    const {auth} = useContext(AuthContext)
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        const formData = new FormData(event.currentTarget);
-        console.log("formdata: ")
-        console.log(formData);
-        const email = formData.get('email')
-        const password = formData.get('newpassword')
-        const passwordVerify = formData.get('confirm-newpassword')
-        console.log(password)
-        console.log(passwordVerify)
-        console.log(email)
-        auth.forgotPassword(
-            email,
-            password,
-            passwordVerify
-        );
+    // const handleSubmit = (event) => {
+    //     event.preventDefault();
+    //     const formData = new FormData(event.currentTarget);
+    //     console.log("formdata: ")
+    //     console.log(formData);
+    //     const email = formData.get('email')
+    //     const password = formData.get('newpassword')
+    //     const passwordVerify = formData.get('confirm-newpassword')
+    //     console.log(password)
+    //     console.log(passwordVerify)
+    //     console.log(email)
+    //     auth.forgotPassword(
+    //         email,
+    //         password,
+    //         passwordVerify
+    //     );
         
-    };
+    // };
 
-    // let modalJSX = "";
-    // console.log(auth);
-    // if (auth.errorMessage !== null){
-    //     modalJSX = <MUIErrorModal />;
-    // }
-    // console.log(modalJSX);
+    // // let modalJSX = "";
+    // // console.log(auth);
+    // // if (auth.errorMessage !== null){
+    // //     modalJSX = <MUIErrorModal />;
+    // // }
+    // // console.log(modalJSX);
 
-    return (
-        <Grid container  bgcolor='#2B2B2B' component="main" direction="column" justify="flex-end" alignItems="center" >
-            <CssBaseline />
-            <AuthErrorModal />
-            <Grid item>
-                <Box
-                    sx={{
-                        my: 8,
-                        mx: 4,
-                        maxWidth: '100%',
-                        display: 'flex',
-                        flexDirection: 'column',
-                        alignItems: 'center',
-                    }}
-                >
-                    <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
-                        <LockResetIcon/>
-                    </Avatar>
-                    <Typography component="h1" variant="h5">
-                        Change Password
-                    </Typography>
+    // return (
+    //     <Grid container  bgcolor='#2B2B2B' component="main" direction="column" justify="flex-end" alignItems="center" >
+    //         <CssBaseline />
+    //         <AuthErrorModal />
+    //         <Grid item>
+    //             <Box
+    //                 sx={{
+    //                     my: 8,
+    //                     mx: 4,
+    //                     maxWidth: '100%',
+    //                     display: 'flex',
+    //                     flexDirection: 'column',
+    //                     alignItems: 'center',
+    //                 }}
+    //             >
+    //                 <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+    //                     <LockResetIcon/>
+    //                 </Avatar>
+    //                 <Typography component="h1" variant="h5">
+    //                     Change Password
+    //                 </Typography>
                     
-                    <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            id="email"
-                            label="Email Address"
-                            name="email"
-                            autoComplete="email"
-                            autoFocus
-                        />
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            sx={{ mt: 3, mb: 2 }}
-                        >
-                            Verify Email
-                        </Button>
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            name="newpassword"
-                            label="New Password"
-                            type="password"
-                            id="new-password"
-                            autoComplete="new-password"
-                        />
-                        <TextField
-                            margin="normal"
-                            required
-                            fullWidth
-                            name="confirm-newpassword"
-                            label="Confirm New Password"
-                            type="password"
-                            id="confirm-newpassword"
-                            autoComplete="confirm-new-password"
-                        />
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            sx={{ mt: 3, mb: 2 }}
-                        >
-                            Change Password
-                        </Button>
-                    </Box>
-                </Box>
-            </Grid>
-            {/* { modalJSX } */}
-        </Grid>
-    );
+    //                 <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+    //                     <TextField
+    //                         margin="normal"
+    //                         required
+    //                         fullWidth
+    //                         id="email"
+    //                         label="Email Address"
+    //                         name="email"
+    //                         autoComplete="email"
+    //                         autoFocus
+    //                     />
+    //                     <Button
+    //                         type="submit"
+    //                         fullWidth
+    //                         variant="contained"
+    //                         sx={{ mt: 3, mb: 2 }}
+    //                     >
+    //                         Verify Email
+    //                     </Button>
+    //                     <TextField
+    //                         margin="normal"
+    //                         required
+    //                         fullWidth
+    //                         name="newpassword"
+    //                         label="New Password"
+    //                         type="password"
+    //                         id="new-password"
+    //                         autoComplete="new-password"
+    //                     />
+    //                     <TextField
+    //                         margin="normal"
+    //                         required
+    //                         fullWidth
+    //                         name="confirm-newpassword"
+    //                         label="Confirm New Password"
+    //                         type="password"
+    //                         id="confirm-newpassword"
+    //                         autoComplete="confirm-new-password"
+    //                     />
+    //                     <Button
+    //                         type="submit"
+    //                         fullWidth
+    //                         variant="contained"
+    //                         sx={{ mt: 3, mb: 2 }}
+    //                         id="confirm-change-password-button"
+    //                     >
+    //                         Change Password
+    //                     </Button>
+    //                 </Box>
+    //             </Box>
+    //         </Grid>
+    //         {/* { modalJSX } */}
+    //     </Grid>
+    // );
 }

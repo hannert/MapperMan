@@ -1,7 +1,7 @@
 import axios from 'axios';
 axios.defaults.withCredentials = true;
 const api = axios.create({
-    baseURL: 'https://mapperman.herokuapp.com/auth',
+    baseURL: process.env.REACT_APP_AUTH_URL,
 })
 
 
@@ -30,11 +30,12 @@ export const registerUser = (firstName, lastName,username, email, password, pass
         passwordVerify : passwordVerify
     })
 }
-const apis = {
+
+const authApis = {
     getLoggedIn,
     registerUser,
     loginUser,
     logoutUser
 }
 
-export default apis
+export default authApis

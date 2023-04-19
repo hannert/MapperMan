@@ -17,45 +17,30 @@ import Typography from '@mui/material/Typography';
 import { useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import AuthContext from '../api';
-import { deleteMap, renameMap } from '../app/store-actions/editMapList';
-import apis from '../app/store-requests/store_requests';
+import { clear, deleteMap, forkMapThunk, renameMap } from '../app/store-actions/editMapList';
 
-
-
-
+import store from '../app/store';
+import { logout, logoutThunk } from '../app/store-actions/accountAuth';
+import { renameMapThunk, deleteMapThunk } from '../app/store-actions/editMapList';
 
 // import PlaylisterToolbar from './PlaylisterToolbar';
 
 function AppBanner() {
-    const { auth } = useContext(AuthContext);
 
-    const map = useSelector((state) => state.editMapList.activeMap);
-    const user = useSelector((state) => state.editMapList.user);
+    const mapId = useSelector((state) => state.editMapList.activeMapId);
+    const mapName = useSelector((state) => state.editMapList.activeMapName);
+    const loggedIn = useSelector((state) => state.accountAuth.loggedIn);
+    const user = useSelector((state) => state.accountAuth.user);
     const navigate = useNavigate();
     const location = useLocation();
     const dispatch = useDispatch();
 
 
     const [anchorEl, setAnchorEl] = useState(null);
-    const [mapName, setMapName] = useState("");
     const [mapRenameField, setMapRenameField]=useState("");
 
 
     const isMenuOpen = Boolean(anchorEl);
-
-
-    /** trying to use state for the map name that is displayed on the editing screen */
-    useEffect(() => {
-        if (map) {
-            apis.getMapById(map).then((response) => {
-                console.log(response.data.map.mapData);
-                console.log(response.data.map.name);
-                setMapName(response.data.map.name);
-                // setMapFile(response.data.map.mapData);
-            }
-        )}   
-    }, [map])
 
 
     // ! - State for dialogs
@@ -97,20 +82,39 @@ function AppBanner() {
 
     // ! ------------------ End of State for dialogs
 
+    // User initials for account icon
+    // Guests will not have an account icon
+    const [userInitials, setUserInitials] = useState('');
+    useEffect(() => {
+        if (loggedIn && user) {
+            let user = store.getState().accountAuth.user;
+            setUserInitials(user.firstName.charAt(0) + user.lastName.charAt(0));
+        }
+    }, [loggedIn, user]);
+
     // Handle click for top right user icon in banner
     const handleProfileMenuOpen = (event) => {
         setAnchorEl(event.currentTarget);
-        auth.getUserInitials();
+        // auth.getUserInitials();
     };
 
     const handleMenuClose = () => {
         setAnchorEl(null);
     };
 
-    // Handles logout of a logged-in user
+    // Send request to backend to invalidate jwt
+    // Then, dispatch logout action to update state
+    // Finally, navigate to login page
     const handleLogout = () => {
         handleMenuClose();
-        auth.logoutUser();
+        dispatch(logoutThunk()).unwrap().then((response) => {
+            console.log(response)
+            dispatch(logout());
+            dispatch(clear());
+            navigate('/login');
+        }).catch((error) => {
+            console.log(error);
+        });
     }
 
     const handleHouseClick = () => {
@@ -142,17 +146,14 @@ function AppBanner() {
     }
 
     const handleRenameSubmit = () =>{
-        let currMapId = map;
-        let newName = mapRenameField;
-        apis.renameMap(currMapId, newName).then((res)=>{
-            if(res.data.success===true){
-                console.log("map renamed successfully");
-                dispatch(renameMap(res.data.id));
-                setMapName(mapRenameField);
-            }else{
-                console.log("map rename failed");
-                console.log(res);
-            }
+        dispatch(renameMapThunk({id: mapId, newName: mapRenameField})).unwrap().then((res)=>{
+            console.log(res);
+            dispatch(renameMap({
+                id: res.id,
+                name: res.name
+            }));   
+        }).catch((err)=>{
+            console.log(err);
         });
         resetRenameTextField();
         setMapRenameOpen(false);
@@ -170,16 +171,17 @@ function AppBanner() {
     }
 
     const handleDeleteMapConfirm = () =>{
-        let currMapId = map;
-        apis.deleteMapById(currMapId).then((res)=>{
-            if(res.data.success===true){
-                console.log("map deleted successfully");
-                dispatch(deleteMap());
-            }else{
-                console.log("map delete failed");
-                console.log(res);
-            }
-        });
+        // Dispatch delete thunk, call it with .then(), based off response
+        // dispatch deleteMap action if success, else do nothing
+        dispatch(deleteMapThunk({
+            id: mapId,
+            user: user
+        })).unwrap().then((res)=>{
+            dispatch(deleteMap());
+        }).catch((error) =>{
+            console.log(error);
+        })
+
         navigate("/maps");
         setDeleteDialogOpen(false);
     }
@@ -194,15 +196,13 @@ function AppBanner() {
     }
 
     const handleForkMapConfirm = () =>{
-        let currMapId = map;
-        apis.forkMap(currMapId, user).then((res)=>{
-            if(res.data.success===true){
-                console.log("map deleted successfully");
-                dispatch(deleteMap());
-            }else{
-                console.log("map delete failed");
-                console.log(res);
-            }
+        // Dispatch fork thunk, call it with .then(), based off response
+        // dispatch forkMap action if success, else do nothing
+        dispatch(forkMapThunk({id: mapId, user: user})).unwrap().then((res)=>{
+            console.log(res);
+            console.log("map forked");
+        }).catch(error =>{
+            console.log(error);
         });
         navigate("/maps");
         setForkDialogOpen(false);
@@ -391,9 +391,8 @@ function AppBanner() {
 
     let playListerToolbar = "";
     let menu = loggedOutMenu;
-    if (user) {
+    if (loggedIn) {
         menu = loggedInMenu;
-
     }
 
     // /** Gets the current map name from the store */
@@ -409,15 +408,8 @@ function AppBanner() {
 
     // Since we dont have auth set up, this will always return account circle
 
-    /** TODO: connect this to the auth,make it display the user initials */
-    function getAccountMenu(loggedIn) {
-        let userInitials = auth.getUserInitials();
-        console.log("userInitials: " + userInitials);
-        if (loggedIn) 
-            return <div>{userInitials}</div>;
-        else
-            return <Face5Icon/>;
-    }
+
+
 
     let screen = location.pathname;
     let tempToolbar = '';
@@ -469,7 +461,24 @@ function AppBanner() {
         )
     }
 
+    let accountCircle = <div></div>
 
+    if (loggedIn) {
+       accountCircle = <Box sx={{ height: "50px", display: { xs: 'none', md: 'flex' } }}>
+            <IconButton
+                size="large"
+                edge="end"
+                aria-label="account of current user"
+                aria-controls={menuId}
+                aria-haspopup="true"
+                onClick={handleProfileMenuOpen}
+                color="inherit"
+            >
+                {/* <Face5Icon /> */}
+                { <div>{userInitials}</div> }
+            </IconButton>
+        </Box>
+    }
     return (
         <Box sx={{color:'black', width:'100%'}}>
             <AppBar position="static" sx={{bgcolor: "#252931",}}>
@@ -494,24 +503,10 @@ function AppBanner() {
                     <Box sx={{ flexGrow: 1, ml: 50}}>
                     {nowEditingText}
                     </Box>
-
-                    
                     
                     {tempToolbar}
-                    <Box sx={{ height: "50px", display: { xs: 'none', md: 'flex' } }}>
-                        <IconButton
-                            size="large"
-                            edge="end"
-                            aria-label="account of current user"
-                            aria-controls={menuId}
-                            aria-haspopup="true"
-                            onClick={handleProfileMenuOpen}
-                            color="inherit"
-                        >
-                            {/* <Face5Icon /> */}
-                            { getAccountMenu(auth.loggedIn) }
-                        </IconButton>
-                    </Box>
+                    {accountCircle}
+                    
                 </Toolbar>
             </AppBar>
             {saveDialog}

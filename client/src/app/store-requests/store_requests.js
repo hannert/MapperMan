@@ -1,10 +1,10 @@
 import axios from 'axios';
 axios.defaults.withCredentials = false;
 const api = axios.create({
-    baseURL:'https://mapperman.herokuapp.com/api', //our server we are deploying on
+    baseURL:process.env.REACT_APP_API_URL, //our server we are deploying on
 })
 
-// name: { type: String, required: true },
+//         name: { type: String, required: true },
 //         owner: { type: ObjectId, ref: 'Account', required: true },
 //         mapData: { type: Object, required: true },
 //         published: {type: Boolean, required: true},
@@ -26,6 +26,17 @@ export const getMapById = (id) => api.get(`/map/${id}`)
 export const getUserMaps = (id) => api.get(`/userMaps/${id}`)
 export const getPublicMaps = () => api.get(`/publicMaps/`)
 export const getMapsDataByAccount = (user) => api.post(`/maps`, user);
+
+export const deleteMap = (id, user) => {
+    console.log('Deleting map with ');
+    console.log(id);
+    console.log(user);
+    return api.post('/map', 
+    {
+        user: user,
+        mapId: id
+    });
+}
 
 export const addVertex = (mapEdit) => {
     return api.post('/map/', {
@@ -50,7 +61,7 @@ export const deleteFeature = (mapEdit) => {
 
 export const renameMap = (id, newName) =>{
     return api.put(`/map/${id}`, {
-        id, newName
+        id: id, newName: newName
     })
 }
 
@@ -61,14 +72,22 @@ export const forkMap = (id, user) => {
     })
 }
 
-const apis = {
+export const publishMap = (id) => {
+    return api.put(`/map/${id}/publish`,{
+        id: id
+    })
+}
+
+const mapApis = {
     createMap,
     deleteMapById,
+    deleteMap,
     getMapById,
     getPublicMaps,
     getMapsDataByAccount,
     renameMap, 
-    forkMap
+    forkMap,
+    publishMap
 }
 
-export default apis
+export default mapApis

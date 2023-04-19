@@ -3,63 +3,59 @@ const Map = require('../db/schemas/map-schema')
 const Account = require('../db/schemas/account-schema');
 
 createMap = async (req, res) => {
-    // Temporary method to add some map to the database, not attached to a specific user yet
     const {owner, mapData} = req.body;
     console.log(req.body);
     console.log("createMap body: " + JSON.stringify(mapData))
 
-    let user = new Account({
-        username: owner.username,
-        passwordHash: owner.passwordHash,
-        email: owner.email,
-        firstName: owner.firstName,
-        lastName: owner.lastName,
-        mapsOwned: [],
-        mapAccess: []
-    })
+    //Find account first 
+    Account.find({email: owner.email}).then((account) => {
+        if (account) {
+            //Add account found as the owner of the new map
+            console.log("Found account");
+            console.log(account[0]);
+            console.log('Account id is ' + account[0]._id);
 
-    let newMap = new Map({
-        name: 'Untitled',
-        owner: user,
-        mapData: mapData,
-        published: false,
-        comments: [],
-        tags: []
+            let newMap = new Map({
+                name: 'Untitled',
+                owner: account[0]._id,
+                mapData: mapData,
+                published: false,
+                comments: [],
+                tags: []
+            })
+
+            //save map to the db
+            newMap
+            .save()
+            .catch(error => { 
+                console.log(error);
+                return res.status(400).json({success:false, error: error})
+            })
+
+            account[0].mapsOwned.push(newMap.id);
+            account[0]
+                .save().then(() => {
+                    return res.status(201).json({
+                        success: true,
+                        id: newMap.id,
+                        name: 'Untitled'
+                    })
+                })
+                // .catch(err => {
+                //     console.log(err)
+                //     return res.status(400).json({success:false, error: err});
+                // })
+            }        
     })
-    newMap
-        .save()
-        .then(() => {
-            // Find the account the user email belongs to and add the map to their list of owned maps
-            // Account.find returns an array of accounts, so we need to access the first element
-            Account.find({email: user.email}).then((account) => {
-                if (account) {
-                    console.log("Found account");
-                    console.log(account[0]);
-                    account[0].mapsOwned.push(newMap.id);
-                    account[0]
-                        .save()
-                        .catch(err => {
-                            console.log(err)
-                            return res.status(400).json({success:false, error: err});
-                        })
-                }else{
-                    return res.status(400).json({success: false, error: "Account not found"})
-                }
-            })
-            // Return the id of the map we just created so EditMapList can grab it
-            return res.status(201).json({
-                success: true,
-                id: newMap.id
-            })
-        }).catch(error => { return res.status(400).json({success:false, error: error})}) 
 }
 
 getMapById = async (req, res) => {
     console.log("loading map");
-
+    console.log(req);
     // use bcrypt to check if the map is in the users owned list
     await Map.findById({ _id: req.params.id }).then((map) => {
         console.log("Found Map!")
+        console.log(map);
         if (map) {
             return res.status(200).json({ success: true, map: map})
         }
@@ -79,12 +75,14 @@ deleteMapById = async (req, res) => {
 
 deleteMap = async (req, res) => {
     // Delete the map from users list
+    console.log(req.body);
     const {user, mapId} = req.body;
-
+    console.log(user);
+    console.log(mapId);
     await Account.find({email: user.email}).then((account) => {
-        if(account){
-            account.mapsOwned = account.mapsOwned.filter(id => id != mapId);
-            account
+        if(account[0]){
+            account[0].mapsOwned = account[0].mapsOwned.filter(id => id != mapId);
+            account[0]
                 .save()
                 .then(() => {
                     return res.status(200)
@@ -99,7 +97,7 @@ deleteMap = async (req, res) => {
         return res.status(400).json({success:false, error: err});
     });
     // Delete the map from the database
-    await Map.findOneAndRemove({ mapId }).then(() => {
+    await Map.findOneAndRemove({_id: mapId }).then(() => {
         return res.status(200)
     }).catch(err => console.log(err))
 }
@@ -163,7 +161,7 @@ getMapsDataByAccount = async (req, res) => {
 
                 console.log('data');
                 console.log(data);
-            });
+            }).catch(err => console.log(err));
         }
     }).then(() => {
         console.log('data at the end');
@@ -181,6 +179,7 @@ renameMap = async (req,res) =>{
     const body = req.body
     console.log("new name: " + req.body.newName);
     console.log(req.params.id)
+
     if(!body){
         return res.status(400).json({
             success: false,
@@ -197,6 +196,7 @@ renameMap = async (req,res) =>{
                 return res.status(200).json({
                     success: true,
                     id: map._id,
+                    name: map.name,
                     message: 'map name updated!',
                 })
             })
@@ -214,6 +214,7 @@ forkMap = async (req, res) => {
     const body = req.body
     const mapId = req.body.map
     const user = req.body.user
+    console.log('Body V');
     console.log(body)
     if(!body){
         return res.status(400).json({
@@ -224,7 +225,6 @@ forkMap = async (req, res) => {
     // Find the map we want to fork
     Map.findOne({_id: mapId}).then((map) => {
         console.log("map found: " + JSON.stringify(map));
-
         Account.findOne({ email: user.email}).then((account) => {
             if (account){
                 console.log("Found account");
@@ -247,20 +247,45 @@ forkMap = async (req, res) => {
                             .save()
                             .catch(err => {
                                 console.log(err)
-                                return res.status(400).json({success:false, error: err});
+                                return res.status(400).json({success:false, id: newMap._id, error: err});
                             })
+                    return res.status(200).json({
+                        success: true,
+                        id: newMap._id,
+                    });
                 })
             }
         })
-    })
+        })
+
+}
+
+publishMap = async(req,res) =>{
+    const body=req.body;
+    if(!body){
+        return res.status(400).json({
+            success: false,
+            error: 'You must provide a body to update',
+        })
+    }
+    const id = body.id;
+    let update={ published:true }
+    Map.findOneAndUpdate({_id: id}, update).then((map)=>{
+        return res.status(200).json({
+            success: true,
+            id: map._id,
+        });
+    }).catch(err => console.log(err));
 }
 
 module.exports = {
     createMap,
     getMapById,
     deleteMapById,
+    deleteMap,
     getPublicMaps,
     getMapsDataByAccount,
     renameMap,
     forkMap,
+    publishMap
 }

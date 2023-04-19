@@ -1,6 +1,7 @@
 import PublishIcon from '@mui/icons-material/Publish';
 import { Button } from '@mui/material';
 
+
 /**
  * This component publishes a map. Will call store commands to change the map's published status
  * in the database. This should only be rendered when the user is on their own repository AND
@@ -11,8 +12,14 @@ import { Button } from '@mui/material';
  * 
  * @returns Publish Button for Map Card Actions
  */
-export default function PublishButton(){
-    function handleDelete(e){
+export default function PublishButton(props){
+    const {togglePublishDialog, handleActionClick} = props;
+
+
+    function handlePublish(e){
+        console.log("publish map button clicked");
+        handleActionClick();
+        togglePublishDialog();
         e.stopPropagation();
     }
 
@@ -20,8 +27,10 @@ export default function PublishButton(){
         e.stopPropagation ();
     }
 
+    
     return (
-        <Button onClick={handleDelete} onMouseDown={mouseDown} style={{maxWidth: '35px', maxHeight: '35px', minWidth: '35px', minHeight: '35px'}}>
+        
+        <Button onClick={handlePublish} onMouseDown={mouseDown} style={{maxWidth: '35px', maxHeight: '35px', minWidth: '35px', minHeight: '35px'}}>
             <PublishIcon style={{fontSize:'16pt', color:'gray'}} />
         </Button>  
     )

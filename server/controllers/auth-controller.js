@@ -1,4 +1,4 @@
-// const auth = require('../auth')
+const auth = require('../auth')
 // const User = require('../models/user-model')
 const Account = require('../db/schemas/account-schema')
 const bcrypt = require('bcryptjs')
@@ -28,11 +28,7 @@ getLoggedIn = async (req, res) => {
 
         return res.status(200).json({
             loggedIn: true,
-            user: {
-                firstName: loggedInUser.firstName,
-                lastName: loggedInUser.lastName,
-                email: loggedInUser.email
-            }
+            user: loggedInUser
         })
     } catch (err) {
         console.log("err: " + err);
@@ -108,7 +104,9 @@ logoutUser = async (req, res) => {
         expires: new Date(0),
         secure: true,
         sameSite: "none"
-    }).send();
+    }).status(200).json({
+        success: true,
+    });
 }
 forgotPassword = async (req, res) => {
     console.log("CHANGING PASSWORD");
@@ -240,7 +238,6 @@ registerUser = async (req, res) => {
                 mapAccess: savedUser.mapAccess       
             }
         })
-
         console.log("token sent");
 
     } catch (err) {

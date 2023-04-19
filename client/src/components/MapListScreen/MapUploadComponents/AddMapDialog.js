@@ -6,10 +6,8 @@ import { useContext, useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import * as shp from 'shpjs';
-import AuthContext from '../../../api';
 import { createNewMap } from '../../../app/store-actions/editMapList';
-import apis from '../../../app/store-requests/store_requests';
-
+import { createMapThunk } from '../../../app/store-actions/editMapList';
 
 
 /**
@@ -19,26 +17,23 @@ import apis from '../../../app/store-requests/store_requests';
  * @returns Dialog for uploading a map
  */
 export default function AddMapDialog(props){
-    const { auth } = useContext(AuthContext);
 
-    const { onClose, selectedValue, open } = props;
-
+    const { onClose, open } = props;
     const [shapefile, setShapefile]=useState(null);
     const [dbfFile, setdbfFile]=useState(null);
     const [geoJsonFile, setGeoJsonFile]=useState(null);
     const [active, setActive]=useState('none')
 
     const dispatch = useDispatch();
-    const navigator = useNavigate();
-    const user = useSelector((state) => state.editMapList.user);
+    const navigate = useNavigate();
+    const user = useSelector((state) => state.accountAuth.user);
 
     const handleClose = () => {
         setShapefile(null);
         setdbfFile(null);
         setGeoJsonFile(null);
-        onClose(selectedValue);
+        onClose();
     };
-
 
     /*Handles the button icon for shpfile/DBF upload: */
     const shpButton = (shapefile) ? <Check/> : <Add/>;
@@ -108,21 +103,21 @@ export default function AddMapDialog(props){
         let combinedGeoJSON = shp.combine([shp.parseShp(shapefile),shp.parseDbf(dbfFile)]);
         let options = {tolerance: 0.01, highQuality: false};
         let simplified = turf.simplify(combinedGeoJSON, options);
-        if(user !== null){
-            apis.createMap(user, simplified).then((res) => {
-                console.log("map created");
-                if(res.data.success===true){
-                    console.log("map created successfully");
-                    dispatch(createNewMap(res.data.id));
-                    navigator(`/maps/edit`);
-                }else{
-                    console.log("map creation failed");
-                    console.log(res);
-                }
-            }).catch((err) => {
-                console.log(err);
-            });
-        }
+        // if(user !== null){
+        //     apis.createMap(user, simplified).then((res) => {
+        //         console.log("map created");
+        //         if(res.data.success===true){
+        //             console.log("map created successfully");
+        //             dispatch(createNewMap(res.data.id));
+        //             navigator(`/maps/edit`);
+        //         }else{
+        //             console.log("map creation failed");
+        //             console.log(res);
+        //         }
+        //     }).catch((err) => {
+        //         console.log(err);
+        //     });
+        // }
 
         
     }
@@ -140,18 +135,12 @@ export default function AddMapDialog(props){
         let options = {tolerance: 0.01, highQuality: false};
         let simplified = turf.simplify(geoJsonFile, options);
         console.log(geoJsonFile);
-        console.log(auth.user)
         if(user !== null){
-            apis.createMap(user, geoJsonFile).then((res) => {
-                console.log("map created");
-                if(res.data.success===true){
-                    console.log("map created successfully");
-                    dispatch(createNewMap(res.data.id));
-                    navigator(`/maps/edit`);
-                }else{
-                    console.log("map creation failed");
-                    console.log(res);
-                }
+            dispatch(createMapThunk({owner: user, mapData: geoJsonFile})).unwrap().then((res) => {
+                console.log("trying to make a map from geojson");
+                console.log(res);
+                dispatch(createNewMap(res));
+                navigate('/maps/edit');
             }).catch((err) => {
                 console.log(err);
             });
