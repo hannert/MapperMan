@@ -260,6 +260,24 @@ forkMap = async (req, res) => {
 
 }
 
+publishMap = async(req,res) =>{
+    const body=req.body;
+    if(!body){
+        return res.status(400).json({
+            success: false,
+            error: 'You must provide a body to update',
+        })
+    }
+    const id = body.id;
+    let update={ published:true }
+    Map.findOneAndUpdate({_id: id}, update).then((map)=>{
+        return res.status(200).json({
+            success: true,
+            id: map._id,
+        });
+    }).catch(err => console.log(err));
+}
+
 module.exports = {
     createMap,
     getMapById,
@@ -269,4 +287,5 @@ module.exports = {
     getMapsDataByAccount,
     renameMap,
     forkMap,
+    publishMap
 }

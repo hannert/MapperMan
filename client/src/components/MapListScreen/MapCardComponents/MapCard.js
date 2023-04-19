@@ -4,20 +4,21 @@ import { useNavigate } from 'react-router-dom';
 import dummy from '../../na.png';
 import MapCardActions from './MapCardActions';
 
-import { setActiveMap } from '../../../app/store-actions/editMapList';
+import { setActiveMap, setMapCardClicked } from '../../../app/store-actions/editMapList';
 import { useDispatch } from 'react-redux';
 
 /**
  * This component is a card that displays a map in the Map List Screen. Deals with actions
  * relating to the map, such as deleting, forking, and publishing.
- * @param {*} props Map object from the Database
+ * @param {*} props Map object from the Database 
+ * and Callback function referring to toggling/untoggling the publish dialog
  * @returns Map Card to display in the Map List Screen
  */
 
 export default function MapCard(props) {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { map } = props;
+    const { map, togglePublishDialog} = props;
 
     function handleMapClick(){
         console.log('Map clicked');
@@ -37,6 +38,19 @@ export default function MapCard(props) {
     function mouseDown(e){
         e.stopPropagation ();
     }
+
+    /**
+     * This function sets the 'mapCardClickedId" value in the store to the id of the card that was clicked in
+     * any of these actions. 
+    */
+    function handleActionClick(){
+        console.log("setting the mapId of the card that was clicked in the redux store to: " + map.id);
+        dispatch(setMapCardClicked({
+            id:map.id
+        }))
+    }
+
+
     let date = 'N/A'
     if(map.published){
         let dateObj = new Date(map.createdAt);
@@ -61,7 +75,7 @@ export default function MapCard(props) {
                         </Typography>
                     </Grid>
                     <Grid item xs = {6} sx={{textAlign:'right'}}>
-                        <MapCardActions published={map.published}></MapCardActions>
+                        <MapCardActions published={map.published} togglePublishDialog={togglePublishDialog} handleActionClick={handleActionClick}></MapCardActions>
                     </Grid>
                 </Grid>          
             </Box>  

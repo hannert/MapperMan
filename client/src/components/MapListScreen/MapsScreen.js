@@ -27,6 +27,11 @@ export default function MapsScreen(){
         setPublishDialogOpen(false);
     };
 
+    const togglePublishDialog = () =>{
+        setPublishDialogOpen(!publishDialogOpen);
+        console.log("clicked on publish button!")
+    }
+
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const user = useSelector((state) => state.accountAuth.user);
@@ -64,6 +69,15 @@ export default function MapsScreen(){
     if (!loggedIn || (!guest && (user === null))) {
         navigate('/');
     }
+
+
+    /**Conditional rendering of the publish dialog:  */
+    let pubDialog = "";
+    pubDialog = (publishDialogOpen) ? <PublishDialog open={true} togglePublishDialog={togglePublishDialog}/> : <PublishDialog open={false} togglePublishDialog={togglePublishDialog}/> ;
+
+
+
+
     return (
         <Grid container rowSpacing={0} sx={{backgroundColor: '#2B2B2B',
                     alignItems:"center", justifyContent:"center", marginRight: '10px'}}>
@@ -81,7 +95,7 @@ export default function MapsScreen(){
                     {      
                         currentList.map((map)=>(
                             <Grid key={map.id} item xs = {6} sx={{align: 'center'}} >
-                                <MapCard key={map.id} sx = {{height: '400px', backgroundColor: '#282c34'}} map={map}/>
+                                <MapCard key={map.id} sx = {{height: '400px', backgroundColor: '#282c34'}} map={map} togglePublishDialog={togglePublishDialog}/>
                             </Grid>
                         ))
                     }
@@ -91,7 +105,7 @@ export default function MapsScreen(){
                 <Pages></Pages>
             </Grid>
             
-            <PublishDialog></PublishDialog>
+            {pubDialog}
         </Grid>
 
     )

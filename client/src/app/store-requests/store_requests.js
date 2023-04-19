@@ -72,6 +72,12 @@ export const forkMap = (id, user) => {
     })
 }
 
+export const publishMap = (id) => {
+    return api.put(`/map/${id}/publish`,{
+        id: id
+    })
+}
+
 const mapApis = {
     createMap,
     deleteMapById,
@@ -80,7 +86,8 @@ const mapApis = {
     getPublicMaps,
     getMapsDataByAccount,
     renameMap, 
-    forkMap
+    forkMap,
+    publishMap
 }
 
 export default mapApis
