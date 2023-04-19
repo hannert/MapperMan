@@ -1,7 +1,7 @@
 import axios from 'axios';
 axios.defaults.withCredentials = false;
 const api = axios.create({
-    baseURL:'http://localhost:4000/api', //our server we are deploying on
+    baseURL:process.env.REACT_APP_API_URL, //our server we are deploying on
 })
 
 //         name: { type: String, required: true },
