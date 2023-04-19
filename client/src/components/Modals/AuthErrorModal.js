@@ -20,7 +20,7 @@ export default function AuthErrorModal () {
 
     return (
         <div>
-        {/* <Dialog open={modalActiveVal} onClose={handleClose}>
+        <Dialog open={modalActiveVal} onClose={handleClose}>
           <DialogTitle>Error</DialogTitle>
           <DialogContent>
              <div>{errorMessage}</div>
@@ -28,7 +28,7 @@ export default function AuthErrorModal () {
           <DialogActions>
             <Button onClick={handleClose}>Confirm</Button>
           </DialogActions>
-        </Dialog> */}
+        </Dialog>
       </div>
     )
 }
