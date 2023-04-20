@@ -30,6 +30,7 @@ getLoggedIn = async (req, res) => {
             loggedIn: true,
             user: loggedInUser
         })
+
     } catch (err) {
         console.log("err: " + err);
         res.json(false);
@@ -94,7 +95,7 @@ loginUser = async (req, res) => {
 
     } catch (err) {
         console.error(err);
-        res.status(500).send();
+        res.status(500).json({ errorMessage: "Server error" });
     }
 }
 

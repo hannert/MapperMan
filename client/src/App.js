@@ -4,7 +4,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
 
 import AppBanner from './components/AppBanner';
-import EditScreen from './components/EditScreen';
+import EditScreen from './components/EditMapScreen/EditScreen';
 import ForgotPasswordScreen from './components/ForgotPasswordScreen';
 import HomeWrapper from './components/HomeWrapper';
 import LoginScreen from './components/LoginScreen';

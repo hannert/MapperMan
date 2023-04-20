@@ -6,37 +6,42 @@ import hash from 'object-hash';
 import React, { useEffect, useState } from 'react';
 import { GeoJSON, MapContainer, TileLayer } from "react-leaflet";
 import { useDispatch, useSelector } from 'react-redux';
-import { getMapByIdThunk } from '../app/store-actions/editMapList';
+import { getMapByIdThunk } from '../../app/store-actions/editMapList';
+
+
+import * as L from 'leaflet';
+
+import { setCurrentGeoJSON } from '../../app/store-actions/leafletEditing';
+import LeafletContainer from './LeafletContainer';
 
 export default function EditScreen(){
 
     const [propertyOpen, setPropertyOpen] = useState(false)
-    const map = useSelector((state) => state.editMapList.activeMapId);
-    // the default value in the usestate is just blank
+    const mapId = useSelector((state) => state.editMapList.activeMapId);
     const dispatch = useDispatch();
 
-    const [mapFile, setMapFile] = useState(
-        {
-        "type": "FeatureCollection",
-        "name": "jsontemplate",
-        "features": [
-        { "type": "Feature", "properties": { "a1": "", "a2": "", "a3": "", "a4": ""}, "geometry": null }
-        ]
-    });
-
     useEffect(() => {
-        if (map) {
-            dispatch(getMapByIdThunk({id: map})).unwrap().then((response) => {
-                console.log("Got map by id");
-                console.log(response.map);
-                setMapFile(response.map.mapData);
+        if (mapId) {
+            console.log('Edit Screen Render');
+            dispatch(getMapByIdThunk({id: mapId})).unwrap().then((response) => {
+                dispatch(setCurrentGeoJSON(response.map.mapData))
+                console.log(response.map.mapData);
+                
+                var map = L.map('map').setView([0, 0], 0);
+                L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    maxZoom: 19,
+                    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+                }).addTo(map);
+                L.geoJSON(response.map.mapData).addTo(map);
+
             }).catch((error) => {
                 console.log(error);
             });
         }   
-    }, [map])
+    }, [mapId])
 
     let leafletSize = ''
+
     if (propertyOpen === true) {
         leafletSize = {width:'65%', height: '100%'}
     }
@@ -175,14 +180,19 @@ export default function EditScreen(){
                 </Box>
                 <Box sx ={leafletSize}>
 
-                    <MapContainer center={[37.09, -95.71]} zoom={4} doubleClickZoom={false}
+                    {/* <MapContainer center={[37.09, -95.71]} zoom={4} doubleClickZoom={false}
                         id="mapId" style={{width:'100%', height:'100%'}}>
                             <TileLayer url='http://{s}.tile.osm.org/{z}/{x}/{y}.png' attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' />
                             <GeoJSON 
                                 key={hash(mapFile)} 
                                 data={mapFile} 
                                 />
-                    </MapContainer>
+                    </MapContainer> */}
+                    <div>
+                        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin=""/>
+                        <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
+                        <div id="map"></div>    
+                    </div>
 
                 </Box>
                 {propertyComponent}
