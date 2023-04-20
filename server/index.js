@@ -26,7 +26,7 @@ app.use((req, res, next) => {
 
 app.use(cors({
   origin: '*',
-  credentials: true
+  credentials: false
 }))
 
 
