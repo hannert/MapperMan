@@ -1,6 +1,5 @@
 import { Comment, ContentCopy, Delete, ForkRight, GroupAdd, Map, Save, Upload } from '@mui/icons-material';
 import EditIcon from '@mui/icons-material/Edit';
-import Face5Icon from '@mui/icons-material/Face5';
 import { Alert, Avatar, Button, Snackbar, TextField } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -14,14 +13,14 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { clear, deleteMap, forkMapThunk, renameMap } from '../app/store-actions/editMapList';
 
 import store from '../app/store';
 import { logout, logoutThunk } from '../app/store-actions/accountAuth';
-import { renameMapThunk, deleteMapThunk } from '../app/store-actions/editMapList';
+import { deleteMapThunk, renameMapThunk } from '../app/store-actions/editMapList';
 
 // import PlaylisterToolbar from './PlaylisterToolbar';
 
@@ -481,6 +480,7 @@ function AppBanner() {
     }
     return (
         <Box sx={{color:'black', width:'100%'}}>
+            {console.log(process.env.REACT_APP_AUTH_URL)}
             <AppBar position="static" sx={{bgcolor: "#252931",}}>
                 <Toolbar>
                     <Link onClick={handleHouseClick} style={{ textDecoration: 'none', color: 'white',  }} to='/'>
