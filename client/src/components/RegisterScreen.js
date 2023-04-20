@@ -42,7 +42,7 @@ export default function RegisterScreen() {
             console.log(response);
             navigate('/login');
         }).catch((error) => {
-            dispatch(setErrorMessage(error.message));
+            dispatch(setErrorMessage(error));
             dispatch(setModalActive(true));
             console.log(error);
         });

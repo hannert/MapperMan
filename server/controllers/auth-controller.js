@@ -4,6 +4,7 @@ const Account = require('../db/schemas/account-schema')
 const bcrypt = require('bcryptjs')
 const jwt = require("jsonwebtoken")
 const dotenv = require('dotenv')
+const sendEmail = require('../nodemailer/sendMail.js')
 dotenv.config()
 
 signToken = (userId) => {
@@ -111,22 +112,22 @@ logoutUser = async (req, res) => {
 forgotPassword = async (req, res) => {
     console.log("CHANGING PASSWORD");
     try {
-        const { email, newpassword, passwordVerify } = req.body;
-        console.log("Email and new passwords: " + email + " " + newpassword + " " + passwordVerify);
-        if (!email || !newpassword || !passwordVerify){
+        const { email, password, passwordVerify } = req.body;
+        console.log("Email and new passwords: " + email + " " + password + " " + passwordVerify);
+        if (!email || !password || !passwordVerify){
             console.log("Nope");
             return res
                 .status(400)
                 .json({errorMessage: "Please enter all required fields." });
         }
         console.log("All fields filled out");
-        if (newpassword.length < 8){
+        if (password.length < 8){
             return res
                 .status(400)
                 .json({errorMessage: "Please enter a new password of at least 8 characters. "});
         }
         console.log("Password long enough.");
-        if (newpassword !== passwordVerify){
+        if (password !== passwordVerify){
             return res
                 .status(400)
                 .json({
@@ -146,7 +147,7 @@ forgotPassword = async (req, res) => {
         }
         const saltRounds = 10;
         const salt = await bcrypt.genSalt(saltRounds);
-        const newpasswordHash = await bcrypt.hash(newpassword, salt);
+        const newpasswordHash = await bcrypt.hash(password, salt);
         console.log("passwordHash: " + newpasswordHash);
         existingUser.passwordHash = newpasswordHash;
         await existingUser.save();
@@ -246,10 +247,33 @@ registerUser = async (req, res) => {
     }
 }
 
+sendVerification = async (req, res) => {
+    const {email} = req.body;
+
+    try {
+        const send_to = email;
+        const send_from = "verifymapperman@gmail.com"
+        const reply_to = email;
+        const subject = "Verify your email for password reset."
+        const message = `
+            <p>Hi! You have requested to do a password reset. Please click here to verify and complete it!</p>
+            <p>Regards, </p>
+            <p>Mapperman team</p>`
+        await sendEmail(subject, message, send_to, send_from, reply_to)
+        console.log("Email sent")
+        return res.status(200).json({success: true})
+        
+    }   catch(error){
+        console.error(error);
+        res.status(500).send();
+    }
+
+}
 module.exports = {
     getLoggedIn,
     registerUser,
     loginUser,
     logoutUser,
-    forgotPassword
+    forgotPassword,
+    sendVerification
 }
