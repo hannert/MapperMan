@@ -18,7 +18,7 @@ import { useDispatch } from 'react-redux';
 export default function MapCard(props) {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { map, togglePublishDialog} = props;
+    const { map, togglePublishDialog, toggleDeleteDialog, toggleForkDialog} = props;
 
     function handleMapClick(){
         console.log('Map clicked');
@@ -44,18 +44,15 @@ export default function MapCard(props) {
         }
     }
 
-    function mouseDown(e){
-        e.stopPropagation ();
-    }
-
     /**
-     * This function sets the 'mapCardClickedId" value in the store to the id of the card that was clicked in
-     * any of these actions. 
+     * This function sets the 'mapCardClickedId" value in the store to the id and name 
+     * of the card that was clicked in any of these actions. 
     */
     function handleActionClick(){
-        console.log("setting the mapId of the card that was clicked in the redux store to: " + map.id);
+        console.log("setting the mapId of the card that was clicked in the redux store to: " + map.id + " with name: " + map.name);
         dispatch(setMapCardClicked({
-            id:map.id
+            id:map.id,
+            name:map.name
         }))
     }
 
@@ -84,7 +81,13 @@ export default function MapCard(props) {
                         </Typography>
                     </Grid>
                     <Grid item xs = {6} sx={{textAlign:'right'}}>
-                        <MapCardActions published={map.published} togglePublishDialog={togglePublishDialog} handleActionClick={handleActionClick}></MapCardActions>
+                        <MapCardActions 
+                            published={map.published} 
+                            togglePublishDialog={togglePublishDialog}
+                            toggleDeleteDialog={toggleDeleteDialog}
+                            toggleForkDialog={toggleForkDialog}
+                            handleActionClick={handleActionClick}>
+                        </MapCardActions>
                     </Grid>
                 </Grid>          
             </Box>  

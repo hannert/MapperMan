@@ -12,19 +12,19 @@ import { Button } from '@mui/material';
  * @returns Fork Button for Map Card Actions
  */
 export default function ForkButton(props){
+    const {toggleForkDialog, handleActionClick} = props;
 
-    const id = props.mapId
-    function handleDelete(e){
+    // Function to stage map to be forked. Should call store to open the ForkDialog, while passing MapID.
+    function handleFork(e){
         e.stopPropagation();
-        console.log(id)
+        console.log("Fork map button clicked")
+        handleActionClick();
+        toggleForkDialog();
     }
 
-    function mouseDown(e){
-        e.stopPropagation ();
-    }
     
     return (
-        <Button onClick={handleDelete} onMouseDown={mouseDown} style={{maxWidth: '35px', maxHeight: '35px', minWidth: '35px', minHeight: '35px'}}>
+        <Button onClick={handleFork} style={{maxWidth: '35px', maxHeight: '35px', minWidth: '35px', minHeight: '35px'}}>
             <ForkRightIcon style={{fontSize:'16pt', color:'gray'}} />
         </Button>  
     )
