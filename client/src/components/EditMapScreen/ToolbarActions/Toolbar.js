@@ -17,7 +17,6 @@ export default function Toolbar(){
         display: 'flex', flexDirection:'column', gap:'10px', zIndex: 999}}>
             {/*Had to explicitly set width to stop buttons from changing width when finish button 
             was clicked. 64 is default value */}
-            
             <MouseButton></MouseButton>
             <AddVertexButton></AddVertexButton>
             <RemoveVertexButton></RemoveVertexButton>

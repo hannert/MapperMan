@@ -1,15 +1,18 @@
 import { Button, Typography } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { editTools, setEditTool } from "../../../app/store-actions/leafletEditing";
 
 export default function CancelButton(props){
     
     // cancel function to stop editing in some mode
     const {cancelFunction, setHidden} = props;
+    const dispatch = useDispatch();
 
     function handleClick(){
         console.log(props);
         cancelFunction();
         setHidden(true);
-
+        dispatch(setEditTool(null));
     }
 
     return (
