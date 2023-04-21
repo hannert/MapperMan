@@ -51,11 +51,11 @@ createMap = async (req, res) => {
 
 getMapById = async (req, res) => {
     console.log("loading map");
-    console.log(req);
+    // console.log(req);
     // use bcrypt to check if the map is in the users owned list
     await Map.findById({ _id: req.params.id }).then((map) => {
         console.log("Found Map!")
-        console.log(map);
+        // console.log(map);
         if (map) {
             return res.status(200).json({ success: true, map: map})
         }

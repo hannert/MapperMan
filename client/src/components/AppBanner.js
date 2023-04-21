@@ -1,6 +1,4 @@
-import { Comment, ContentCopy, Delete, ForkRight, GroupAdd, Map, Save, Upload } from '@mui/icons-material';
-import EditIcon from '@mui/icons-material/Edit';
-import Face5Icon from '@mui/icons-material/Face5';
+import { Face5 } from '@mui/icons-material';
 import { Alert, Avatar, Button, Snackbar, TextField } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -14,14 +12,14 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { clear, deleteMap, forkMapThunk, renameMap } from '../app/store-actions/editMapList';
-
 import store from '../app/store';
 import { logout, logoutThunk } from '../app/store-actions/accountAuth';
-import { renameMapThunk, deleteMapThunk } from '../app/store-actions/editMapList';
+import { clear } from '../app/store-actions/editMapList';
+import EditMapActions from './AppBanner/EditMapActions';
+import ViewMapActions from './AppBanner/ViewMapActions';
 
 // import PlaylisterToolbar from './PlaylisterToolbar';
 
@@ -132,81 +130,6 @@ function AppBanner() {
         navigate('/register/')
     }
 
-    const [mapRenameOpen, setMapRenameOpen] = useState(false);
-    const resetRenameTextField = () =>{
-        setMapRenameField("");
-    }
-
-    const handleMapRenameOpen = () =>{
-        setMapRenameOpen(true);
-    }
-    const handleMapRenameClose = () =>{
-        resetRenameTextField();
-        setMapRenameOpen(false);
-    }
-
-    const handleRenameSubmit = () =>{
-        dispatch(renameMapThunk({id: mapId, newName: mapRenameField})).unwrap().then((res)=>{
-            console.log(res);
-            dispatch(renameMap({
-                id: res.id,
-                name: res.name
-            }));   
-        }).catch((err)=>{
-            console.log(err);
-        });
-        resetRenameTextField();
-        setMapRenameOpen(false);
-    }
-    const handleRenameTextFieldChange = (event) =>{
-        setMapRenameField(event.target.value);
-    }
-    
-    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-    const handleOpenDeleteMapDialog = () =>{
-        setDeleteDialogOpen(true);
-    }
-    const handleCloseDeleteMapDialog = () =>{
-        setDeleteDialogOpen(false)
-    }
-
-    const handleDeleteMapConfirm = () =>{
-        // Dispatch delete thunk, call it with .then(), based off response
-        // dispatch deleteMap action if success, else do nothing
-        dispatch(deleteMapThunk({
-            id: mapId,
-            user: user
-        })).unwrap().then((res)=>{
-            dispatch(deleteMap());
-        }).catch((error) =>{
-            console.log(error);
-        })
-
-        navigate("/maps");
-        setDeleteDialogOpen(false);
-    }
-
-
-    const [forkDialogOpen, setForkDialogOpen] = useState(false);
-    const handleOpenForkMapDialog = () =>{
-        setForkDialogOpen(true);
-    }
-    const handleCloseForkMapDialog = () =>{
-        setForkDialogOpen(false)
-    }
-
-    const handleForkMapConfirm = () =>{
-        // Dispatch fork thunk, call it with .then(), based off response
-        // dispatch forkMap action if success, else do nothing
-        dispatch(forkMapThunk({id: mapId, user: user})).unwrap().then((res)=>{
-            console.log(res);
-            console.log("map forked");
-        }).catch(error =>{
-            console.log(error);
-        });
-        navigate("/maps");
-        setForkDialogOpen(false);
-    }
 
     
 
@@ -294,44 +217,7 @@ function AppBanner() {
       </Dialog>
     )
 
-    const renameDialog = (
-        <Dialog open={mapRenameOpen} onClose={handleMapRenameClose} fullWidth maxWidth='sm'>
-            <DialogTitle>Enter new name for: {mapName}</DialogTitle>
-            <DialogContent>
-                <TextField 
-                    fullWidth
-                    label='New Map Name'
-                    onChange={handleRenameTextFieldChange}
-                    value={mapRenameField}
-                />
-            </DialogContent>
-            <DialogActions>
-                <Button  onClick={handleMapRenameClose}>Cancel</Button>
-                <Button  variant='contained'onClick={handleRenameSubmit}>Confirm</Button>
-            </DialogActions>
-        </Dialog>
-    )
 
-    const deleteDialog = (
-        <Dialog open={deleteDialogOpen} onClose={handleCloseDeleteMapDialog} fullWidth maxWidth='sm'>
-            <DialogTitle>Delete {mapName}?</DialogTitle>
-            <DialogActions>
-                <Button  onClick={handleCloseDeleteMapDialog}>Cancel</Button>
-                <Button  variant='contained'onClick={handleDeleteMapConfirm}>Confirm</Button>
-            </DialogActions>
-        </Dialog>
-    )
-
-
-    const forkDialog = (
-        <Dialog open={forkDialogOpen} onClose={handleCloseForkMapDialog} fullWidth maxWidth='sm'>
-            <DialogTitle>Fork {mapName}?</DialogTitle>
-            <DialogActions>
-                <Button  onClick={handleCloseForkMapDialog}>Cancel</Button>
-                <Button  variant='contained'onClick={handleForkMapConfirm}>Confirm</Button>
-            </DialogActions>
-        </Dialog>
-    )
     // ! ------------- End for placeholder modals
 
 
@@ -357,12 +243,12 @@ function AppBanner() {
             }}
         >
             <MenuItem onClick={handleToLogin}>
-                <Typography variant='h6'>
+                <Typography>
                     Login
                 </Typography>
             </MenuItem>
             <MenuItem onClick={handleToCreate}>
-                <Typography variant='h6'>
+                <Typography>
                     Create New Account
                 </Typography>
             </MenuItem>
@@ -384,85 +270,52 @@ function AppBanner() {
             open={isMenuOpen}
             onClose={handleMenuClose}
         >
-            <MenuItem onClick={handleLogout}>Logout</MenuItem>
+            <MenuItem onClick={handleLogout}>
+                <Typography>
+                    Logout
+                </Typography>
+            </MenuItem>
         </Menu>        
 
-    let playListerToolbar = "";
     let menu = loggedOutMenu;
     if (loggedIn) {
         menu = loggedInMenu;
     }
 
-    // /** Gets the current map name from the store */
-    // const getCurrentMapName = () => {
-    //     // if(map){
-    //     //     apis.getMapById(map).then((response) => {
-    //     //         console.log(response.data.map.name);
-    //     //         return response.data.map.name;
-    //     //     }
-    //     // )}
-    //     return "unknown"
-    // }
-
-    // Since we dont have auth set up, this will always return account circle
-
-
-
-
+    // Figure out the current path the user is on
+    // Display buttons / Map name conditionally
     let screen = location.pathname;
-    let tempToolbar = '';
-    let nowEditingText='';
+    let buttonGroup = '';
+    let actionText='';
+
+    // If we are on MapEditScreen
     if(screen === '/maps/edit') {
-        tempToolbar = (
-            <Box>
-                <IconButton>
-                    <Save onClick={handleSaveOpen}/>
-                </IconButton>
-                <IconButton>
-                    <GroupAdd onClick={handleCollabOpen}/>
-                </IconButton>
-                <IconButton>
-                    <Upload onClick={handlePublishOpen}/>
-                </IconButton>
-            </Box>
-        )
-        
-        nowEditingText = (
-            <Box>
-            <Typography>
+        actionText = (
+            <Typography sx={{fontFamily:'Roboto mono'}}>
                 Now Editing: {mapName}
-                <IconButton>
-                    <EditIcon onClick={handleMapRenameOpen}/>
-                </IconButton>
-                <IconButton>
-                    <Delete onClick={handleOpenDeleteMapDialog}/>
-                </IconButton>
-                <IconButton>
-                    <ForkRight onClick={handleOpenForkMapDialog}/>
-                </IconButton>
             </Typography>
-            
-            </Box>
         )
-
+        buttonGroup = (
+            <EditMapActions />
+        )
     }
+    // If we are on MapViewScreen
     if(screen.startsWith('/maps/view/') === true) {
-        tempToolbar = (
-            <Box>
-                <IconButton>
-                    <Comment />
-                </IconButton>
-                <IconButton>
-                    <ContentCopy onClick={handleCopyOpen}/>
-                </IconButton>
-            </Box>
+        buttonGroup = (
+            <ViewMapActions />
+        );
+        actionText = (
+            <Typography sx={{fontFamily:'Roboto mono'}}>
+                Now viewing {mapName}
+            </Typography>
         )
     }
 
-    let accountCircle = <div></div>
+    let accountCircle = ""
 
-    if (loggedIn) {
-       accountCircle = <Box sx={{ height: "50px", display: { xs: 'none', md: 'flex' } }}>
+    if (loggedIn === true) {
+       accountCircle = 
+        <Box sx={{ height: "50px", display: { xs: 'none', md: 'flex' }}}>
             <IconButton
                 size="large"
                 edge="end"
@@ -472,10 +325,27 @@ function AppBanner() {
                 onClick={handleProfileMenuOpen}
                 color="inherit"
             >
-                {/* <Face5Icon /> */}
-                { <div>{userInitials}</div> }
+                <Typography>
+                    {userInitials}
+                </Typography>
             </IconButton>
         </Box>
+    } else if (loggedIn === false){
+        accountCircle = (
+            <Box sx={{ height: "50px", display: { xs: 'none', md: 'flex' }}}>
+            <IconButton
+                size="large"
+                edge="end"
+                aria-label="account of current user"
+                aria-controls={menuId}
+                aria-haspopup="true"
+                onClick={handleProfileMenuOpen}
+                color="inherit"
+            >
+                <Face5 />
+            </IconButton>
+        </Box>
+        )
     }
     return (
         <Box sx={{color:'black', width:'100%'}}>
@@ -492,17 +362,12 @@ function AppBanner() {
                         </Typography>                        
                         {/* <img src="https://i.ibb.co/SnCcPnW/Mapper-Man-Logo-Transparent.png" height={35} width={35}/> */}
                     </Link>
-                    <Link to='/maps/edit'>
-                        <EditIcon />
-                    </Link>
-                    <Link to='/maps'>
-                        <Map />
-                    </Link>
-                    <Box sx={{ flexGrow: 1, ml: 50}}>
-                    {nowEditingText}
+                    <Box sx={{ flexGrow: 1, textAlign:'center'}}>
+                        {actionText}
                     </Box>
-                    
-                    {tempToolbar}
+                    <Box sx={{backgroundColor:'#2C2E34'}}>
+                        {buttonGroup}
+                    </Box>
                     {accountCircle}
                     
                 </Toolbar>
@@ -511,18 +376,14 @@ function AppBanner() {
             {copyMapDialog}
             {publishMapDialog}
             {collabDialog}
-            {renameDialog}
-            {deleteDialog}
-            {forkDialog}
+
             <Snackbar>
 
             </Snackbar>
             {
                 menu
             }
-            {
-                playListerToolbar
-            }
+
 
         </Box>
     );

@@ -4,11 +4,13 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { deleteMapThunk } from '../../../app/store-actions/editMapList';
 
 export default function DeleteDialog (props) {
     const {open, toggleDeleteDialog } = props;
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const mapID = useSelector((state) => state.editMapList.mapCardClickedId, shallowEqual);
     const mapName = useSelector((state) => state.editMapList.mapCardClickedName, shallowEqual);
     const user = useSelector((state) => state.accountAuth.user);
@@ -22,6 +24,7 @@ export default function DeleteDialog (props) {
           console.log(error);
       })
       toggleDeleteDialog();
+      navigate('/')
     }
 
 
