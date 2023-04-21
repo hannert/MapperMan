@@ -82,6 +82,7 @@ export default function AddMapDialog(props){
             if(event.target.files){
                 console.log(event.target.files);
                 setGeoJsonFile(event.target.files[0]);
+                console.log(event.target.files[0]);
                 var reader = new FileReader();
                 reader.onload = function() {
                     setGeoJsonFile(JSON.parse(reader.result));
@@ -132,8 +133,8 @@ export default function AddMapDialog(props){
     function handleGeoJsonConfirm(){
         console.log("confirm button for geojson");
         
-        let options = {tolerance: 0.01, highQuality: false};
-        let simplified = turf.simplify(geoJsonFile, options);
+        let options = {tolerance: 0.001, highQuality: true};
+        // let simplified = turf.simplify(geoJsonFile, options);
         console.log(geoJsonFile);
         if(user !== null){
             dispatch(createMapThunk({owner: user, mapData: geoJsonFile})).unwrap().then((res) => {

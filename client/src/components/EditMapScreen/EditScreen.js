@@ -13,6 +13,8 @@ import * as L from 'leaflet';
 
 import { setCurrentGeoJSON } from '../../app/store-actions/leafletEditing';
 import LeafletContainer from './LeafletContainer';
+import Toolbar from './ToolbarActions/Toolbar';
+
 
 export default function EditScreen(){
 
@@ -22,10 +24,8 @@ export default function EditScreen(){
 
     useEffect(() => {
         if (mapId) {
-            console.log('Edit Screen Render');
             dispatch(getMapByIdThunk({id: mapId})).unwrap().then(async(response) => {
                 dispatch(setCurrentGeoJSON(response.map.mapData))
-                console.log(response.map.mapData);
             }).catch((error) => {
                 console.log(error);
             });
@@ -39,7 +39,7 @@ export default function EditScreen(){
         leafletSize = {width:'65%', height: '100%'}
     }
     if (propertyOpen === false) {
-        leafletSize = {width:'95%', height: '100%', margin:'auto'}
+        leafletSize = {width:'100%', height: '100%', margin:'auto'}
     }
 
 
@@ -121,61 +121,12 @@ export default function EditScreen(){
             <Button onClick={handleToggleProperty} sx={{position:'absolute', right:0, zIndex: 999}}>
                 Open Property
             </Button>
-            <Box sx={{height:'100%', display:'flex'}}>
-                <Box sx={{width:'5%', display: 'flex', flexDirection:'column', gap:'10px'}}>
-                    <Tooltip title='cursor' placement='right'>
-                        <Button variant='contained'>
-                            <Mouse />
-                        </Button>
-                    </Tooltip>
-                    <Tooltip title='add vertex' placement='right'> 
-                        <Button variant='contained'>
-                            <Circle />
-                        </Button>
-                    </Tooltip>
-                    <Tooltip title='remove vertex' placement='right'>
-                        <Button variant='contained'>
-                            <RemoveCircle />
-                        </Button>
-                    </Tooltip>
-
-                    <Tooltip title='polyline' placement='right'>
-                        <Button variant='contained'>
-                            <Timeline />
-                        </Button>
-                    </Tooltip>
-
-                    <Tooltip title='add subregion' placement='right'>
-                        <Button variant='contained'>
-                            <AddLocation />
-                        </Button>
-                    </Tooltip>
-                    <Tooltip title='remove subregion' placement='right'>
-                        <Button variant='contained'>
-                            <WrongLocation />
-                        </Button>
-                    </Tooltip>
-                    <Tooltip title='merge subregion' placement='right'>
-                        <Button variant='contained'>
-                            <Merge />
-                        </Button>
-                    </Tooltip>
-                    <Tooltip title='undo' placement='right'>
-                        <Button variant='contained'>
-                            <Undo />
-                        </Button>
-                    </Tooltip>
-                    <Tooltip title='redo' placement='right'>
-                        <Button variant='contained'>
-                            <Redo />
-                        </Button>
-                    </Tooltip>
-                </Box>
+            <Box sx={{height:'100%', display:'flex', position:'relative'}}>
+                <Toolbar></Toolbar>
                 <Box sx ={leafletSize}>
                     <LeafletContainer></LeafletContainer>
                 </Box>
                 {propertyComponent}
-
             </Box>
 
 

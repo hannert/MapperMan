@@ -31,18 +31,13 @@ export default function MapsScreen(){
     const maps = useSelector((state) => state.editMapList.mapList);
     useEffect(() => {
         dispatch(getLoggedInThunk()).unwrap().then((response) => {
-            console.log(response.loggedIn);
-            console.log(response)
             dispatch(loginUser(response.user));
         })
     }, [])
 
     useEffect(() => {
-        console.log(user);
         if (user) {
             dispatch(getMapsDataByAccountThunk({user: user})).unwrap().then((response) => {
-                console.log("Get maps response")
-                console.log(response);
                 dispatch(setMapList(response.maps));
             }).catch((error) => {
                 console.log(error);

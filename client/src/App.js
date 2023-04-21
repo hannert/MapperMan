@@ -22,6 +22,7 @@ const themeOptions = createTheme({
     mode: 'dark',
     primary: {
       main: '#1976d2',
+      dark: '#2B2B2B'
     },
     secondary: {
       main: '#9c27b0',
@@ -55,7 +56,6 @@ const themeOptions = createTheme({
 });
 
 function App() {
-
   return (
     // <div className="App">
     //   <FileUpload />

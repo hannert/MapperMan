@@ -12,10 +12,10 @@ function HomeWrapper() {
 
     useEffect(() => {
         dispatch(getLoggedInThunk()).unwrap().then((response) => {
-            console.log(response.loggedIn);
-            console.log(response)
             dispatch(loginUser(response.user));
-        })
+        }).catch((error) => {
+            console.log(error);
+        });
     }, [])
 
     if(loggedIn){

@@ -53,7 +53,6 @@ export default function MapCard(props) {
      * any of these actions. 
     */
     function handleActionClick(){
-        console.log("setting the mapId of the card that was clicked in the redux store to: " + map.id);
         dispatch(setMapCardClicked({
             id:map.id
         }))
@@ -67,7 +66,6 @@ export default function MapCard(props) {
         let day = dateObj.getUTCDate();
         let year = dateObj.getUTCFullYear();
         date = year + "/" + month + "/" + day;
-        console.log(date);
     }
 
     return (
