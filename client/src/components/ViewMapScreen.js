@@ -1,13 +1,11 @@
 import { Box, Grid } from '@mui/material';
 import hash from 'object-hash';
+import { useEffect, useState } from 'react';
 import { GeoJSON, MapContainer, TileLayer } from "react-leaflet";
-import { useParams } from "react-router-dom";
-import CommentsList from "./CommentsList";
-import file from './NA.json'; //hardcoded geojson
 import { useDispatch, useSelector } from 'react-redux';
-import { useState, useEffect } from 'react';
-import { getMapByIdThunk } from '../app/store-actions/editMapList';
-
+import { useParams } from "react-router-dom";
+import { getMapByIdThunk, setActiveMap } from '../app/store-actions/editMapList';
+import CommentsList from "./CommentsList";
 
 
 function ViewMapScreen() {
@@ -30,10 +28,11 @@ function ViewMapScreen() {
     useEffect(() => {
         if (id) {
             dispatch(getMapByIdThunk({id: id})).unwrap().then((response) => {
-                console.log("Got map by id");
+                // console.log("Got map by id");
                 if(response.map.published){
-                    console.log(response.map);
+                    // console.log(response.map);
                     setMapFile(response.map.mapData);
+                    dispatch(setActiveMap({name:response.map.name, id:response.map._id}))
                 }
                 else{
                     unpublished = true;
@@ -52,9 +51,6 @@ function ViewMapScreen() {
 
     return(
         <Box sx={{height:"100%"}}>
-            <Box width='100%' color="white" bgcolor='#2B2B2B' sx={{textAlign:'center'}}>
-                        VIEWING: {mapName}
-                    </Box>
             <Grid container direction='row'sx={{height:'100%'}}>
 
                 <Grid item xs={4}>

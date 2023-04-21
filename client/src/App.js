@@ -49,6 +49,31 @@ const themeOptions = createTheme({
           fontFamily: 'koulen'
         }
       }
+    },
+    MuiTypography: {
+      styleOverrides: {
+        root: {
+          fontFamily: 'Roboto mono'
+        }
+      }
+    },
+    MuiSvgIcon: {
+      styleOverrides: {
+        root: {
+          '&:hover': {
+            color: '#FF3B6B',
+            transition: 'all 0.3s ease'
+          }
+        },
+
+      }
+    },
+    MuiFormControlLabel: {
+      styleOverrides: {
+        root: {
+          fontFamily: 'Roboto mono'
+        }
+      }
     }
   }
   

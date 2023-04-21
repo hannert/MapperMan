@@ -1,12 +1,12 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from "@mui/material";
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { publishMapThunk } from "../../../app/store-actions/editMapList";
+import { publishMapThunk } from "../../app/store-actions/editMapList";
 
-export default function PublishDialog(props){
+export default function PublishModal(props){
     const { open, togglePublishDialog } = props;
     const dispatch = useDispatch();
-    const mapID = useSelector((state) => state.editMapList.mapCardClickedId, shallowEqual);
-    const mapName = useSelector((state) => state.editMapList.mapCardClickedName, shallowEqual);
+    const mapID = useSelector((state) => state.editMapList.activeMapId, shallowEqual);
+    const mapName = useSelector((state) => state.editMapList.activeMapName, shallowEqual);
 
     const handleConfirm = () =>{
         console.log("map Id that will be published: " + mapID)

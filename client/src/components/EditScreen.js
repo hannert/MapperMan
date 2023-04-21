@@ -5,9 +5,7 @@ import { Box } from "@mui/system";
 import hash from 'object-hash';
 import React, { useEffect, useState } from 'react';
 import { GeoJSON, MapContainer, TileLayer } from "react-leaflet";
-import file from './NA.json';
 import { useDispatch, useSelector } from 'react-redux';
-
 import { getMapByIdThunk } from '../app/store-actions/editMapList';
 
 export default function EditScreen(){
@@ -17,13 +15,14 @@ export default function EditScreen(){
     // the default value in the usestate is just blank
     const dispatch = useDispatch();
 
-    const [mapFile, setMapFile] = useState({
-            "type": "FeatureCollection",
-            "name": "jsontemplate",
-            "features": [
-            { "type": "Feature", "properties": { "a1": "", "a2": "", "a3": "", "a4": ""}, "geometry": null }
-            ]
-        });
+    const [mapFile, setMapFile] = useState(
+        {
+        "type": "FeatureCollection",
+        "name": "jsontemplate",
+        "features": [
+        { "type": "Feature", "properties": { "a1": "", "a2": "", "a3": "", "a4": ""}, "geometry": null }
+        ]
+    });
 
     useEffect(() => {
         if (map) {
@@ -108,8 +107,7 @@ export default function EditScreen(){
                                         <Button>
                                             <AddCircle/>
                                         </Button>    
-                                    </Box>
-                                                                    
+                                    </Box>                        
                                 </TableCell>
                             </TableRow>
                         </TableBody>

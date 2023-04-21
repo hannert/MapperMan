@@ -51,11 +51,11 @@ createMap = async (req, res) => {
 
 getMapById = async (req, res) => {
     console.log("loading map");
-    console.log(req);
+    // console.log(req);
     // use bcrypt to check if the map is in the users owned list
     await Map.findById({ _id: req.params.id }).then((map) => {
         console.log("Found Map!")
-        console.log(map);
+        // console.log(map);
         if (map) {
             return res.status(200).json({ success: true, map: map})
         }
@@ -107,7 +107,7 @@ getPublicMaps = async (req, res) => {
     console.log("Getting public maps");
     let data = []
     await Map.find({published:true}).then(async(maps) => {
-        console.log(maps);
+        // console.log(maps);
 
         for (const map of maps){
             await Account.find({_id: map.owner}).then((account) => {
