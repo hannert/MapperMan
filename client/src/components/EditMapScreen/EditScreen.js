@@ -7,11 +7,11 @@ import React, { useEffect, useRef, useState } from 'react';
 import { GeoJSON, MapContainer, TileLayer } from "react-leaflet";
 import { useDispatch, useSelector } from 'react-redux';
 import { getMapByIdThunk } from '../../app/store-actions/editMapList';
-import 'leaflet-editable';
 
+import 'leaflet-editable';
 import * as L from 'leaflet';
 
-import { setCurrentGeoJSON, setInitialized } from '../../app/store-actions/leafletEditing';
+import { setCurrentGeoJSON } from '../../app/store-actions/leafletEditing';
 import LeafletContainer from './LeafletContainer';
 
 export default function EditScreen(){
@@ -19,36 +19,6 @@ export default function EditScreen(){
     const [propertyOpen, setPropertyOpen] = useState(false)
     const mapId = useSelector((state) => state.editMapList.activeMapId);
     const dispatch = useDispatch();
-    const mapFile = useSelector((state) => state.leafletEditing.currentGeoJSON);
-    
-    const init = useSelector((state) => state.leafletEditing.initialized);
-    const [map, setMap] = useState({});
-    const mapRef = useRef(null);
-
-    // For a ref out of a leaflet div
-
-    // L.Map.addInitHook(function () {
-    //    mapRef = this; 
-    // });
-
-    L.Map.addInitHook(function () {
-        L.Map.mergeOptions({
-            options:{
-                editable: true
-            }
-        })
-    });
-
-    useEffect(() => {
-        if(mapRef.current !== null){
-            console.log('Trying to attach editing tools')
-            console.log(mapRef.current);
-            // this sets a property called edit tools options to true
-            (mapRef.current).editTools = new L.Editable(mapRef.current, {editable: true});
-            // this add an 'editable' : true property on leaflet map instance
-            mapRef.current.options['editable'] = true;
-        }
-    }, [mapRef.current]);
 
     useEffect(() => {
         if (mapId) {
@@ -56,32 +26,11 @@ export default function EditScreen(){
             dispatch(getMapByIdThunk({id: mapId})).unwrap().then(async(response) => {
                 dispatch(setCurrentGeoJSON(response.map.mapData))
                 console.log(response.map.mapData);
-                // Setting up leaflet div
-
-                // var m = L.map('map').setView([0, 0], 0);
-                // L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                //     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-                // }).addTo(m);
-                // console.log(m);
-                // L.geoJSON(response.map.mapData).addTo(m);
-                // var m = L.map('mapId');
-                // console.log(m);
-                if(mapRef !== null){
-                    var polyline = L.polyline([[43.1, 1.2], [43.2, 1.3],[43.3, 1.2]]).addTo(mapRef.current);
-                    polyline.enableEdit();
-                }
-
-                console.log(mapRef.current);
-                dispatch(setInitialized());
             }).catch((error) => {
                 console.log(error);
             });
         }   
     }, [mapId])
-
-
-
-
     
 
     let leafletSize = ''
@@ -223,21 +172,7 @@ export default function EditScreen(){
                     </Tooltip>
                 </Box>
                 <Box sx ={leafletSize}>
-                    {/** The ONLY use React leaflet will have is to initialize the map */}
-                    <MapContainer center={[0,0]} zoom={0} doubleClickZoom={false} ref={mapRef}
-                        id="mapId" style={{width:'100%', height:'100%'}}>
-                            <TileLayer url='http://{s}.tile.osm.org/{z}/{x}/{y}.png' attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors' />
-                            <GeoJSON 
-                                key={hash(mapFile)} 
-                                data={mapFile} 
-                                />
-                    </MapContainer>
-                    {/* <div>
-                        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.3/dist/leaflet.css" integrity="sha256-kLaT2GOSpHechhsozzB+flnD+zUyjE2LlfWPgU04xyI=" crossorigin=""/>
-                        <script src="https://unpkg.com/leaflet@1.9.3/dist/leaflet.js" integrity="sha256-WBkoXOwTeyKclOHuWtc+i2uENFpDZ9YPdf5Hf+D7ewM=" crossorigin=""></script>
-                        <div id="map"></div>    
-                    </div> */}
-
+                    <LeafletContainer></LeafletContainer>
                 </Box>
                 {propertyComponent}
 
