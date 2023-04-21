@@ -13,7 +13,11 @@ export default function CancelButton(props){
     }
 
     return (
-        <Button onClick ={handleClick} size="small" sx={{backgroundColor:'gray'}}>
+        <Button onClick ={handleClick} size="small" sx={{backgroundColor:'gray',
+        '&:hover': {
+           backgroundColor:'gray',
+           filter: 'brightness(0.85)',
+        }}}>
             <Typography fontSize={10} variant='overline' sx={{color:'white'}}>
                 Cancel
             </Typography>
