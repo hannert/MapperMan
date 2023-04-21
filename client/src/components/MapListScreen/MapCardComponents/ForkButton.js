@@ -1,5 +1,5 @@
 import ForkRightIcon from '@mui/icons-material/ForkRight';
-import { Button } from '@mui/material';
+import { Button, Tooltip , IconButton} from '@mui/material';
 
 /**
  * This component forks a map. Will call store commands to change the map to go into the repository
@@ -24,8 +24,11 @@ export default function ForkButton(props){
 
     
     return (
-        <Button onClick={handleFork} style={{maxWidth: '35px', maxHeight: '35px', minWidth: '35px', minHeight: '35px'}}>
-            <ForkRightIcon style={{fontSize:'16pt', color:'gray'}} />
-        </Button>  
+        <Tooltip title='Fork map'>
+            <Button onClick={handleFork} style={{maxWidth: '35px', maxHeight: '35px', minWidth: '35px', minHeight: '35px'}}>
+                <ForkRightIcon style={{fontSize:'16pt', color:'gray'}} />
+            </Button>  
+        </Tooltip>
+        
     )
 }

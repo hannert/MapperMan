@@ -107,7 +107,7 @@ getPublicMaps = async (req, res) => {
     console.log("Getting public maps");
     let data = []
     await Map.find({published:true}).then(async(maps) => {
-        console.log(maps);
+        // console.log(maps);
 
         for (const map of maps){
             await Account.find({_id: map.owner}).then((account) => {

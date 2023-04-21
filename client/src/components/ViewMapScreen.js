@@ -28,9 +28,9 @@ function ViewMapScreen() {
     useEffect(() => {
         if (id) {
             dispatch(getMapByIdThunk({id: id})).unwrap().then((response) => {
-                console.log("Got map by id");
+                // console.log("Got map by id");
                 if(response.map.published){
-                    console.log(response.map);
+                    // console.log(response.map);
                     setMapFile(response.map.mapData);
                     dispatch(setActiveMap({name:response.map.name, id:response.map._id}))
                 }

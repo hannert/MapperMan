@@ -14,7 +14,7 @@ export default function MapCardActions(props){
     const publicRepo = useSelector((state) => state.editMapList.publicRepo);
 
     return (
-        <Box>
+        <Box sx={{marginRight:'5%'}}>
             {!published && <PublishButton togglePublishDialog={togglePublishDialog} handleActionClick={handleActionClick}></PublishButton>}
             {published && <ForkButton toggleForkDialog={toggleForkDialog} handleActionClick={handleActionClick}></ForkButton>}
             {!publicRepo && <DeleteButton toggleDeleteDialog={toggleDeleteDialog} handleActionClick={handleActionClick}></DeleteButton>}

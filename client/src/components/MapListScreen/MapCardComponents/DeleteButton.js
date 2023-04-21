@@ -1,5 +1,5 @@
 import DeleteIcon from '@mui/icons-material/Delete';
-import { Button } from "@mui/material";
+import { Button, Tooltip } from "@mui/material";
 
 /**
  * This component deletes a map. Will call store commands to delete the map from the database and the user's repository
@@ -25,8 +25,11 @@ export default function DeleteButton(props){
 
 
     return (
-        <Button onClick={handleDelete} style={{maxWidth: '35px', maxHeight: '35px', minWidth: '35px', minHeight: '35px'}}>
-            <DeleteIcon style={{fontSize:'16pt', color:'gray'}} />
-        </Button>  
+        <Tooltip title='Delete map'>
+            <Button onClick={handleDelete} style={{maxWidth: '35px', maxHeight: '35px', minWidth: '35px', minHeight: '35px'}}>
+                <DeleteIcon style={{fontSize:'16pt', color:'gray'}} />
+            </Button>  
+        </Tooltip>
+        
     )
 }

@@ -1,5 +1,5 @@
 import PublishIcon from '@mui/icons-material/Publish';
-import { Button } from '@mui/material';
+import { Button, Tooltip } from '@mui/material';
 
 
 /**
@@ -29,10 +29,12 @@ export default function PublishButton(props){
 
     
     return (
+        <Tooltip title='Publish map'>
+            <Button onClick={handlePublish} onMouseDown={mouseDown} style={{maxWidth: '35px', maxHeight: '35px', minWidth: '35px', minHeight: '35px'}}>
+                <PublishIcon style={{fontSize:'16pt', color:'gray'}} />
+            </Button>  
+        </Tooltip>
         
-        <Button onClick={handlePublish} onMouseDown={mouseDown} style={{maxWidth: '35px', maxHeight: '35px', minWidth: '35px', minHeight: '35px'}}>
-            <PublishIcon style={{fontSize:'16pt', color:'gray'}} />
-        </Button>  
     )
 
 }
