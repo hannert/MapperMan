@@ -29,11 +29,12 @@ export default function MapsScreen(){
     const user = useSelector((state) => state.accountAuth.user);
     const guest = useSelector((state) => state.accountAuth.guest);
     const maps = useSelector((state) => state.editMapList.mapList);
-    useEffect(() => {
-        dispatch(getLoggedInThunk()).unwrap().then((response) => {
-            dispatch(loginUser(response.user));
-        })
-    }, [])
+    
+    // useEffect(() => {
+    //     dispatch(getLoggedInThunk()).unwrap().then((response) => {
+    //         dispatch(loginUser(response.user));
+    //     })
+    // }, [])
 
     useEffect(() => {
         if (user) {
