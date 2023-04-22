@@ -14,6 +14,7 @@ import * as L from 'leaflet';
 import { setCurrentGeoJSON } from '../../app/store-actions/leafletEditing';
 import LeafletContainer from './LeafletContainer';
 import Toolbar from './ToolbarActions/Toolbar';
+import PropertyEditor from './PropertyEditor';
 
 
 export default function EditScreen(){
@@ -47,72 +48,12 @@ export default function EditScreen(){
         setPropertyOpen(!propertyOpen);
     }
 
-    function createData(name, type, value) {
-        return { name, type, value};
-    }
-    const rows = [
-        createData('Capital', 'String', 'Bajookieland'),
-        createData('Prime Minister', 'String', 'Christopher'),
-        createData('isUnlocked', 'Boolean', 'true')
-    ]
 
 
 
-    let propertyComponent = <Box id='property-editor'></Box>;
+    let propertyComponent = '';
     if (propertyOpen === true) {
-        propertyComponent = (
-            <Box id='property-editor' sx={{width:'35%', height:'100%', backgroundColor:'#1D2026', display:'flex',  flexDirection:'column', alignItems:'flex-start'}}>
-                <IconButton onClick={handleToggleProperty} >
-                    <ChevronLeftIcon />
-                </IconButton>
-                <Typography variant='h4' sx={{fontFamily:'Koulen', color:"#B9D3E9", marginLeft:'20px'}}>
-                    Edit Region Properties
-                </Typography>
-                <TableContainer>
-                    <Table>
-                        <TableHead>
-                            <TableRow>
-                                <TableCell>
-                                    <Typography variant='h6' sx={{fontFamily:'koulen'}}>
-                                        Name
-                                    </Typography>
-                                </TableCell>
-                                <TableCell>
-                                    <Typography variant='h6' sx={{fontFamily:'koulen'}}>
-                                        Type
-                                    </Typography>
-                                </TableCell>
-                                <TableCell>
-                                    <Typography variant='h6' sx={{fontFamily:'koulen'}}>
-                                        Value
-                                    </Typography>
-                                </TableCell>
-                            </TableRow>
-                        </TableHead> 
-                        <TableBody>
-                            {
-                                rows.map((row) => (
-                                    <TableRow>
-                                        <TableCell>{row.name}</TableCell>
-                                        <TableCell>{row.type}</TableCell>
-                                        <TableCell>{row.value}</TableCell>
-                                    </TableRow>
-                                ))
-                            }
-                            <TableRow >
-                                <TableCell colSpan={3}>
-                                    <Box sx={{display:'flex', justifyContent:'center'}}>
-                                        <Button>
-                                            <AddCircle/>
-                                        </Button>    
-                                    </Box>                        
-                                </TableCell>
-                            </TableRow>
-                        </TableBody>
-                    </Table>
-                </TableContainer>
-            </Box>
-        )
+        propertyComponent = <PropertyEditor handleToggleProperty={handleToggleProperty}/>
     }
 
 

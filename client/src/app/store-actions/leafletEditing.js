@@ -36,9 +36,15 @@ export const leafletEditing = createSlice({
             state.mapRef = action.payload;
             console.log('Mapref in store');
             console.log(state.mapRef);
+        },
+        setFeatureClicked: (state, action) =>{
+            state.featureClicked = action.payload;
+            console.log("feature in store: ");
+            console.log(state.featureClicked)
         }
     }
 });
 
-export const { setPrevGeoJSON, setCurrentGeoJSON, setInitialized, setEditTool, setMapRef } = leafletEditing.actions;
+export const { setPrevGeoJSON, setCurrentGeoJSON, setInitialized, setEditTool, setMapRef,
+                setFeatureClicked } = leafletEditing.actions;
 export default leafletEditing.reducer;

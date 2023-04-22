@@ -4,7 +4,7 @@ import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
 import { useDispatch, useSelector } from 'react-redux';
 import hash from 'object-hash';
 import 'leaflet-editable';
-import { setMapRef } from '../../app/store-actions/leafletEditing';
+import { setFeatureClicked, setMapRef } from '../../app/store-actions/leafletEditing';
 
 export default function LeafletContainer(){
 
@@ -38,7 +38,11 @@ export default function LeafletContainer(){
                             console.log(e.target);
                             console.log(e.target.disableEdit());
                         }else{
+                            console.log("Event TARGET:")
                             console.log(e.target);
+
+                            dispatch(setFeatureClicked(feature));
+
                             console.log(e.target.enableEdit());
                             maps.push(e.target);
                         }
