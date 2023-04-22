@@ -12,7 +12,7 @@ function HomeWrapper() {
 
     useEffect(() => {
         dispatch(getLoggedInThunk()).unwrap().then((response) => {
-            if(response.loggedIn === null){
+            if(response.loggedIn === true){
                 dispatch(loginUser(response.user));
             }
         }).catch((error) => {
