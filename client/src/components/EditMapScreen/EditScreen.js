@@ -21,6 +21,7 @@ export default function EditScreen(){
 
     const [propertyOpen, setPropertyOpen] = useState(false)
     const mapId = useSelector((state) => state.editMapList.activeMapId);
+    const feature = useSelector((state)=>state.leafletEditing.featureClicked);
     const dispatch = useDispatch();
 
     useEffect(() => {
@@ -45,7 +46,9 @@ export default function EditScreen(){
 
 
     function handleToggleProperty () {
-        setPropertyOpen(!propertyOpen);
+        if(feature){
+            setPropertyOpen(!propertyOpen);
+        }
     }
 
 
