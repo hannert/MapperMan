@@ -80,12 +80,23 @@ export const publishMap = (id) => {
     })
 }
 
-export const editMapProperty = (id, index, property, value) =>{
+/**
+ * Edits the properties of a given feature, inserting it if it is new
+ * @param {*} id 
+ * @param {*} index 
+ * @param {*} property 
+ * @param {*} value 
+ * @param {*} newProperty Object that contains a boolean isNew and string Type fields, not currently used but
+ * can be used when  indicating a number type, but I think they can all be stored as strings
+ * @returns 
+ */
+export const editMapProperty = (id, index, property, value, newProperty) =>{
     return api.put(`/map/${id}/editProperty`,{
         id: id,
         index: index,
         property: property,
-        value: value
+        value: value,
+        newProperty: newProperty
     })
 }
 

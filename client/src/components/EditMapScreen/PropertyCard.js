@@ -23,7 +23,7 @@ export default function PropertyCard(props){
 
     function handleKeyPress(event) {
         if (event.code === "Enter") {
-            dispatch(editMapPropertyThunk({id: currMapId, index: featureIndex, property: propKey, value: value})).unwrap().then((res)=>{
+            dispatch(editMapPropertyThunk({id: currMapId, index: featureIndex, property: propKey, value: value, newProperty: {isNew: false, type: 'none'}})).unwrap().then((res)=>{
                 console.log(res);
             }).catch((err)=>{
                 console.log(err);

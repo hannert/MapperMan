@@ -1,4 +1,4 @@
-import { Button, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip, Typography } from '@mui/material';
+import { Button, FormControl, IconButton, MenuItem, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip, Typography } from '@mui/material';
 import { Box } from "@mui/system";
 import { AddCircle, AddLocation, Circle, Merge, Mouse, Redo, RemoveCircle, Timeline, Undo, WrongLocation } from '@mui/icons-material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
@@ -8,6 +8,8 @@ import PropertyCard from './PropertyCard';
 import { useState } from 'react';
 import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
+import { editMapPropertyThunk } from '../../app/store-actions/leafletEditing';
+
 
 
 
@@ -15,7 +17,10 @@ import Select from '@mui/material/Select';
 
 export default function PropertyEditor(props){
     const {handleToggleProperty} = props;
+    const dispatch = useDispatch();
     const feature = useSelector((state)=>state.leafletEditing.featureClicked);
+    const featureIndex = useSelector((state)=>state.leafletEditing.featureClickedIndex);
+    const currMapId = useSelector((state)=>state.editMapList.activeMapId);
     const [addNewPropertyMenuOpen, setAddNewPropertyMenuOpen] = useState(false);
     const [newNameText, setNewNameText] = useState("");
     const [newType, setNewType] = useState('string');
@@ -54,20 +59,23 @@ export default function PropertyEditor(props){
         setNewNameText(event.target.value);
     }
 
+    const handleUpdateType = (event) =>{
+        setNewType(event.target.value);
+        
+    }
+
     const handleUpdateValueText = (event) =>{
         setNewValue(event.target.value) 
     }
 
-    function handleKeyPress(event) {
-        event.stopPropagation()
-        if (event.code === "Enter") {
-            // dispatch(editMapPropertyThunk({id: currMapId, index: featureIndex, property: propKey, value: value})).unwrap().then((res)=>{
-            //     console.log(res);
-            // }).catch((err)=>{
-            //     console.log(err);
-            // });
-            // setEditActive(false);
-        }
+    function handleConfirm(event) {
+        console.log("confirm");
+        dispatch(editMapPropertyThunk({id: currMapId, index: featureIndex, property: newNameText, value: newValue, newProperty: {isNew: true, type: newType}})).unwrap().then((res)=>{
+            console.log(res);
+        }).catch((err)=>{
+            console.log(err);
+        });
+        
     }
 
     let newPropertyField = ''
@@ -81,7 +89,6 @@ export default function PropertyEditor(props){
                     fullWidth
                     label="Name"
                     name="Name"
-                    onKeyPress={handleKeyPress}
                     onChange={handleUpdateNameText}
                     defaultValue={newNameText}
                     inputProps={{style: {fontSize: 12}}}
@@ -91,7 +98,25 @@ export default function PropertyEditor(props){
             </TableCell>
                 
             <TableCell>
-                type
+                <FormControl>
+                <Select
+                    id="prop-type-select"
+                    value = {newType ? newType : ""}
+                    // label = "Type"
+                    onChange={handleUpdateType}
+                    style={{fontSize: "12px"}}
+                >
+
+                <MenuItem value={"string"}>
+                    String
+                </MenuItem>
+
+                <MenuItem value={"number"}>
+                    Number
+                </MenuItem>
+                
+                </Select>
+                </FormControl>
             </TableCell>
                 
             <TableCell>
@@ -101,13 +126,18 @@ export default function PropertyEditor(props){
                         fullWidth
                         label="Value"
                         name="Name"
-                        onKeyPress={handleKeyPress}
                         onChange={handleUpdateValueText}
                         defaultValue={newValue}
                         inputProps={{style: {fontSize: 12}}}
                         InputLabelProps={{style: {fontSize: 12}}}
                         autoFocus
                 />
+            </TableCell>
+
+            <TableCell>
+                <Button variant='contained' onClick={handleConfirm}>
+                    Confirm
+                </Button>
             </TableCell>
         </TableRow>
     }

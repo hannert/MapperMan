@@ -68,6 +68,10 @@ export default function LeafletContainer(){
                             }else{
                                 console.log(e.target);
                                 console.log(e.target.enableEdit());
+                                
+                                dispatch(setFeatureClicked(feature));
+                                dispatch(setFeatureIndexClicked(geoJSON.features.indexOf(feature)))
+
                                 maps.push(e.target);
                             }
                         }

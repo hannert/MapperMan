@@ -109,7 +109,7 @@ export default leafletEditing.reducer;
 export const editMapPropertyThunk = createAsyncThunk('/map/:id/editProperty', async(payload, {rejectWithValue}) => {
     console.log("id sent to editProperty thunk: " + payload.id)
     try{
-        const response = await mapApis.editMapProperty(payload.id, payload.index, payload.property, payload.value);
+        const response = await mapApis.editMapProperty(payload.id, payload.index, payload.property, payload.value, payload.newProperty);
         return response.data
     }catch(err){
         return rejectWithValue(err.response.data.errorMessage);
