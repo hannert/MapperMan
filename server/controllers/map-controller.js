@@ -299,7 +299,8 @@ editMapProperty = async(req,res) =>{
     Map.findOneAndUpdate(
         {_id: id},
         {$set: {[`mapData.features.${index}.properties.${property}`]: value}},
-        {new: true}
+        {new: true,
+        upsert: true}
     ).then((map)=>{
         return res.status(200).json({
             success: true,

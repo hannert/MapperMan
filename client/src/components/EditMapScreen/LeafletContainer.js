@@ -31,6 +31,7 @@ export default function LeafletContainer(){
             dispatch(setMapRef(mapRef.current));
 
             var polyline = L.polyline([[43.1, 1.2], [43.2, 1.3],[43.3, 1.2]]).addTo(mapRef.current);
+
             console.log(polyline.enableEdit());
             
             mapRef.current.on('editable:vertex:dragstart', function(e){
@@ -42,6 +43,7 @@ export default function LeafletContainer(){
                 console.log(e.sourceTarget._startPos);
                 console.log(e.sourceTarget._newPos);
             });
+
 
             if(layerGroup !== null){
                 console.log('clear map')
