@@ -102,7 +102,7 @@ export default function AddMapDialog(props){
     function handleShpDbfConfirm(){
         console.log("confirm button for shp");
         let combinedGeoJSON = shp.combine([shp.parseShp(shapefile),shp.parseDbf(dbfFile)]);
-        let options = {tolerance: 0.01, highQuality: false};
+        let options = {tolerance: 0.05, highQuality: false};
         let simplified = turf.simplify(combinedGeoJSON, options);
         if(user !== null){
             dispatch(createMapThunk({owner: user, mapData: simplified})).unwrap().then((res) => {

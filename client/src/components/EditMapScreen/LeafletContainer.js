@@ -39,8 +39,8 @@ export default function LeafletContainer(){
                             console.log(e.target.disableEdit());
                         }else{
                             console.log("Event TARGET:")
-                            console.log(e.target);
-                            console.log(geoJSON.features.indexOf(feature))
+                            // console.log(e.target);
+                            // console.log(geoJSON.features.indexOf(feature))
 
                             dispatch(setFeatureClicked(feature));
                             dispatch(setFeatureIndexClicked(geoJSON.features.indexOf(feature)))

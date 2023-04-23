@@ -5,6 +5,10 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { useDispatch, useSelector } from 'react-redux';
 import { setFeatureClicked} from '../../app/store-actions/leafletEditing';
 import PropertyCard from './PropertyCard';
+import { useState } from 'react';
+import TextField from '@mui/material/TextField';
+import Select from '@mui/material/Select';
+
 
 
 
@@ -12,6 +16,10 @@ import PropertyCard from './PropertyCard';
 export default function PropertyEditor(props){
     const {handleToggleProperty} = props;
     const feature = useSelector((state)=>state.leafletEditing.featureClicked);
+    const [addNewPropertyMenuOpen, setAddNewPropertyMenuOpen] = useState(false);
+    const [newNameText, setNewNameText] = useState("");
+    const [newType, setNewType] = useState('string');
+    const [newValue, setNewValue] = useState("");
 
     /**
      * Holds the properties in the feature that was taken
@@ -38,6 +46,71 @@ export default function PropertyEditor(props){
         return { name, type, value};
     }
 
+    const handleAddPropertyClick = (event)=>{
+        setAddNewPropertyMenuOpen(!addNewPropertyMenuOpen);
+    }
+
+    const handleUpdateNameText = (event) =>{
+        setNewNameText(event.target.value);
+    }
+
+    const handleUpdateValueText = (event) =>{
+        setNewValue(event.target.value) 
+    }
+
+    function handleKeyPress(event) {
+        event.stopPropagation()
+        if (event.code === "Enter") {
+            // dispatch(editMapPropertyThunk({id: currMapId, index: featureIndex, property: propKey, value: value})).unwrap().then((res)=>{
+            //     console.log(res);
+            // }).catch((err)=>{
+            //     console.log(err);
+            // });
+            // setEditActive(false);
+        }
+    }
+
+    let newPropertyField = ''
+    if(addNewPropertyMenuOpen){
+        newPropertyField = 
+        <TableRow>
+            <TableCell>
+                <TextField
+                    margin="normal"
+                    required
+                    fullWidth
+                    label="Name"
+                    name="Name"
+                    onKeyPress={handleKeyPress}
+                    onChange={handleUpdateNameText}
+                    defaultValue={newNameText}
+                    inputProps={{style: {fontSize: 12}}}
+                    InputLabelProps={{style: {fontSize: 12}}}
+                    autoFocus
+                />
+            </TableCell>
+                
+            <TableCell>
+                type
+            </TableCell>
+                
+            <TableCell>
+                <TextField
+                        margin="normal"
+                        required
+                        fullWidth
+                        label="Value"
+                        name="Name"
+                        onKeyPress={handleKeyPress}
+                        onChange={handleUpdateValueText}
+                        defaultValue={newValue}
+                        inputProps={{style: {fontSize: 12}}}
+                        InputLabelProps={{style: {fontSize: 12}}}
+                        autoFocus
+                />
+            </TableCell>
+        </TableRow>
+    }
 
 
     
@@ -77,11 +150,14 @@ export default function PropertyEditor(props){
                         {
                             rows
                         }
+                        {
+                            newPropertyField
+                        }
                         <TableRow >
                             <TableCell colSpan={3}>
                                 <Box sx={{display:'flex', justifyContent:'center'}}>
                                     <Button>
-                                        <AddCircle/>
+                                        <AddCircle onClick={handleAddPropertyClick}/>
                                     </Button>    
                                 </Box>                        
                             </TableCell>
