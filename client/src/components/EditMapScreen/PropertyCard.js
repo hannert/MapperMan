@@ -2,6 +2,8 @@ import { Button, IconButton, Table, TableBody, TableCell, TableContainer, TableH
 import { Box } from "@mui/system";
 import { useState } from 'react';
 import TextField from '@mui/material/TextField';
+import { editMapPropertyThunk } from '../../app/store-actions/leafletEditing';
+import { useSelector, useDispatch } from 'react-redux';
 
 
 
@@ -9,7 +11,10 @@ export default function PropertyCard(props){
     const {propKey, propType, propValue} = props;
     const [value, setValue] = useState(propValue);
     const [editActive, setEditActive] = useState(false);
-    
+    const dispatch = useDispatch();
+    const featureIndex = useSelector((state)=>state.leafletEditing.featureClickedIndex);
+    const currMapId = useSelector((state)=>state.editMapList.activeMapId);
+
     const handleValueDoubleClick = (event) =>{
         console.log("clicked on property value");
         event.stopPropagation();
@@ -18,6 +23,11 @@ export default function PropertyCard(props){
 
     function handleKeyPress(event) {
         if (event.code === "Enter") {
+            dispatch(editMapPropertyThunk({id: currMapId, index: featureIndex, property: propKey, value: value})).unwrap().then((res)=>{
+                console.log(res);
+            }).catch((err)=>{
+                console.log(err);
+            });
             setEditActive(false);
         }
     }
