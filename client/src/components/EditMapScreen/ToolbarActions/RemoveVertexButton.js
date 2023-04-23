@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import CancelButton from "./CancelButton";
 
 import { useDispatch, useSelector } from "react-redux";
-import { editTools, setEditTool } from "../../../app/store-actions/leafletEditing";
+import { editTools, setEditTool, unselectTool } from "../../../app/store-actions/leafletEditing";
 
 export default function RemoveVertexButton(){
 
@@ -33,7 +33,7 @@ export default function RemoveVertexButton(){
                     <RemoveCircle />
                 </Button>
             </Tooltip>
-            { !hidden && <CancelButton setHidden={setHidden} cancelFunction={()=>{console.log('Remove Vertex Button Cancelled')}}/>}
+            { !hidden && <CancelButton setHidden={setHidden} cancelFunction={unselectTool}/>}
         </Box>
     )
 }

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import CancelButton from "./CancelButton";
 
 import { useDispatch, useSelector } from "react-redux";
-import { editTools, setEditTool } from "../../../app/store-actions/leafletEditing";
+import { editTools, setEditTool, unselectTool } from "../../../app/store-actions/leafletEditing";
 
 export default function MergeSubregionButton() {
 
@@ -25,7 +25,7 @@ export default function MergeSubregionButton() {
             setHidden(true);
         }
     }, [currentEditTool])
-    
+
     return (
         <Box sx={{display: 'flex', flexDirection:'row'}}>
             <Tooltip enterDelay={1000} title='Merge Subregions' placement='right'>
@@ -33,7 +33,7 @@ export default function MergeSubregionButton() {
                     <Merge />
                 </Button>
             </Tooltip>
-            { !hidden && <CancelButton setHidden={setHidden} cancelFunction={()=>{console.log('Merge Subregions Button Cancelled')}}/>}
+            { !hidden && <CancelButton setHidden={setHidden} cancelFunction={unselectTool}/>}
 
         </Box>
     );

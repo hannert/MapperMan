@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import CancelButton from "./CancelButton";
 
 import { useDispatch, useSelector } from "react-redux";
-import { editTools, setEditTool } from "../../../app/store-actions/leafletEditing";
+import { editTools, setEditTool, unselectTool } from "../../../app/store-actions/leafletEditing";
 
 export default function MouseButton(){
 
@@ -33,7 +33,7 @@ export default function MouseButton(){
                     <Mouse />
                 </Button>
             </Tooltip>
-            { !hidden && <CancelButton setHidden={setHidden} cancelFunction={()=>{console.log('Mouse Button Cancelled')}}/>}
+            { !hidden && <CancelButton setHidden={setHidden} cancelFunction={unselectTool}/>}
         </Box>
 
     )
