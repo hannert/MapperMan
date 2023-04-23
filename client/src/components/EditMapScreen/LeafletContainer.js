@@ -4,7 +4,8 @@ import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
 import { useDispatch, useSelector } from 'react-redux';
 import hash from 'object-hash';
 import 'leaflet-editable';
-import { clearMap, editTools, setLayerGroup, setMapRef } from '../../app/store-actions/leafletEditing';
+import { clearMap, editTools, setLayerGroup, setMapRef,setFeatureClicked, setFeatureIndexClicked } from '../../app/store-actions/leafletEditing';
+
 
 export default function LeafletContainer(){
 
@@ -52,6 +53,7 @@ export default function LeafletContainer(){
 
             for(let feature of geoJSON.features){
                 // Very cursed to add each as coordinates
+<<<<<<< HEAD
                 const polygon = L.polygon(L.GeoJSON.geometryToLayer(feature)._latlngs).on({
                     'click': (e)=>{
                         // console.log('Edit tool')
@@ -68,6 +70,24 @@ export default function LeafletContainer(){
                                 console.log(e.target.enableEdit());
                                 maps.push(e.target);
                             }
+=======
+                L.polygon(feature.geometry.coordinates).addTo(mapRef.current).on({
+                    'click': function(e){
+                        if(e.target.editEnabled()){
+                            //this don't work
+                            console.log(e.target);
+                            console.log(e.target.disableEdit());
+                        }else{
+                            console.log("Event TARGET:")
+                            console.log(e.target);
+                            console.log(geoJSON.features.indexOf(feature))
+
+                            dispatch(setFeatureClicked(feature));
+                            dispatch(setFeatureIndexClicked(geoJSON.features.indexOf(feature)))
+
+                            console.log(e.target.enableEdit());
+                            maps.push(e.target);
+>>>>>>> c37237a816d036be29a3218b5b9f598fc0fb979c
                         }
                     }
                 });
