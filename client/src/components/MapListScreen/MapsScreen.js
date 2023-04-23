@@ -13,9 +13,7 @@ import { useNavigate } from 'react-router-dom';
 import { getLoggedInThunk, loginUser } from '../../app/store-actions/accountAuth';
 
 export default function MapsScreen(){
-    const [currentList, setCurrentList] = useState([
-        {name: 'Africa', published: '3/7/2023', index: 0},
-    ])
+    const [currentList, setCurrentList] = useState([])
     const [publishDialogOpen, setPublishDialogOpen] = React.useState(false);
     const loggedIn = useSelector((state) => state.accountAuth.loggedIn);
 
@@ -43,6 +41,8 @@ export default function MapsScreen(){
             }).catch((error) => {
                 console.log(error);
             });
+        }else{
+            navigate('/');
         }
     }, [user])
 
@@ -54,9 +54,13 @@ export default function MapsScreen(){
 
     //If user's aren't logged in don't let them see this
     //If the user is not a guest AND not a user, don't let them see this
-    if (!loggedIn || (!guest && (user === null))) {
-        navigate('/');
-    }
+    
+    // if (!loggedIn || (!guest && (user === null))) {
+    //     console.log(loggedIn);
+    //     console.log(guest);
+    //     console.log(user);
+    //     navigate('/');
+    // }
 
 
     /**Conditional rendering of the publish dialog:  */

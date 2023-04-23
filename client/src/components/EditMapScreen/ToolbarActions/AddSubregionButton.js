@@ -3,7 +3,7 @@ import { Box, Button, Tooltip, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import CancelButton from "./CancelButton";
 import { useDispatch, useSelector } from "react-redux";
-import { editTools, setEditTool } from "../../../app/store-actions/leafletEditing";
+import { editTools, setEditTool, unselectTool } from "../../../app/store-actions/leafletEditing";
 
 
 export default function AddSubregionButton() {
@@ -32,7 +32,7 @@ export default function AddSubregionButton() {
                     <AddBox />
                 </Button>
             </Tooltip>
-            { !hidden && <CancelButton setHidden={setHidden} cancelFunction={()=>{console.log('Add Subregion Button Cancelled')}}/>}
+            { !hidden && <CancelButton setHidden={setHidden} cancelFunction={unselectTool}/>}
         </Box>
     );
 }

@@ -3,7 +3,7 @@ import { Box, Button, Tooltip } from "@mui/material";
 import CancelButton from "./CancelButton";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { editTools, setEditTool } from "../../../app/store-actions/leafletEditing";
+import { editTools, setEditTool, unselectTool } from "../../../app/store-actions/leafletEditing";
 
 
 export default function AddVertexButton(){
@@ -32,7 +32,7 @@ export default function AddVertexButton(){
                     <Circle />
                 </Button>
             </Tooltip>
-            { !hidden && <CancelButton setHidden={setHidden} cancelFunction={()=>{console.log('Add Vertex Button Cancelled')}}/>}
+            { !hidden && <CancelButton setHidden={setHidden} cancelFunction={unselectTool}/>}
         </Box>
     )
 }
