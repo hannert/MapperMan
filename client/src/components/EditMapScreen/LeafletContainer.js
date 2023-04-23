@@ -20,18 +20,16 @@ export default function LeafletContainer(){
     // L.Map.addInitHook(function () {
     //    mapRef = this; 
     // });
-    var maps = []
     
     useEffect(() => {
         if(mapRef.current !== null){
+            console.log('Leaflet render')
             // this sets a property called edit tools options to true
+            console.log(mapRef);
             (mapRef.current).editTools = new L.Editable(mapRef.current, {editable: true});
-            // this add an 'editable' : true property on leaflet map instance
+            // this adds an 'editable' : true property on leaflet map instance
             mapRef.current.options['editable'] = true;
             dispatch(setMapRef(mapRef.current));
-
-            var polyline = L.polyline([[43.1, 1.2], [43.2, 1.3],[43.3, 1.2]]).addTo(mapRef.current);
-            console.log(polyline.enableEdit());
             
             mapRef.current.on('editable:vertex:dragstart', function(e){
                 console.log(e);
@@ -43,44 +41,31 @@ export default function LeafletContainer(){
                 console.log(e.sourceTarget._newPos);
             });
 
-            if(layerGroup !== null){
-                console.log('clear map')
-                layerGroup.clearLayers()
-            }
-
-
-            const lGroup = L.layerGroup();
+            console.log(layerGroup);
+            layerGroup.clearLayers()
+            console.log(layerGroup);
 
             for(let feature of geoJSON.features){
-                // Very cursed to add each as coordinates
-                const polygon = L.polygon(L.GeoJSON.geometryToLayer(feature)._latlngs).on({
-                    'click': (e)=>{
-                        // console.log('Edit tool')
-                        // console.log(editTool);
-                        // console.log(editTools.mouse);
-                        if(editTool === editTools.mouse){
-                            
-                            if(e.target.editEnabled()){
-                                console.log(e.target);
-                                console.log(e.target.disableEdit());
-                            }else{
-                                console.log(e.target);
-                                console.log(e.target.enableEdit());
-                                maps.push(e.target);
-                            }
-                        }
-                    }
-                });
-                lGroup.addLayer(polygon);
-                // console.log(polygon);
+                const polygon = L.polygon(L.GeoJSON.geometryToLayer(feature)._latlngs)
+                // .on({
+                //     'click': (e)=>{
+                //         if(editTool === editTools.mouse){
+                //             if(e.target.editEnabled()){
+                //                 console.log(e.target);
+                //                 console.log(e.target.disableEdit());
+                //             }else{
+                //                 console.log(e.target);
+                //                 console.log(e.target.enableEdit());
+                //             }
+                //         }
+                //     }
+                // });
+                layerGroup.addLayer(polygon);
             }
-            console.log('lGroup')
-            console.log(lGroup);
-            lGroup.addTo(mapRef.current)
-            dispatch(setLayerGroup(lGroup));
+            layerGroup.addTo(mapRef.current)
             
         }
-    }, [mapRef.current, editTool]);
+    }, [mapRef.current]);
 
     // Leaflet Map Container will only be used for initial map creation and that's it
     return (

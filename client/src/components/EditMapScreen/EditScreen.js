@@ -27,7 +27,7 @@ export default function EditScreen(){
     useEffect(() => {
         if (mapId) {
             dispatch(getMapByIdThunk({id: mapId})).unwrap().then(async(response) => {
-                dispatch(setCurrentGeoJSON(response.map.mapData))
+                dispatch(setCurrentGeoJSON(response.map.mapData));
             }).catch((error) => {
                 console.log(error);
             });

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import CancelButton from "./CancelButton";
 
 import { useDispatch, useSelector } from "react-redux";
-import { editTools, setEditTool, unselectTool } from "../../../app/store-actions/leafletEditing";
+import { editTools, setEditTool, startMouseTool, unselectTool } from "../../../app/store-actions/leafletEditing";
 
 export default function MouseButton(){
 
@@ -16,6 +16,7 @@ export default function MouseButton(){
         console.log('Mouse Button Clicked');
         setHidden(false);
         dispatch(setEditTool(editTools.mouse));
+        dispatch(startMouseTool());
     }
     
     //kind of redunant, but this is to make sure that the button is hidden 

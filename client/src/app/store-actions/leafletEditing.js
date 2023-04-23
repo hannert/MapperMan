@@ -21,7 +21,7 @@ const initialState = {
     featureClickedIndex:null,
     editTool: null,
     mapRef: null,
-    layerGroup : null
+    layerGroup : L.layerGroup()
 }
 
 export const leafletEditing = createSlice({
@@ -74,6 +74,20 @@ export const leafletEditing = createSlice({
             state.mapRef.editTools.commitDrawing();
             state.mapRef.editTools.stopDrawing();
         },
+        startMouseTool: (state, action) =>{
+            console.log('Attaching onClick');
+            state.layerGroup.eachLayer(function(layer){
+                layer.on({
+                    'click': function(e){
+                        if(e.target.editEnabled()){
+                            e.target.disableEdit();
+                        }else{
+                            e.target.enableEdit();
+                        }
+                    }
+                });
+            });            
+        },
         /**
          * Delete a path shape at a given latlng point
          * @param {*} state 
@@ -83,6 +97,11 @@ export const leafletEditing = createSlice({
             state.mapRef.editTools.deleteShapeAt(action.payload);
         },
         unselectTool: (state, action) => {
+            state.layerGroup.eachLayer(function(layer){
+                layer.off(
+                    'click'
+                );
+            });     
             state.editTool = null;
         },
         setLayerGroup(state, action){
@@ -102,7 +121,8 @@ export const leafletEditing = createSlice({
 });
 
 export const { setPrevGeoJSON, setCurrentGeoJSON, setInitialized, setEditTool, setMapRef,
-startPolylineDraw, endPolylineDraw, unselectTool, setLayerGroup, setFeatureClicked, setFeatureIndexClicked } = leafletEditing.actions;
+startPolylineDraw, endPolylineDraw, unselectTool, setLayerGroup, setFeatureClicked, setFeatureIndexClicked,
+startMouseTool } = leafletEditing.actions;
 export default leafletEditing.reducer;
 
 
