@@ -1,4 +1,5 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import mapApis from "../store-requests/store_requests";
 
 export const editTools ={
     addVertex: 'addVertex',
@@ -15,6 +16,7 @@ const initialState = {
     prevGeoJSON: null,
     currentGeoJSON: null,
     featureClicked: null,
+    featureClickedIndex:null,
     editTool: null,
     mapRef: null
 }
@@ -41,10 +43,26 @@ export const leafletEditing = createSlice({
             state.featureClicked = action.payload;
             console.log("feature in store: ");
             console.log(state.featureClicked)
+        },
+        setFeatureIndexClicked: (state, action) =>{
+            state.featureClickedIndex = action.payload;
+            console.log("feature Index in store: ");
+            console.log(state.featureClickedIndex);
         }
     }
 });
 
 export const { setPrevGeoJSON, setCurrentGeoJSON, setInitialized, setEditTool, setMapRef,
-                setFeatureClicked } = leafletEditing.actions;
+                setFeatureClicked, setFeatureIndexClicked } = leafletEditing.actions;
 export default leafletEditing.reducer;
+
+
+export const editMapPropertyThunk = createAsyncThunk('/map/:id/editProperty', async(payload, {rejectWithValue}) => {
+    console.log("id sent to editProperty thunk: " + payload.id)
+    try{
+        const response = await mapApis.editMapProperty(payload.id, payload.index, payload.property, payload.value);
+        return response.data
+    }catch(err){
+        return rejectWithValue(err.response.data.errorMessage);
+    }
+});
