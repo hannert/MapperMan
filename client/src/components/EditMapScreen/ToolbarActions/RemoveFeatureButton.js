@@ -25,9 +25,9 @@ export default function RemoveFeatureButton() {
     const RemoveFeature = (e) => {
         if(chosenForDeletion !== null){
             console.log('removeFeature');
-            console.log(chosenForDeletion);
-            dispatch(setChosenForDeletion(null))
+            console.log(chosenForDeletion)
             dispatch(removeFeature(e.latlng));
+            dispatch(setChosenForDeletion(null))
         }else{
             console.log('chooseFeature');
             e.target.setStyle({ color: "red" });
@@ -50,6 +50,7 @@ export default function RemoveFeatureButton() {
     useEffect(()=>{
         if (currentEditTool !== editTools.removeFeature){
             setHidden(true);
+            // dispatch(unselectTool());
         }
     }, [currentEditTool])
 

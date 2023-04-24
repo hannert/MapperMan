@@ -164,8 +164,8 @@ export const leafletEditing = createSlice({
             console.log('Removing feature');
             console.log(action.payload);
             console.log(state.layerClickedEditor);
-            
-            console.log('Setting chosen for deletion to null');
+            state.layerGroup.removeLayer(state.chosenForDeletion);
+
             console.log(state.chosenForDeletion);
             state.layerClickedEditor.deleteShapeAt(action.payload);
 
