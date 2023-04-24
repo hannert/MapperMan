@@ -28,10 +28,10 @@ jobs:
         working-directory: ./server
         run: npm install
 
-      # - name: Jest Backend Tests
-      #   if: steps.changes.outputs.server == 'true'
-      #   working-directory: ./server
-      #   run: npm run jestTest
+      - name: Jest Backend Tests
+        if: steps.changes.outputs.server == 'true'
+        working-directory: ./server
+        run: npm run jestTest
 
       - name: Deploy to Heroku
         if: steps.changes.outputs.server == 'true'
