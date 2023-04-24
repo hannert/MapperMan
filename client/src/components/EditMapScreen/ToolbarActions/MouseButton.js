@@ -39,7 +39,7 @@ export default function MouseButton(){
             console.log(layerGroup.getLayer(layerClickedId));
             let featureIndex = layerGroup.getLayer(layerClickedId).featureIndex
             console.log("feature: ", layerGroup.getLayer(layerClickedId).featureIndex);
-
+            
             dispatch((setFeatureIndexClicked(featureIndex)))
 
             dispatch(setLayerClickedEditor(layerGroup.getLayer(layerClickedId).editor));

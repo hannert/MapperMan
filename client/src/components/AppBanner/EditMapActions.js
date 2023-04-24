@@ -2,11 +2,13 @@ import { Delete, Edit, Groups, Publish, Save } from "@mui/icons-material";
 import { IconButton, Tooltip } from "@mui/material";
 import { Box, Container } from '@mui/system';
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import DeleteModal from "./DeleteModal";
 import EditModal from "./EditModal";
 import PublishModal from "./PublishModal";
 import CollaboratorModal from "./CollaboratorModal";
+import { saveGeojsonThunk } from "../../app/store-actions/leafletEditing";
+import * as L from 'leaflet';
 /**
  * This component is a container for the buttons that appear on App Banner when on the EditScreen
  * Responsible for conditional rendering of the buttons. 
@@ -22,7 +24,12 @@ export default function EditMapActions () {
     const [collaboratorDialogOpen, setCollaboratorDialogOpen] = useState(false);
 
     const mapName = useSelector((state) => state.editMapList.activeMapName)
-
+    const layerGroup = useSelector((state) => state.leafletEditing.layerGroup);
+    const user = useSelector((state) => state.accountAuth.user);
+    const mapId = useSelector((state) => state.editMapList.activeMapId);
+    const properties = useSelector((state) => state.leafletEditing.properties);
+    const dispatch = useDispatch
+    ()
     const toggleEditDialog = () => {
         setEditDialogOpen(!editDialogOpen)
     }
@@ -40,8 +47,30 @@ export default function EditMapActions () {
 
     //  Function to handle user clicking the save icon, Should save and give notification
     function handleSave(){
-        console.log("Save map");
-    }
+        const geoJSON = layerGroup.toGeoJSON();
+
+        console.log(geoJSON);
+        let idx = 0; 
+        console.log(properties);
+        for(let feature of geoJSON.features){
+            feature.properties = properties[idx];
+            idx += 1;
+            console.log(feature);
+        }
+        console.log(user);
+        console.log(geoJSON);
+        console.log(mapId);
+        dispatch(saveGeojsonThunk({
+            owner: user, 
+            mapData: geoJSON, 
+            id: mapId}
+            )).unwrap().then((response) => {
+            console.log(response);
+        }).catch((error) => {
+            console.log(error);
+        });
+
+        console.log(geoJSON);    }
 
     let editDialog = "";
     editDialog = (editDialogOpen) ? <EditModal open={true} toggleEditDialog={toggleEditDialog}/> : <EditModal open={false} toggleEditDialog={toggleEditDialog}/> ;

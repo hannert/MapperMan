@@ -1,7 +1,7 @@
 import { Box, Button, LinearProgress } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { editTools, mergeRegion } from '../../app/store-actions/leafletEditing';
+import { editTools, incrementFeatureIndex, mergeRegion } from '../../app/store-actions/leafletEditing';
 
 export default function MergeStatus() {
 
@@ -23,6 +23,7 @@ export default function MergeStatus() {
     }, [mergeArray])
 
     function handleConfirm() {
+        dispatch(incrementFeatureIndex());
         dispatch(mergeRegion())
     }
 
