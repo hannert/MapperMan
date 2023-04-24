@@ -1,72 +1,72 @@
-# name: Build and Deploy to Netlify
-# on:
-#   push:
-#     branches:
-#       - main
+name: Build and Deploy to Netlify
+on:
+  push:
+    branches:
+      - main
 
-# jobs:
-#   build:
-#     runs-on: ubuntu-22.04
-#     steps:
-#       - uses: actions/checkout@v3
-#       # ( Build to ./dist or other directory... )
-#       - uses: dorny/paths-filter@v2.11.1
-#         id: changes
-#         with:
-#           filters: |
-#             client:
-#               - 'client/**'
-#             server:
-#               - 'server/**'
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      # ( Build to ./dist or other directory... )
+      - uses: dorny/paths-filter@v2.11.1
+        id: changes
+        with:
+          filters: |
+            client:
+              - 'client/**'
+            server:
+              - 'server/**'
 
-#       - name: Change directory...
-#         run: cd client
-
-
-
-#       - name: Install Node
-#         if: steps.changes.outputs.client == 'true'
-#         uses: actions/setup-node@v2.5.2
-#         with:
-#           node-version: 16
+      - name: Change directory...
+        run: cd client
 
 
 
-#       - name: Install packages
-#         if: steps.changes.outputs.client == 'true'
-#         working-directory: ./client
-#         run: npm install
+      - name: Install Node
+        if: steps.changes.outputs.client == 'true'
+        uses: actions/setup-node@v2.5.2
+        with:
+          node-version: 16
+
+
+
+      - name: Install packages
+        if: steps.changes.outputs.client == 'true'
+        working-directory: ./client
+        run: npm install
         
 
 
-#       # - name: Cypress Tests
-#       #   if: steps.changes.outputs.client == 'true'
-#       #   uses: actions/checkout@v2
+      - name: Cypress Tests
+        if: steps.changes.outputs.client == 'true'
+        uses: actions/checkout@v2
         
-#       # - name: Run Cypress Tests
-#       #   if: steps.changes.outputs.client == 'true'
-#       #   uses: cypress-io/github-action@v4
-#       #   with:
-#       #     working-directory: ./client
-#       #     command: npx cypress run
-#       #     browser: chrome
+      - name: Run Cypress Tests
+        if: steps.changes.outputs.client == 'true'
+        uses: cypress-io/github-action@v4
+        with:
+          working-directory: ./client
+          command: npx cypress run
+          browser: chrome
           
-#       - name: Create production build
-#         if: steps.changes.outputs.client == 'true'
-#         working-directory: ./client
-#         run: npm run build
-#         env:
-#           CI: false
+      # - name: Create production build
+      #   if: steps.changes.outputs.client == 'true'
+      #   working-directory: ./client
+      #   run: npm run build
+      #   env:
+      #     CI: false
         
-#       - name: Deploy to Netlify      
-#         if: steps.changes.outputs.client == 'true'
-#         uses: nwtgck/actions-netlify@v2.0
-#         with:
-#           publish-dir: './client/build'
-#           production-deploy: true
-#           production-branch: main
-#           deploy-message: "Deploy from GitHub Actions"
-#         env:
-#           NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
-#           NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-#         timeout-minutes: 1
+      # - name: Deploy to Netlify      
+      #   if: steps.changes.outputs.client == 'true'
+      #   uses: nwtgck/actions-netlify@v2.0
+      #   with:
+      #     publish-dir: './client/build'
+      #     production-deploy: true
+      #     production-branch: main
+      #     deploy-message: "Deploy from GitHub Actions"
+      #   env:
+      #     NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+      #     NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+      #   timeout-minutes: 1
