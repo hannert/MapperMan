@@ -1,12 +1,11 @@
 import * as L from 'leaflet';
-import React, { useEffect, useRef, useState } from 'react';
-import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
-import { useDispatch, useSelector } from 'react-redux';
-import hash from 'object-hash';
 import 'leaflet-editable';
 import 'leaflet-path-drag';
-import { clearMap, editTools, setLayerGroup, setMapRef,setFeatureClicked, setFeatureIndexClicked } from '../../app/store-actions/leafletEditing';
-
+import hash from 'object-hash';
+import React, { useEffect, useRef } from 'react';
+import { GeoJSON, MapContainer, TileLayer } from 'react-leaflet';
+import { useDispatch, useSelector } from 'react-redux';
+import { setMapRef } from '../../app/store-actions/leafletEditing';
 
 export default function LeafletContainer(){
 
@@ -14,6 +13,10 @@ export default function LeafletContainer(){
     const geoJSON = useSelector((state) => state.leafletEditing.currentGeoJSON);
     const editTool = useSelector((state) => state.leafletEditing.editTool);
     const layerGroup = useSelector((state) => state.leafletEditing.layerGroup);
+    const mergeArray = useSelector((state) => state.leafletEditing.mergeArray);
+    const mergedFeature = useSelector((state) => state.leafletEditing.mergedFeature);
+
+
     const mapRef = useRef(null);
     const dispatch = useDispatch();
     // For a ref out of a leaflet div
@@ -32,9 +35,9 @@ export default function LeafletContainer(){
             mapRef.current.options['editable'] = true;
             dispatch(setMapRef(mapRef.current));
 
-            console.log(layerGroup);
+            console.log("Layergroup: ",layerGroup);
             layerGroup.clearLayers()
-            console.log(layerGroup);
+            console.log('Layergroup after clear: ', layerGroup);
 
             for(let feature of geoJSON.features){
                 // Have to add draggable here first then disable/enable it when wanted
@@ -55,6 +58,6 @@ export default function LeafletContainer(){
             <GeoJSON 
                 key={hash(geoJSON)} 
                 />
-        </MapContainer>
+        </MapContainer>   
     )
 }

@@ -1,6 +1,7 @@
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import * as turf from '@turf/turf';
 import * as L from 'leaflet';
 import 'leaflet-editable';
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import mapApis from "../store-requests/store_requests";
 import 'leaflet-path-drag';
 
@@ -27,7 +28,9 @@ const initialState = {
     layerGroup : L.layerGroup(),
     layerClickedId: null,
     layerClickedEditor: null,
-    activeDrawing: null
+    activeDrawing: null,
+    mergeArray: [],
+    mergedFeature: null
 }
 
 export const leafletEditing = createSlice({
@@ -178,6 +181,24 @@ export const leafletEditing = createSlice({
             console.log(state.layerClickedEditor);
             state.layerClickedEditor.push(action.payload);
         },
+        startMergeTool: (state, action) => {
+            console.log('Attaching onClick for merge button');
+            state.layerGroup.eachLayer(function(layer){
+                layer.on({
+                    'click': function(e) {
+                        action.payload(e)
+                    
+                    }
+                });
+                if(state.mergeArray.includes(layer._leaflet_id)){
+                    layer.setStyle({fillColor: '#CD544F'})
+                } else{
+                    layer.setStyle({fillColor: '#3388FF'})
+                }
+            });
+        },
+
+
         /**
          * Delete a path shape at a given latlng point
          * @param {*} state 
@@ -191,29 +212,57 @@ export const leafletEditing = createSlice({
                 layer.off(
                     'click'
                 );
+                // Reset array colors if there was a merge selected
+                layer.setStyle({fillColor: '#3388FF'}) 
             });     
+            
             state.editTool = null;
+            state.mergeArray = []; // Reset mergeArray when clicking out of merge
         },
         setLayerGroup(state, action){
             state.layerGroup = action.payload;
         },
         setFeatureClicked: (state, action) =>{
             state.featureClicked = action.payload;
-            console.log("feature in store: ");
-            console.log(state.featureClicked)
+            console.log("feature in store: ", state.featureClicked);
         },
         setFeatureIndexClicked: (state, action) =>{
             state.featureClickedIndex = action.payload;
-            console.log("feature Index in store: ");
-            console.log(state.featureClickedIndex);
+            console.log("feature Index in store: ", state.featureClickedIndex);
+        },
+        setMergeArray: (state, action) =>{
+            state.mergeArray = action.payload;
+            console.log("mergeArray in store: ", state.mergeArray);
+        },
+        mergeRegion: (state, action) =>{
+            let geometryFirst = state.layerGroup.getLayer(state.mergeArray[0]).toGeoJSON();
+            let geometrySecond = state.layerGroup.getLayer(state.mergeArray[1]).toGeoJSON();
+            
+            state.layerGroup.removeLayer(state.mergeArray[0])
+            state.layerGroup.removeLayer(state.mergeArray[1])
+            console.log("Removed old region")
+            console.log("geoFirst", geometryFirst)
+            console.log('geoSecon', geometrySecond)
+            let mergedFeature = turf.union(
+                geometryFirst, 
+                geometrySecond
+            )
+            state.layerGroup.addLayer(L.GeoJSON.geometryToLayer(mergedFeature))
+            state.mergeArray = []
+        },
+        finishMergeRegion: (state, action ) => {
+            console.log("Finishing merge region")
+            state.mergedFeature = null
+            state.mergeArray = []
         }
     }
 });
 
 export const { setPrevGeoJSON, setCurrentGeoJSON, setInitialized, setEditTool, setMapRef,
 startPolylineDraw, endPolylineDraw, unselectTool, setLayerGroup, setFeatureClicked, setFeatureIndexClicked,
-startMouseTool, startMouseTracking, setLayerClickedId, setLayerClickedEditor, addVertex, stopMouseTracking,
-setDraggable, unsetDraggable, startPolygonDraw, endPolygonDraw, startMarker, endMarker } = leafletEditing.actions;
+ startMouseTracking, setLayerClickedId, setLayerClickedEditor, addVertex, stopMouseTracking,
+setDraggable, unsetDraggable, startPolygonDraw, endPolygonDraw, startMarker, endMarker, 
+startMouseTool, setMergeArray, mergeRegion, finishMergeRegion, startMergeTool} = leafletEditing.actions;
 export default leafletEditing.reducer;
 
 
