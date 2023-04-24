@@ -30,6 +30,7 @@ export default function MergeSubregionButton() {
 
     function handleMergeClick(e){
         let leafletID = e.target._leaflet_id
+
         console.log(leafletID);
         console.log(mergeArray)
         if(mergeArray.length === 0){
@@ -45,21 +46,18 @@ export default function MergeSubregionButton() {
                 temp.push(leafletID)
                 console.log(temp)
                 dispatch(setMergeArray(temp))
-            
             }
             
         }
         else if (mergeArray.length === 2){
             // If the mergeArray currently has two features already in it, keep most recent one
             if(mergeArray.includes(leafletID)){
-
                 // If the currently clicked region is in the first place, slide back second place to first
                 if(mergeArray[0] === leafletID){
                     dispatch(setMergeArray([mergeArray[1]]))
                 } else {
                     dispatch(setMergeArray([mergeArray[0]]))
                 }
-                
             } else {
                 let temp = [];
                 temp.push(mergeArray[1]); 

@@ -110,6 +110,7 @@ export const leafletEditing = createSlice({
             let polygon = L.polygon(state.activeDrawing.getLatLngs(), {draggable: 'true'});
             polygon.dragging.disable();
 
+            console.log(polygon);
             state.layerGroup.removeLayer(state.activeDrawing);
             state.layerGroup.addLayer(polygon);
 
@@ -274,9 +275,10 @@ export const leafletEditing = createSlice({
             console.log('geoSecon', geometrySecond)
             let mergedFeature = turf.union(
                 geometryFirst, 
-                geometrySecond
+                geometrySecond, 
             )
-            state.layerGroup.addLayer(L.GeoJSON.geometryToLayer(mergedFeature))
+            let polygon = L.polygon(L.GeoJSON.geometryToLayer(mergedFeature.geometry)._latlngs, {draggable:true});
+            state.layerGroup.addLayer(polygon);
             state.mergeArray = []
         },
         finishMergeRegion: (state, action ) => {
