@@ -2,7 +2,6 @@ import { Box, Grid } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { getLoggedInThunk, loginUser } from '../../app/store-actions/accountAuth';
 import { getMapsDataByAccountThunk, setMapList } from '../../app/store-actions/editMapList';
 import DeleteDialog from './MapCardComponents/DeleteDialog';
 import ForkDialog from './MapCardComponents/ForkDialog';
@@ -14,13 +13,6 @@ import Pages from './SearchComponents/Pages';
 
 export default function MapsScreen(){
     const [currentList, setCurrentList] = useState([])
-    const [publishDialogOpen, setPublishDialogOpen] = React.useState(false);
-    const loggedIn = useSelector((state) => state.accountAuth.loggedIn);
-
-    const togglePublishDialog = () =>{
-        setPublishDialogOpen(!publishDialogOpen);
-        console.log("clicked on publish button!")
-    }
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
