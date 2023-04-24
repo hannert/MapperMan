@@ -8,6 +8,9 @@ const request = require('supertest');
           .send(
             {
             name: "Dinagat Islands",
+            owner: {
+                "email": "TestingAccount@gmail.com"
+            },
             mapData: 
             {
               "type": "Feature",
