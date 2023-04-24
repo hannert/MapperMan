@@ -21,7 +21,6 @@ import ViewMapActions from './AppBanner/ViewMapActions';
 
 function AppBanner() {
 
-    const mapId = useSelector((state) => state.editMapList.activeMapId);
     const mapName = useSelector((state) => state.editMapList.activeMapName);
     const loggedIn = useSelector((state) => state.accountAuth.loggedIn);
     const user = useSelector((state) => state.accountAuth.user);
@@ -49,22 +48,6 @@ function AppBanner() {
             return; 
         }
 
-        const geoJSON = layerGroup.toGeoJSON();
-
-        console.log(user);
-        console.log(geoJSON);
-        console.log(mapId);
-        dispatch(saveGeojsonThunk({
-            owner: user, 
-            mapData: geoJSON, 
-            id: mapId}
-            )).unwrap().then((response) => {
-            console.log(response);
-        }).catch((error) => {
-            console.log(error);
-        });
-
-        console.log(geoJSON);
         setSaveOpen(false);    
     }
 

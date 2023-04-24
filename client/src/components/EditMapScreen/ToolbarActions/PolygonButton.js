@@ -2,7 +2,7 @@ import PentagonIcon from '@mui/icons-material/Pentagon';
 import { Box, Button, Tooltip } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from 'react';
-import { editTools, endPolygonDraw, setEditTool, startPolygonDraw } from '../../../app/store-actions/leafletEditing';
+import { editTools, endPolygonDraw, incrementFeatureIndex, setEditTool, startPolygonDraw } from '../../../app/store-actions/leafletEditing';
 import CancelButton from './CancelButton';
 
 
@@ -15,6 +15,9 @@ export default function PolygonButton() {
         console.log('Polygon Button Clicked');
         setHidden(false);
         dispatch(setEditTool(editTools.polygon))
+        
+        //TODO bandaid fix
+        dispatch(incrementFeatureIndex());
         dispatch(startPolygonDraw())
     }
     

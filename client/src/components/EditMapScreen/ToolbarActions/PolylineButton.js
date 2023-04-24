@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import CancelButton from "./CancelButton";
 
 import { useDispatch, useSelector } from "react-redux";
-import { editTools, endPolylineDraw, setEditTool, startMouseTracking, startPolylineDraw } from "../../../app/store-actions/leafletEditing";
+import { editTools, endPolylineDraw, incrementFeatureIndex, setEditTool, startMouseTracking, startPolylineDraw } from "../../../app/store-actions/leafletEditing";
 
 export default function PolylineButton(){
 
@@ -16,7 +16,11 @@ export default function PolylineButton(){
         console.log('Polyline Button Clicked');
         setHidden(false);
         dispatch(setEditTool(editTools.polyline));
+
+        //TODO bandaid fix
+        dispatch(incrementFeatureIndex());
         dispatch(startPolylineDraw())
+        
     }
     
     //kind of redunant, but this is to make sure that the button is hidden 

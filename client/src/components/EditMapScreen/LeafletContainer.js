@@ -5,7 +5,7 @@ import hash from 'object-hash';
 import React, { useEffect, useRef } from 'react';
 import { GeoJSON, MapContainer, TileLayer } from 'react-leaflet';
 import { useDispatch, useSelector } from 'react-redux';
-import { setMapRef } from '../../app/store-actions/leafletEditing';
+import { incrementFeatureIndex, setFeatureIndex, setMapRef, setProperties } from '../../app/store-actions/leafletEditing';
 
 export default function LeafletContainer(){
 
@@ -15,7 +15,6 @@ export default function LeafletContainer(){
     const layerGroup = useSelector((state) => state.leafletEditing.layerGroup);
     const mergeArray = useSelector((state) => state.leafletEditing.mergeArray);
     const mergedFeature = useSelector((state) => state.leafletEditing.mergedFeature);
-
 
     const mapRef = useRef(null);
     const dispatch = useDispatch();
@@ -39,13 +38,25 @@ export default function LeafletContainer(){
             layerGroup.clearLayers()
             console.log('Layergroup after clear: ', layerGroup);
 
+            console.log(geoJSON);
+            let properties = [];
+
+            let idx = 0;
             for(let feature of geoJSON.features){
                 // Have to add draggable here first then disable/enable it when wanted
                 const polygon = L.polygon(L.GeoJSON.geometryToLayer(feature)._latlngs, {draggable:true});
                 polygon.dragging.disable();
-                polygon.featureIndex =geoJSON.features.indexOf(feature)
+
+                polygon.featureIndex = idx;
+                // TODO prob a better way to do this
+                console.log(idx);
+                properties.push(geoJSON.features[idx].properties);
+                idx += 1;
                 layerGroup.addLayer(polygon);
             }
+            // TODO prob a better way to do this
+            dispatch(setProperties(properties));
+            dispatch(setFeatureIndex(idx));
             layerGroup.addTo(mapRef.current)
             
         }

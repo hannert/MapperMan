@@ -31,11 +31,13 @@ export default function PropertyEditor(props){
     const [newType, setNewType] = useState('string');
     const [newValue, setNewValue] = useState("");
 
+    const properties = useSelector((state)=>state.leafletEditing.properties);
     /**
      * Holds the properties in the feature that was taken
      * from the state
      */
-    const featureProperties = geoJSON.features[featureIndex].properties;
+    const featureProperties = properties[featureIndex];
+
 
 
     /**
@@ -49,6 +51,7 @@ export default function PropertyEditor(props){
 
 
     for (var key in featureProperties){
+        console.log(featureProperties);
         rows.push(<PropertyCard propKey={key} propType={typeof(key)} propValue={featureProperties[key]} />)
     }
 

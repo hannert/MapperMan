@@ -24,6 +24,8 @@ const initialState = {
     currentGeoJSON: null,
     featureClicked: null,
     featureClickedIndex:null,
+    featureIndex: 0,
+    properties: null,
     editTool: null,
     mapRef: null,
     layerGroup : L.layerGroup(),
@@ -92,6 +94,9 @@ export const leafletEditing = createSlice({
             let polyline = L.polyline(state.activeDrawing.getLatLngs(), {draggable: 'true'});
             polyline.dragging.disable();
 
+            polyline.featureIndex = state.featureIndex;
+            state.properties[state.featureIndex] = {name: 'New Polyline'};
+
             state.layerGroup.removeLayer(state.activeDrawing);
             state.layerGroup.addLayer(polyline);
 
@@ -110,7 +115,9 @@ export const leafletEditing = createSlice({
             let polygon = L.polygon(state.activeDrawing.getLatLngs(), {draggable: 'true'});
             polygon.dragging.disable();
 
-            console.log(polygon);
+            polygon.featureIndex = state.featureIndex;
+            state.properties[state.featureIndex] = {name: 'New Polygon'};
+
             state.layerGroup.removeLayer(state.activeDrawing);
             state.layerGroup.addLayer(polygon);
 
@@ -285,6 +292,16 @@ export const leafletEditing = createSlice({
             console.log("Finishing merge region")
             state.mergedFeature = null
             state.mergeArray = []
+        },
+        //TODO bandaid fix
+        setFeatureIndex: (state, action) => {
+            state.featureIndex = action.payload;
+        },
+        incrementFeatureIndex: (state, action) => {
+            state.featureIndex += 1;
+        },
+        setProperties: (state, action) => {
+            state.properties = action.payload;
         }
     }
 });
@@ -294,7 +311,7 @@ startPolylineDraw, endPolylineDraw, unselectTool, setLayerGroup, setFeatureClick
  startMouseTracking, setLayerClickedId, setLayerClickedEditor, addVertex, stopMouseTracking,
 setDraggable, unsetDraggable, startPolygonDraw, endPolygonDraw, startMarker, endMarker, 
 startMouseTool, setMergeArray, mergeRegion, finishMergeRegion, startMergeTool, removeFeature, startRemoveTool, 
-setChosenForDeletion, startCircleDraw, endCircleDraw} = leafletEditing.actions;
+setChosenForDeletion, startCircleDraw, endCircleDraw, incrementFeatureIndex, setProperties, setFeatureIndex} = leafletEditing.actions;
 export default leafletEditing.reducer;
 
 
