@@ -1,11 +1,10 @@
 import * as L from 'leaflet';
-import React, { useEffect, useRef, useState } from 'react';
-import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
-import { useDispatch, useSelector } from 'react-redux';
-import hash from 'object-hash';
 import 'leaflet-editable';
-import { clearMap, editTools, setLayerGroup, setMapRef,setFeatureClicked, setFeatureIndexClicked } from '../../app/store-actions/leafletEditing';
-
+import hash from 'object-hash';
+import React, { useEffect, useRef } from 'react';
+import { GeoJSON, MapContainer, TileLayer } from 'react-leaflet';
+import { useDispatch, useSelector } from 'react-redux';
+import { finishMergeRegion, setCurrentGeoJSON, setMapRef } from '../../app/store-actions/leafletEditing';
 
 export default function LeafletContainer(){
 
@@ -13,6 +12,10 @@ export default function LeafletContainer(){
     const geoJSON = useSelector((state) => state.leafletEditing.currentGeoJSON);
     const editTool = useSelector((state) => state.leafletEditing.editTool);
     const layerGroup = useSelector((state) => state.leafletEditing.layerGroup);
+    const mergeArray = useSelector((state) => state.leafletEditing.mergeArray);
+    const mergedFeature = useSelector((state) => state.leafletEditing.mergedFeature);
+
+
     const mapRef = useRef(null);
     const dispatch = useDispatch();
     // For a ref out of a leaflet div
@@ -41,25 +44,12 @@ export default function LeafletContainer(){
                 console.log(e.sourceTarget._newPos);
             });
 
-            console.log(layerGroup);
+            console.log("Layergroup: ",layerGroup);
             layerGroup.clearLayers()
-            console.log(layerGroup);
+            console.log('Layergroup after clear: ', layerGroup);
 
-            for(let feature of geoJSON.features){
+            for(const [index, feature] of geoJSON.features.entries()){
                 const polygon = L.polygon(L.GeoJSON.geometryToLayer(feature)._latlngs)
-                // .on({
-                //     'click': (e)=>{
-                //         if(editTool === editTools.mouse){
-                //             if(e.target.editEnabled()){
-                //                 console.log(e.target);
-                //                 console.log(e.target.disableEdit());
-                //             }else{
-                //                 console.log(e.target);
-                //                 console.log(e.target.enableEdit());
-                //             }
-                //         }
-                //     }
-                // });
                 layerGroup.addLayer(polygon);
             }
             layerGroup.addTo(mapRef.current)
@@ -75,6 +65,6 @@ export default function LeafletContainer(){
             <GeoJSON 
                 key={hash(geoJSON)} 
                 />
-        </MapContainer>
+        </MapContainer>   
     )
 }

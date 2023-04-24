@@ -1,21 +1,16 @@
-import { AddCircle, AddLocation, Circle, Merge, Mouse, Redo, RemoveCircle, Timeline, Undo, WrongLocation } from '@mui/icons-material';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import { Button, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip, Typography } from '@mui/material';
+import { Button } from '@mui/material';
 import { Box } from "@mui/system";
-import hash from 'object-hash';
-import React, { useEffect, useRef, useState } from 'react';
-import { GeoJSON, MapContainer, TileLayer } from "react-leaflet";
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getMapByIdThunk } from '../../app/store-actions/editMapList';
 
 import 'leaflet-editable';
-import * as L from 'leaflet';
 
 import { setCurrentGeoJSON } from '../../app/store-actions/leafletEditing';
 import LeafletContainer from './LeafletContainer';
-import Toolbar from './ToolbarActions/Toolbar';
+import MergeStatus from './MergeStatus';
 import PropertyEditor from './PropertyEditor';
-
+import Toolbar from './ToolbarActions/Toolbar';
 
 export default function EditScreen(){
 
@@ -71,7 +66,9 @@ export default function EditScreen(){
                     <LeafletContainer></LeafletContainer>
                 </Box>
                 {propertyComponent}
+                <MergeStatus />
             </Box>
+            
 
 
         </Box>
