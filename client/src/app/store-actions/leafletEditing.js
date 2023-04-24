@@ -284,7 +284,11 @@ export const leafletEditing = createSlice({
                 geometryFirst, 
                 geometrySecond, 
             )
+
             let polygon = L.polygon(L.GeoJSON.geometryToLayer(mergedFeature.geometry)._latlngs, {draggable:true});
+            polygon.featureIndex = state.featureIndex;
+            state.properties[state.featureIndex] = {name: 'New Merged Region'};
+
             state.layerGroup.addLayer(polygon);
             state.mergeArray = []
         },
