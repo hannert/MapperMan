@@ -5,7 +5,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { deleteMapThunk } from '../../../app/store-actions/editMapList';
+import { deleteMapThunk, getMapsDataByAccountThunk, setMapList } from '../../../app/store-actions/editMapList';
 
 export default function DeleteDialog (props) {
     const {open, toggleDeleteDialog } = props;
@@ -16,15 +16,21 @@ export default function DeleteDialog (props) {
     const user = useSelector((state) => state.accountAuth.user);
 
     const handleConfirm = () => {
-      console.log("map Id that will be published: " + mapID)
+      console.log("map Id that will be deleted: " + mapID)
       dispatch(deleteMapThunk({
           id: mapID,
           user: user
       })).catch((error) =>{
           console.log(error);
+      }).then(() => {
+        dispatch(getMapsDataByAccountThunk({user: user})).unwrap().then((response) => {
+          console.log("Getting maps")
+          dispatch(setMapList(response.maps));
+        }).catch((error) => {
+            console.log(error);
+        });
       })
       toggleDeleteDialog();
-      navigate('/')
     }
 
 

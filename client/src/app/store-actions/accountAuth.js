@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk, isRejectedWithValue } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import authApis from "../store-requests/auth_requests";
 
 const initialState = {
@@ -17,6 +17,7 @@ export const accountAuth = createSlice({
         loginUser: (state, action) => {
             state.user = action.payload;
             state.loggedIn = true;
+            state.guest = false;
         },
         allowGuest: (state, action) => {
             state.guest = true;
@@ -24,6 +25,7 @@ export const accountAuth = createSlice({
         logout: (state, action) => {
             state.user = null;
             state.loggedIn = false;
+            state.guest = false;
         },
         registerUser: (state, action) => {
             state.user = action.payload.user;
