@@ -34,7 +34,23 @@ const request = require('supertest');
       request('https://mapperman.herokuapp.com/api')
           .post('/newmap')
           .send(
-            {nonsense:'asldkjfhsadkjf'}
+            {
+                name: "Shouldn't Work",
+                owner: {
+                "email": "Not a real email"
+            },
+            mapData: 
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Point",
+                "coordinates": [125.6, 10.1]
+              },
+              "properties": {
+                "name": "Dinagat Islands"
+              }
+            }
+            }
             
             
             )
