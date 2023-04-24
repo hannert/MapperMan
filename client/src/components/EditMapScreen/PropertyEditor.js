@@ -3,9 +3,9 @@ import { Box } from "@mui/system";
 import { AddCircle, AddLocation, Circle, Merge, Mouse, Redo, RemoveCircle, Timeline, Undo, WrongLocation } from '@mui/icons-material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { useDispatch, useSelector } from 'react-redux';
-import { setFeatureClicked} from '../../app/store-actions/leafletEditing';
+import { setCurrentGeoJSON, setFeatureClicked, setPrevGeoJSON} from '../../app/store-actions/leafletEditing';
 import PropertyCard from './PropertyCard';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
 import { editMapPropertyThunk } from '../../app/store-actions/leafletEditing';
@@ -18,9 +18,14 @@ import { editMapPropertyThunk } from '../../app/store-actions/leafletEditing';
 export default function PropertyEditor(props){
     const {handleToggleProperty} = props;
     const dispatch = useDispatch();
+
+    /**
+     * deprecated, not really any need for the featureClicked State
+     */
     const feature = useSelector((state)=>state.leafletEditing.featureClicked);
     const featureIndex = useSelector((state)=>state.leafletEditing.featureClickedIndex);
     const currMapId = useSelector((state)=>state.editMapList.activeMapId);
+    const geoJSON = useSelector((state) => state.leafletEditing.currentGeoJSON);
     const [addNewPropertyMenuOpen, setAddNewPropertyMenuOpen] = useState(false);
     const [newNameText, setNewNameText] = useState("");
     const [newType, setNewType] = useState('string');
@@ -30,7 +35,8 @@ export default function PropertyEditor(props){
      * Holds the properties in the feature that was taken
      * from the state
      */
-    const featureProperties = feature.properties
+    const featureProperties = geoJSON.features[featureIndex].properties;
+
 
     /**
      * Puts the properties into the
@@ -41,14 +47,9 @@ export default function PropertyEditor(props){
      */
     const rows = []
 
-    
+
     for (var key in featureProperties){
         rows.push(<PropertyCard propKey={key} propType={typeof(key)} propValue={featureProperties[key]} />)
-    }
-    
-
-    function createData(name, type, value) {
-        return { name, type, value};
     }
 
     const handleAddPropertyClick = (event)=>{
@@ -72,9 +73,23 @@ export default function PropertyEditor(props){
         console.log("confirm");
         dispatch(editMapPropertyThunk({id: currMapId, index: featureIndex, property: newNameText, value: newValue, newProperty: {isNew: true, type: newType}})).unwrap().then((res)=>{
             console.log(res);
+            let featureCopy = structuredClone(geoJSON.features[featureIndex]);
+            featureCopy.properties[newNameText]=newValue
+            console.log(featureCopy.properties);
+            let geoJSONCopy = structuredClone(geoJSON);
+            geoJSONCopy.features[featureIndex] = featureCopy;
+            console.log("geoJSON copy: ", geoJSONCopy)
+            console.log("setting the current geojson")
+            dispatch(setCurrentGeoJSON(geoJSONCopy));
+
         }).catch((err)=>{
             console.log(err);
         });
+        /**
+         * How do I get the changes to be reflected on the frontend?
+         * Should I rerender the map and retrieve the data again?
+         */
+        
         
     }
 
