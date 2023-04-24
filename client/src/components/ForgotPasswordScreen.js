@@ -80,14 +80,6 @@ export default function ForgotPasswordScreen() {
                             autoComplete="email"
                             autoFocus
                         />
-                        <Button
-                            type="submit"
-                            fullWidth
-                            variant="contained"
-                            sx={{ mt: 3, mb: 2 }}
-                        >
-                            Verify Email
-                        </Button>
                         <TextField
                             margin="normal"
                             required
