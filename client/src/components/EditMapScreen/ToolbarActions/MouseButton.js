@@ -2,23 +2,45 @@ import { Mouse } from "@mui/icons-material";
 import { Box, Button, Tooltip, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import CancelButton from "./CancelButton";
-
+import * as L from 'leaflet';
 import { useDispatch, useSelector } from "react-redux";
-import { editTools, setEditTool, startMouseTool, unselectTool } from "../../../app/store-actions/leafletEditing";
+import { editTools, setDraggable, setEditTool, setLayerClickedEditor, setLayerClickedId, startMouseTool, unselectTool } from "../../../app/store-actions/leafletEditing";
 
 export default function MouseButton(){
 
     const [hidden, setHidden] = useState(true);
     const dispatch = useDispatch()
     const currentEditTool = useSelector(state => state.leafletEditing.editTool);
+    const layerClickedId = useSelector(state => state.leafletEditing.layerClickedId);
+    const layerGroup = useSelector(state => state.leafletEditing.layerGroup);
 
     function handleButtonClick(){
         console.log('Mouse Button Clicked');
         setHidden(false);
         dispatch(setEditTool(editTools.mouse));
-        dispatch(startMouseTool());
+        dispatch(startMouseTool(handleMouseClick));
     }
     
+    const handleMouseClick = (e) => {
+        if(e.target.editEnabled()){
+            e.target.setStyle({ color: "#3388ff" });
+            e.target.disableEdit();
+            dispatch(setLayerClickedId(null));
+        }else{
+            e.target.setStyle({ color: "red" });
+            e.target.enableEdit();
+            dispatch(setLayerClickedId(e.target._leaflet_id));
+        }
+    }
+
+    useEffect(()=>{
+        if (layerClickedId !== null){
+            console.log(layerGroup.getLayer(layerClickedId));
+            dispatch(setLayerClickedEditor(layerGroup.getLayer(layerClickedId).editor));
+            dispatch(setDraggable(layerClickedId))
+        }
+    }, [layerClickedId])
+
     //kind of redunant, but this is to make sure that the button is hidden 
     //when the user switches to a different tool
     useEffect(()=>{

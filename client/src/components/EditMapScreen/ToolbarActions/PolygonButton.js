@@ -1,28 +1,27 @@
-import { Timeline } from "@mui/icons-material";
+import PentagonIcon from '@mui/icons-material/Pentagon';
 import { Box, Button, Tooltip } from "@mui/material";
-import { useEffect, useState } from "react";
-import CancelButton from "./CancelButton";
-
 import { useDispatch, useSelector } from "react-redux";
-import { editTools, endPolylineDraw, setEditTool, startMouseTracking, startPolylineDraw } from "../../../app/store-actions/leafletEditing";
+import { useEffect, useState } from 'react';
+import { editTools, endPolygonDraw, setEditTool, startPolygonDraw } from '../../../app/store-actions/leafletEditing';
+import CancelButton from './CancelButton';
 
-export default function PolylineButton(){
 
+export default function PolygonButton() {
     const [hidden, setHidden] = useState(true);
     const dispatch = useDispatch()
     const currentEditTool = useSelector(state => state.leafletEditing.editTool);
 
     function handleButtonClick(){
-        console.log('Polyline Button Clicked');
+        console.log('Polygon Button Clicked');
         setHidden(false);
         // dispatch(startMouseTracking((e)=>{dispatch(startPolylineDraw(e.latlng))}))
-        dispatch(startPolylineDraw())
+        dispatch(startPolygonDraw())
     }
     
     //kind of redunant, but this is to make sure that the button is hidden 
     //when the user switches to a different tool
     useEffect(()=>{
-        if (currentEditTool !== editTools.polyline){
+        if (currentEditTool !== editTools.polygon){
             setHidden(true);
         }
     }, [currentEditTool])
@@ -31,10 +30,10 @@ export default function PolylineButton(){
         <Box sx={{display: 'flex', flexDirection:'row'}}>
             <Tooltip enterDelay={1000} title='Draw Polyline' placement='right'>
                 <Button onClick={handleButtonClick} variant='contained' sx={{backgroundColor:'#2B2B2B'}}>
-                    <Timeline />
+                    <PentagonIcon />
                 </Button>
             </Tooltip>
-            { !hidden && <CancelButton setHidden={setHidden} cancelFunction={endPolylineDraw}/>}
+            { !hidden && <CancelButton setHidden={setHidden} cancelFunction={endPolygonDraw}/>}
         </Box>
-    )
+    );
 }

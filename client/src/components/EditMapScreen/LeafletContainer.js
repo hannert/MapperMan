@@ -4,6 +4,7 @@ import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet';
 import { useDispatch, useSelector } from 'react-redux';
 import hash from 'object-hash';
 import 'leaflet-editable';
+import 'leaflet-path-drag';
 import { clearMap, editTools, setLayerGroup, setMapRef,setFeatureClicked, setFeatureIndexClicked } from '../../app/store-actions/leafletEditing';
 
 
@@ -30,36 +31,15 @@ export default function LeafletContainer(){
             // this adds an 'editable' : true property on leaflet map instance
             mapRef.current.options['editable'] = true;
             dispatch(setMapRef(mapRef.current));
-            
-            mapRef.current.on('editable:vertex:dragstart', function(e){
-                console.log(e);
-            });
-
-            mapRef.current.on('editable:vertex:dragend', function(e){
-                console.log(e);
-                console.log(e.sourceTarget._startPos);
-                console.log(e.sourceTarget._newPos);
-            });
 
             console.log(layerGroup);
             layerGroup.clearLayers()
             console.log(layerGroup);
 
             for(let feature of geoJSON.features){
-                const polygon = L.polygon(L.GeoJSON.geometryToLayer(feature)._latlngs)
-                // .on({
-                //     'click': (e)=>{
-                //         if(editTool === editTools.mouse){
-                //             if(e.target.editEnabled()){
-                //                 console.log(e.target);
-                //                 console.log(e.target.disableEdit());
-                //             }else{
-                //                 console.log(e.target);
-                //                 console.log(e.target.enableEdit());
-                //             }
-                //         }
-                //     }
-                // });
+                // Have to add draggable here first then disable/enable it when wanted
+                const polygon = L.polygon(L.GeoJSON.geometryToLayer(feature)._latlngs, {draggable:true});
+                polygon.dragging.disable();
                 layerGroup.addLayer(polygon);
             }
             layerGroup.addTo(mapRef.current)

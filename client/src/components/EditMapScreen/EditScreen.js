@@ -68,6 +68,7 @@ export default function EditScreen(){
             <Box sx={{height:'100%', display:'flex', position:'relative'}}>
                 <Toolbar></Toolbar>
                 <Box sx ={leafletSize}>
+                    <script src="https://npmcdn.com/leaflet.path.drag/src/Path.Drag.js"></script>
                     <LeafletContainer></LeafletContainer>
                 </Box>
                 {propertyComponent}

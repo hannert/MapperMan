@@ -4,10 +4,12 @@ import AddVertexButton from './AddVertexButton';
 import RemoveVertexButton from './RemoveVertexButton';
 import PolylineButton from './PolylineButton';
 import AddSubregionButton from './AddSubregionButton';
-import RemoveSubregionButton from './RemoveSubregionButton';
+import RemoveFeatureButton from './RemoveFeatureButton';
 import MergeSubregionButton from './MergeSubregionsButton';
 import UndoButton from './UndoButton';
 import RedoButton from './RedoButton';
+import PolygonButton from "./PolygonButton";
+import MarkerButton from "./MarkerButton";
 
 export default function Toolbar(){
 
@@ -18,11 +20,13 @@ export default function Toolbar(){
             {/*Had to explicitly set width to stop buttons from changing width when finish button 
             was clicked. 64 is default value */}
             <MouseButton></MouseButton>
-            <AddVertexButton></AddVertexButton>
-            <RemoveVertexButton></RemoveVertexButton>
+            {/* <AddVertexButton></AddVertexButton> */}
+            {/* <RemoveVertexButton></RemoveVertexButton> */}
             <PolylineButton></PolylineButton>
-            <AddSubregionButton></AddSubregionButton>
-            <RemoveSubregionButton></RemoveSubregionButton>
+            <PolygonButton></PolygonButton>
+            <MarkerButton></MarkerButton>
+            {/* <AddSubregionButton></AddSubregionButton> */}
+            <RemoveFeatureButton></RemoveFeatureButton>
             <MergeSubregionButton></MergeSubregionButton>
             <UndoButton></UndoButton>
             <RedoButton></RedoButton>
