@@ -1,16 +1,12 @@
 import { Box } from "@mui/material";
-import MouseButton from './MouseButton';
-import AddVertexButton from './AddVertexButton';
-import RemoveVertexButton from './RemoveVertexButton';
-import PolylineButton from './PolylineButton';
-import AddSubregionButton from './AddSubregionButton';
-import RemoveFeatureButton from './RemoveFeatureButton';
-import MergeSubregionButton from './MergeSubregionsButton';
-import UndoButton from './UndoButton';
-import RedoButton from './RedoButton';
-import PolygonButton from "./PolygonButton";
 import MarkerButton from "./MarkerButton";
-import AddCircleButton from "./AddCircleButton";
+import MergeSubregionButton from './MergeSubregionsButton';
+import MouseButton from './MouseButton';
+import PolygonButton from "./PolygonButton";
+import PolylineButton from './PolylineButton';
+import RedoButton from './RedoButton';
+import RemoveFeatureButton from './RemoveFeatureButton';
+import UndoButton from './UndoButton';
 
 export default function Toolbar(){
 

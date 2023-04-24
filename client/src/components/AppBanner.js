@@ -1,5 +1,5 @@
 import { Face5 } from '@mui/icons-material';
-import { Alert, Snackbar, Tooltip} from '@mui/material';
+import { Alert, Snackbar, Tooltip } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
@@ -10,13 +10,10 @@ import Typography from '@mui/material/Typography';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { clear, deleteMap, forkMapThunk, renameMap } from '../app/store-actions/editMapList';
-import * as L from 'leaflet';
 import store from '../app/store';
-import { renameMapThunk, deleteMapThunk } from '../app/store-actions/editMapList';
-import { saveGeojsonThunk } from '../app/store-actions/leafletEditing';
 import { logout, logoutThunk } from '../app/store-actions/accountAuth';
 import { clear } from '../app/store-actions/editMapList';
+import { saveGeojsonThunk } from '../app/store-actions/leafletEditing';
 import EditMapActions from './AppBanner/EditMapActions';
 import ViewMapActions from './AppBanner/ViewMapActions';
 
