@@ -315,6 +315,42 @@ editMapProperty = async(req,res) =>{
 
 }
 
+deleteMapProperty = async(req,res) =>{
+    console.log("in delete map property")
+    const body = req.body;
+    console.log(body)
+
+    if(!body){
+        return res.status(400).json({
+            success: false,
+            error: 'You must provide a body to update',
+        })
+    }
+
+    const id = body.id;
+    const index = body.index;
+    const property = body.property;
+
+
+
+    Map.findOneAndUpdate(
+        {_id:id},
+        {$unset: {[`mapData.features.${index}.properties`]: property}},
+        {new: true}
+    ).then((map)=>{
+        return res.status(200).json({
+            success: true,
+            id: map._id,
+            name: map.name,
+            indexChanged: index,
+            propertyDeleted: property,
+            message: 'map property deleted!'
+        });
+    }).catch(err => console.log(err));
+
+
+}
+
 module.exports = {
     createMap,
     getMapById,
@@ -325,5 +361,6 @@ module.exports = {
     renameMap,
     forkMap,
     publishMap,
-    editMapProperty
+    editMapProperty,
+    deleteMapProperty
 }

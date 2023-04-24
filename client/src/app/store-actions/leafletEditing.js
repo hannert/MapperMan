@@ -115,3 +115,13 @@ export const editMapPropertyThunk = createAsyncThunk('/map/:id/editProperty', as
         return rejectWithValue(err.response.data.errorMessage);
     }
 });
+
+export const deleteMapPropertyThunk = createAsyncThunk('/map/:id/deleteProperty', async(payload, {rejectWithValue}) => {
+    console.log("id sent to deleteProperty thunk: " + payload.id)
+    try{
+        const response = await mapApis.deleteMapProperty(payload.id, payload.index, payload.property);
+        return response.data
+    }catch(err){
+        return rejectWithValue(err.response.data.errorMessage);
+    }
+})

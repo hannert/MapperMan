@@ -69,28 +69,40 @@ export default function PropertyEditor(props){
         setNewValue(event.target.value) 
     }
 
+    const resetFields = () =>{
+        setNewValue('');
+        setNewNameText('');
+        setNewType('string');
+    }
+
     function handleConfirm(event) {
         console.log("confirm");
-        dispatch(editMapPropertyThunk({id: currMapId, index: featureIndex, property: newNameText, value: newValue, newProperty: {isNew: true, type: newType}})).unwrap().then((res)=>{
-            console.log(res);
-            let featureCopy = structuredClone(geoJSON.features[featureIndex]);
-            featureCopy.properties[newNameText]=newValue
-            console.log(featureCopy.properties);
-            let geoJSONCopy = structuredClone(geoJSON);
-            geoJSONCopy.features[featureIndex] = featureCopy;
-            console.log("geoJSON copy: ", geoJSONCopy)
-            console.log("setting the current geojson")
-            dispatch(setCurrentGeoJSON(geoJSONCopy));
+        if(newNameText!=='' && newValue!==''){
+            dispatch(editMapPropertyThunk({id: currMapId, index: featureIndex, property: newNameText, value: newValue, newProperty: {isNew: true, type: newType}})).unwrap().then((res)=>{
+                console.log(res);
+                let featureCopy = structuredClone(geoJSON.features[featureIndex]);
+                featureCopy.properties[newNameText]=newValue
+                console.log(featureCopy.properties);
+                let geoJSONCopy = structuredClone(geoJSON);
+                geoJSONCopy.features[featureIndex] = featureCopy;
+                console.log("geoJSON copy: ", geoJSONCopy)
+                console.log("setting the current geojson")
+                dispatch(setCurrentGeoJSON(geoJSONCopy));
+                resetFields();
+                setAddNewPropertyMenuOpen(false);
 
-        }).catch((err)=>{
-            console.log(err);
-        });
-        /**
-         * How do I get the changes to be reflected on the frontend?
-         * Should I rerender the map and retrieve the data again?
-         */
+            }).catch((err)=>{
+                console.log(err);
+                resetFields();
+                setAddNewPropertyMenuOpen(false);
+            });
+        }
         
-        
+    }
+
+    function handleCancel(){
+        resetFields();
+        setAddNewPropertyMenuOpen(false);
     }
 
     let newPropertyField = ''
@@ -150,8 +162,11 @@ export default function PropertyEditor(props){
             </TableCell>
 
             <TableCell>
-                <Button variant='contained' onClick={handleConfirm}>
+                <Button variant='contained' fullWidth onClick={handleConfirm}>
                     Confirm
+                </Button>
+                <Button variant='contained' fullWidth onClick={handleCancel} color='error' sx={{mt:'2px'}}>
+                    Cancel
                 </Button>
             </TableCell>
         </TableRow>
@@ -188,6 +203,9 @@ export default function PropertyEditor(props){
                                 <Typography variant='h6' sx={{fontFamily:'koulen'}}>
                                     Value
                                 </Typography>
+                            </TableCell>
+                            <TableCell>
+                                
                             </TableCell>
                         </TableRow>
                     </TableHead> 
