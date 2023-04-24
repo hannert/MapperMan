@@ -2,7 +2,7 @@ import RoomIcon from '@mui/icons-material/Room';
 import { Box, Button, Tooltip } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from 'react';
-import { editTools, endMarker, startMarker } from '../../../app/store-actions/leafletEditing';
+import { editTools, endMarker, setEditTool, startMarker } from '../../../app/store-actions/leafletEditing';
 import CancelButton from './CancelButton';
 
 
@@ -14,7 +14,7 @@ export default function MarkerButton() {
     function handleButtonClick(){
         console.log('Marker Button Clicked');
         setHidden(false);
-        // dispatch(startMouseTracking((e)=>{dispatch(startPolylineDraw(e.latlng))}))
+        dispatch(setEditTool(editTools.marker));
         dispatch(startMarker())
     }
     

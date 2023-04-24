@@ -8,6 +8,7 @@ router.get('/publicmaps', MapController.getPublicMaps)
 router.post('/maps', MapController.getMapsDataByAccount)
 
 router.post('/map', MapController.deleteMap)
+router.post('/map/:id', MapController.saveMap)
 
 /**might have to convert rename to another method (like update), but its here for 
  * build 2 for now

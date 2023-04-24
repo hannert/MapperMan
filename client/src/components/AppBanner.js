@@ -18,10 +18,12 @@ import { useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { clear, deleteMap, forkMapThunk, renameMap } from '../app/store-actions/editMapList';
+import * as L from 'leaflet';
 
 import store from '../app/store';
 import { logout, logoutThunk } from '../app/store-actions/accountAuth';
 import { renameMapThunk, deleteMapThunk } from '../app/store-actions/editMapList';
+import { saveGeojsonThunk } from '../app/store-actions/leafletEditing';
 
 // import PlaylisterToolbar from './PlaylisterToolbar';
 
@@ -35,6 +37,7 @@ function AppBanner() {
     const location = useLocation();
     const dispatch = useDispatch();
 
+    const layerGroup = useSelector((state) => state.leafletEditing.layerGroup);
 
     const [anchorEl, setAnchorEl] = useState(null);
     const [mapRenameField, setMapRenameField]=useState("");
@@ -64,11 +67,28 @@ function AppBanner() {
     const handleSaveOpen = () => {
         setSaveOpen(true);
     }
+
     const handleSaveClose = (event, reason) => {
         if (reason === 'clickaway') {
             return; 
         }
-      
+
+        const geoJSON = layerGroup.toGeoJSON();
+
+        console.log(user);
+        console.log(geoJSON);
+        console.log(mapId);
+        dispatch(saveGeojsonThunk({
+            owner: user, 
+            mapData: geoJSON, 
+            id: mapId}
+            )).unwrap().then((response) => {
+            console.log(response);
+        }).catch((error) => {
+            console.log(error);
+        });
+
+        console.log(geoJSON);
         setSaveOpen(false);    
     }
 

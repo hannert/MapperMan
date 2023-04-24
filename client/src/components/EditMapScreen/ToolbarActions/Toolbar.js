@@ -10,6 +10,7 @@ import UndoButton from './UndoButton';
 import RedoButton from './RedoButton';
 import PolygonButton from "./PolygonButton";
 import MarkerButton from "./MarkerButton";
+import AddCircleButton from "./AddCircleButton";
 
 export default function Toolbar(){
 
@@ -24,6 +25,8 @@ export default function Toolbar(){
             {/* <RemoveVertexButton></RemoveVertexButton> */}
             <PolylineButton></PolylineButton>
             <PolygonButton></PolygonButton>
+            {/* circle is cursed */}
+            {/* <AddCircleButton></AddCircleButton> */}
             <MarkerButton></MarkerButton>
             {/* <AddSubregionButton></AddSubregionButton> */}
             <RemoveFeatureButton></RemoveFeatureButton>

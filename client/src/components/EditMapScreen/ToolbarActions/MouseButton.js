@@ -27,7 +27,7 @@ export default function MouseButton(){
             e.target.disableEdit();
             dispatch(setLayerClickedId(null));
         }else{
-            e.target.setStyle({ color: "red" });
+            e.target.setStyle({ color: "black" });
             e.target.enableEdit();
             dispatch(setLayerClickedId(e.target._leaflet_id));
         }

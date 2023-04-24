@@ -28,6 +28,14 @@ export const getPublicMaps = () => api.get(`/publicMaps/`);
 export const getMapsDataByAccount = (user) => api.post(`/maps`, user);
 
 
+export const saveMap = (owner, mapData, id) => {
+    return api.post(`/map/${id}`,
+    {
+        owner: owner,
+        mapData: mapData,
+        id: id
+    })
+}
 
 export const deleteMap = (id, user) => {
     console.log('Deleting map with ');
@@ -101,7 +109,8 @@ const mapApis = {
     renameMap, 
     forkMap,
     publishMap,
-    editMapProperty
+    editMapProperty,
+    saveMap
 }
 
 export default mapApis
