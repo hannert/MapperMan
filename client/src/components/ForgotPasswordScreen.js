@@ -48,7 +48,7 @@ export default function ForgotPasswordScreen() {
     };
 
     return (
-        <Grid container  bgcolor='#2B2B2B' component="main" direction="column" justify="flex-end" alignItems="center" >
+        <Grid container  component="main" direction="column" justify="flex-end" alignItems="center" >
             <CssBaseline />
             <AuthErrorModal />
             <Grid item>

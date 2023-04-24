@@ -42,7 +42,7 @@ export default function DeleteDialog (props) {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-            <Button onClick={handleConfirm}>Cancel</Button>
+            <Button onClick={toggleDeleteDialog}>Cancel</Button>
             <Button variant='contained'onClick={handleConfirm}>Confirm</Button>
         </DialogActions>
       </Dialog>

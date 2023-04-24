@@ -43,6 +43,7 @@ export default function LeafletContainer(){
                 // Have to add draggable here first then disable/enable it when wanted
                 const polygon = L.polygon(L.GeoJSON.geometryToLayer(feature)._latlngs, {draggable:true});
                 polygon.dragging.disable();
+                polygon.featureIndex =geoJSON.features.indexOf(feature)
                 layerGroup.addLayer(polygon);
             }
             layerGroup.addTo(mapRef.current)

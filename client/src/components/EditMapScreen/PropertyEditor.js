@@ -1,13 +1,15 @@
-import { Button, IconButton, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip, Typography } from '@mui/material';
+import { Button, FormControl, IconButton, MenuItem, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Tooltip, Typography } from '@mui/material';
 import { Box } from "@mui/system";
 import { AddCircle, AddLocation, Circle, Merge, Mouse, Redo, RemoveCircle, Timeline, Undo, WrongLocation } from '@mui/icons-material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { useDispatch, useSelector } from 'react-redux';
-import { setFeatureClicked} from '../../app/store-actions/leafletEditing';
+import { setCurrentGeoJSON, setFeatureClicked, setPrevGeoJSON} from '../../app/store-actions/leafletEditing';
 import PropertyCard from './PropertyCard';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
+import { editMapPropertyThunk } from '../../app/store-actions/leafletEditing';
+
 
 
 
@@ -15,7 +17,15 @@ import Select from '@mui/material/Select';
 
 export default function PropertyEditor(props){
     const {handleToggleProperty} = props;
-    const feature = useSelector((state)=>state.leafletEditing.featureClicked);
+    const dispatch = useDispatch();
+
+    /**
+     * deprecated, not really any need for the featureClicked State
+     */
+    // const feature = useSelector((state)=>state.leafletEditing.featureClicked);
+    const featureIndex = useSelector((state)=>state.leafletEditing.featureClickedIndex);
+    const currMapId = useSelector((state)=>state.editMapList.activeMapId);
+    const geoJSON = useSelector((state) => state.leafletEditing.currentGeoJSON);
     const [addNewPropertyMenuOpen, setAddNewPropertyMenuOpen] = useState(false);
     const [newNameText, setNewNameText] = useState("");
     const [newType, setNewType] = useState('string');
@@ -25,7 +35,8 @@ export default function PropertyEditor(props){
      * Holds the properties in the feature that was taken
      * from the state
      */
-    const featureProperties = feature.properties
+    const featureProperties = geoJSON.features[featureIndex].properties;
+
 
     /**
      * Puts the properties into the
@@ -36,14 +47,9 @@ export default function PropertyEditor(props){
      */
     const rows = []
 
-    
+
     for (var key in featureProperties){
         rows.push(<PropertyCard propKey={key} propType={typeof(key)} propValue={featureProperties[key]} />)
-    }
-    
-
-    function createData(name, type, value) {
-        return { name, type, value};
     }
 
     const handleAddPropertyClick = (event)=>{
@@ -54,20 +60,49 @@ export default function PropertyEditor(props){
         setNewNameText(event.target.value);
     }
 
+    const handleUpdateType = (event) =>{
+        setNewType(event.target.value);
+        
+    }
+
     const handleUpdateValueText = (event) =>{
         setNewValue(event.target.value) 
     }
 
-    function handleKeyPress(event) {
-        event.stopPropagation()
-        if (event.code === "Enter") {
-            // dispatch(editMapPropertyThunk({id: currMapId, index: featureIndex, property: propKey, value: value})).unwrap().then((res)=>{
-            //     console.log(res);
-            // }).catch((err)=>{
-            //     console.log(err);
-            // });
-            // setEditActive(false);
+    const resetFields = () =>{
+        setNewValue('');
+        setNewNameText('');
+        setNewType('string');
+    }
+
+    function handleConfirm(event) {
+        console.log("confirm");
+        if(newNameText!=='' && newValue!==''){
+            dispatch(editMapPropertyThunk({id: currMapId, index: featureIndex, property: newNameText, value: newValue, newProperty: {isNew: true, type: newType}})).unwrap().then((res)=>{
+                console.log(res);
+                let featureCopy = structuredClone(geoJSON.features[featureIndex]);
+                featureCopy.properties[newNameText]=newValue
+                console.log(featureCopy.properties);
+                let geoJSONCopy = structuredClone(geoJSON);
+                geoJSONCopy.features[featureIndex] = featureCopy;
+                console.log("geoJSON copy: ", geoJSONCopy)
+                console.log("setting the current geojson")
+                dispatch(setCurrentGeoJSON(geoJSONCopy));
+                resetFields();
+                setAddNewPropertyMenuOpen(false);
+
+            }).catch((err)=>{
+                console.log(err);
+                resetFields();
+                setAddNewPropertyMenuOpen(false);
+            });
         }
+        
+    }
+
+    function handleCancel(){
+        resetFields();
+        setAddNewPropertyMenuOpen(false);
     }
 
     let newPropertyField = ''
@@ -81,7 +116,6 @@ export default function PropertyEditor(props){
                     fullWidth
                     label="Name"
                     name="Name"
-                    onKeyPress={handleKeyPress}
                     onChange={handleUpdateNameText}
                     defaultValue={newNameText}
                     inputProps={{style: {fontSize: 12}}}
@@ -91,7 +125,25 @@ export default function PropertyEditor(props){
             </TableCell>
                 
             <TableCell>
-                type
+                <FormControl>
+                <Select
+                    id="prop-type-select"
+                    value = {newType ? newType : ""}
+                    // label = "Type"
+                    onChange={handleUpdateType}
+                    style={{fontSize: "12px"}}
+                >
+
+                <MenuItem value={"string"}>
+                    String
+                </MenuItem>
+
+                <MenuItem value={"number"}>
+                    Number
+                </MenuItem>
+                
+                </Select>
+                </FormControl>
             </TableCell>
                 
             <TableCell>
@@ -101,13 +153,21 @@ export default function PropertyEditor(props){
                         fullWidth
                         label="Value"
                         name="Name"
-                        onKeyPress={handleKeyPress}
                         onChange={handleUpdateValueText}
                         defaultValue={newValue}
                         inputProps={{style: {fontSize: 12}}}
                         InputLabelProps={{style: {fontSize: 12}}}
                         autoFocus
                 />
+            </TableCell>
+
+            <TableCell>
+                <Button variant='contained' fullWidth onClick={handleConfirm}>
+                    Confirm
+                </Button>
+                <Button variant='contained' fullWidth onClick={handleCancel} color='error' sx={{mt:'2px'}}>
+                    Cancel
+                </Button>
             </TableCell>
         </TableRow>
     }
@@ -143,6 +203,9 @@ export default function PropertyEditor(props){
                                 <Typography variant='h6' sx={{fontFamily:'koulen'}}>
                                     Value
                                 </Typography>
+                            </TableCell>
+                            <TableCell>
+                                
                             </TableCell>
                         </TableRow>
                     </TableHead> 
