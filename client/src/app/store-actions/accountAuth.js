@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk, isRejectedWithValue } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import authApis from "../store-requests/auth_requests";
 
 const initialState = {
@@ -17,6 +17,7 @@ export const accountAuth = createSlice({
         loginUser: (state, action) => {
             state.user = action.payload;
             state.loggedIn = true;
+            state.guest = false;
         },
         allowGuest: (state, action) => {
             state.guest = true;
@@ -24,10 +25,19 @@ export const accountAuth = createSlice({
         logout: (state, action) => {
             state.user = null;
             state.loggedIn = false;
+            state.guest = false;
         },
         registerUser: (state, action) => {
             state.user = action.payload.user;
             state.loggedIn = true;
+        },
+        forgotPassword: (state, action) => {
+            state.user = action.payload.user;
+            state.loggedIn = false;
+        },
+        sendVerification: (state, action) => {
+            state.user = action.payload.user;
+            state.loggedIn = false;
         },
         setModalActive: (state, action) => {
             state.modalActive = action.payload;
@@ -38,7 +48,7 @@ export const accountAuth = createSlice({
     }
 })
 
-export const { loginUser, allowGuest, logout, registerUser, setModalActive, setErrorMessage} = accountAuth.actions
+export const { loginUser, allowGuest, logout, registerUser, forgotPassword, setModalActive, setErrorMessage} = accountAuth.actions
 export default accountAuth.reducer
 
 export const loginThunk = createAsyncThunk('/login', async (payload, {rejectWithValue}) => {
@@ -79,6 +89,22 @@ export const getLoggedInThunk = createAsyncThunk('/getLoggedIn', async (_, {reje
         const response = await authApis.getLoggedIn();
         return response.data;
     }catch(err){
+        return rejectWithValue(err.response.data.errorMessage);
+    }
+})
+export const forgotPasswordThunk = createAsyncThunk('/forgotPassword', async (payload, {rejectWithValue}) => {
+    try {
+        const response = await authApis.forgotPassword(payload.email, payload.password, payload.passwordVerify)
+        return response.data;
+    } catch(err){
+        return rejectWithValue(err.response.data.errorMessage);
+    }
+})
+export const sendVerificationThunk = createAsyncThunk('/sendmail', async (payload, {rejectWithValue}) => {
+    try {
+        const response = await authApis.sendVerification(payload.email)
+        return response.data;
+    } catch(err){
         return rejectWithValue(err.response.data.errorMessage);
     }
 })

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import CancelButton from "./CancelButton";
 import * as L from 'leaflet';
 import { useDispatch, useSelector } from "react-redux";
-import { editTools, setDraggable, setEditTool, setLayerClickedEditor, setLayerClickedId, startMouseTool, unselectTool } from "../../../app/store-actions/leafletEditing";
+import { editTools, setDraggable, setEditTool, setFeatureIndexClicked, setLayerClickedEditor, setLayerClickedId, startMouseTool, unselectTool } from "../../../app/store-actions/leafletEditing";
 
 export default function MouseButton(){
 
@@ -37,6 +37,11 @@ export default function MouseButton(){
     useEffect(()=>{
         if (layerClickedId !== null){
             console.log(layerGroup.getLayer(layerClickedId));
+            let featureIndex = layerGroup.getLayer(layerClickedId).featureIndex
+            console.log("feature: ", layerGroup.getLayer(layerClickedId).featureIndex);
+
+            dispatch((setFeatureIndexClicked(featureIndex)))
+
             dispatch(setLayerClickedEditor(layerGroup.getLayer(layerClickedId).editor));
             dispatch(setDraggable(layerClickedId))
         }

@@ -1,13 +1,12 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from "@mui/material";
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { getMapsDataByAccountThunk, publishMapThunk, setMapList } from "../../../app/store-actions/editMapList";
+import { publishMapThunk } from "../../app/store-actions/editMapList";
 
-export default function PublishDialog(props){
+export default function PublishModal(props){
     const { open, togglePublishDialog } = props;
     const dispatch = useDispatch();
-    const mapID = useSelector((state) => state.editMapList.mapCardClickedId, shallowEqual);
-    const mapName = useSelector((state) => state.editMapList.mapCardClickedName, shallowEqual);
-    const user = useSelector((state) => state.accountAuth.user);
+    const mapID = useSelector((state) => state.editMapList.activeMapId, shallowEqual);
+    const mapName = useSelector((state) => state.editMapList.activeMapName, shallowEqual);
 
     const handleConfirm = () =>{
         console.log("map Id that will be published: " + mapID)
@@ -15,13 +14,6 @@ export default function PublishDialog(props){
             id: mapID
         })).catch((error) =>{
             console.log(error);
-        }).then(() => {
-            dispatch(getMapsDataByAccountThunk({user: user})).unwrap().then((response) => {
-                console.log("Getting maps")
-                dispatch(setMapList(response.maps));
-            }).catch((error) => {
-                console.log(error);
-            });
         })
         togglePublishDialog();
     }

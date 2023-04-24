@@ -20,6 +20,8 @@ router.post('/fork', MapController.forkMap)
 router.put('/map/:id/publish', MapController.publishMap)
 
 router.put('/map/:id/editProperty', MapController.editMapProperty)
+router.put('/map/:id/deleteProperty', MapController.deleteMapProperty)
+
 
 
 module.exports = router

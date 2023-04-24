@@ -1,32 +1,62 @@
-import MapCard from './MapCardComponents/MapCard';
-import FilterMaps from './SearchComponents/FilterMaps';
-import AddMapButton from './MapUploadComponents/AddMapButton';
-import Pagination from '@mui/material/Pagination';
-import { Grid, Box, Paper } from '@mui/material';
-import Pages from './SearchComponents/Pages';
+import { Box, Grid } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import PublishDialog from './MapCardComponents/PublishDialog';
-import { getMapsDataByAccountThunk } from '../../app/store-actions/editMapList';
-import { setMapList } from '../../app/store-actions/editMapList';
 import { useNavigate } from 'react-router-dom';
-import { getLoggedInThunk, loginUser } from '../../app/store-actions/accountAuth';
+import { getMapsDataByAccountThunk, getPublicMapsThunk, setMapList } from '../../app/store-actions/editMapList';
+import DeleteDialog from './MapCardComponents/DeleteDialog';
+import ForkDialog from './MapCardComponents/ForkDialog';
+import MapCard from './MapCardComponents/MapCard';
+import PublishDialog from './MapCardComponents/PublishDialog';
+import AddMapButton from './MapUploadComponents/AddMapButton';
+import FilterMaps from './SearchComponents/FilterMaps';
+import Pages from './SearchComponents/Pages';
+import GuestModal from '../Modals/GuestModal';
 
 export default function MapsScreen(){
     const [currentList, setCurrentList] = useState([])
-    const [publishDialogOpen, setPublishDialogOpen] = React.useState(false);
-    const loggedIn = useSelector((state) => state.accountAuth.loggedIn);
-
-    const togglePublishDialog = () =>{
-        setPublishDialogOpen(!publishDialogOpen);
-        console.log("clicked on publish button!")
-    }
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
+
+    const [publishDialogOpen, setPublishDialogOpen] = useState(false);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [forkDialogOpen, setForkDialogOpen] = useState(false);
+    const [guestDialogOpen, setGuestDialogOpen] = useState(false);
+
+    const loggedIn = useSelector((state) => state.accountAuth.loggedIn);
     const user = useSelector((state) => state.accountAuth.user);
     const guest = useSelector((state) => state.accountAuth.guest);
     const maps = useSelector((state) => state.editMapList.mapList);
+
+    const togglePublishDialog = () => {
+        if(guest){
+            setGuestDialogOpen(true)
+        } else {
+            setPublishDialogOpen(!publishDialogOpen);
+            console.log("clicked on publish button!")
+        }
+        
+    }
+    const toggleDeleteDialog = () => {
+        if(guest){
+            setGuestDialogOpen(true)
+        } else {
+            setDeleteDialogOpen(!deleteDialogOpen);
+            console.log("Clicked on delete button")
+        }
+        
+    }
+    const toggleForkDialog = () => {
+        if(guest){
+            setGuestDialogOpen(true)
+        } else {
+            setForkDialogOpen(!forkDialogOpen);
+            console.log("Toggled fork dialog")
+        }
+        
+    }
+
+
     
     // useEffect(() => {
     //     dispatch(getLoggedInThunk()).unwrap().then((response) => {
@@ -45,6 +75,18 @@ export default function MapsScreen(){
             navigate('/');
         }
     }, [user])
+
+    useEffect(() => {
+        if (guest) {
+            dispatch(getPublicMapsThunk()).then((response) => {
+                console.log("Get maps response")
+                console.log(response);
+                if(response.payload.success){
+                    dispatch(setMapList(response.payload.maps));
+                }
+            });
+        }   
+    }, [guest])
 
     useEffect(() => {
         if(maps){
@@ -67,13 +109,22 @@ export default function MapsScreen(){
     let pubDialog = "";
     pubDialog = (publishDialogOpen) ? <PublishDialog open={true} togglePublishDialog={togglePublishDialog}/> : <PublishDialog open={false} togglePublishDialog={togglePublishDialog}/> ;
 
+    let delDialog = "";
+    delDialog = (deleteDialogOpen) ? <DeleteDialog open={true} toggleDeleteDialog={toggleDeleteDialog}/> : <DeleteDialog open={false} toggleDeleteDialog={toggleDeleteDialog}/> ;
 
+    let forkDialog = "";
+    forkDialog = (forkDialogOpen) ? <ForkDialog open={true} toggleForkDialog={toggleForkDialog}/> : <ForkDialog open={false} toggleForkDialog={toggleForkDialog}/> ;
+
+    let guestDialog = "";
+    guestDialog = (guestDialog) ? <GuestModal open={true} toggleForkDialog={toggleForkDialog}/> : <GuestModal open={false} toggleForkDialog={toggleForkDialog}/> ;
+
+    
 
 
     return (
         <Grid container rowSpacing={0} sx={{backgroundColor: '#2B2B2B',
                     alignItems:"center", justifyContent:"center", marginRight: '10px'}}>
-
+            {console.log('Guest status', guest)}
             {/* Giving this height is a cursed technique but is what it is */}
             <Grid item  xs = {12} sx={{textAlign:'right', height:'25px'}}>
                 <AddMapButton></AddMapButton>
@@ -87,7 +138,14 @@ export default function MapsScreen(){
                     {      
                         currentList.map((map)=>(
                             <Grid key={map.id} item xs = {6} sx={{align: 'center'}} >
-                                <MapCard key={map.id} sx = {{height: '400px', backgroundColor: '#282c34'}} map={map} togglePublishDialog={togglePublishDialog}/>
+                                <MapCard 
+                                    key={map.id} 
+                                    sx = {{height: '400px', backgroundColor: '#282c34'}} 
+                                    map={map} 
+                                    togglePublishDialog={togglePublishDialog} 
+                                    toggleDeleteDialog={toggleDeleteDialog} 
+                                    toggleForkDialog={toggleForkDialog}
+                                />
                             </Grid>
                         ))
                     }
@@ -98,6 +156,8 @@ export default function MapsScreen(){
             </Grid>
             
             {pubDialog}
+            {delDialog}
+            {forkDialog}
         </Grid>
 
     )

@@ -2,7 +2,7 @@
 const express = require('express')
 const cors = require('cors')
 const dotenv = require('dotenv')
-const cookieParser = require('cookie-parser')
+// const cookieParser = require('cookie-parser')
 
 // CREATE OUR SERVER
 dotenv.config()
@@ -24,23 +24,28 @@ app.use((req, res, next) => {
   next()
 });
 
-const whitelist = [process.env.FRONTEND_URL, process.env.BACKEND_URL];
+// const whitelist = [process.env.FRONTEND_URL, process.env.BACKEND_URL];
 
-var corsOptions = {
-  origin: function (origin, callback) {
-    if (whitelist.indexOf(origin) !== -1 || !origin) {
-      callback(null, true)
-    } else {
-      callback(new Error('Not allowed by CORS'))
-    }
-  },
-  credentials: true
-}
+// var corsOptions = {
+//   origin: function (origin, callback) {
+//     if (whitelist.indexOf(origin) !== -1 || !origin) {
+//       callback(null, true)
+//     } else {
+//       callback(new Error('Not allowed by CORS'))
+//     }
+//   },
+//   credentials: true
+// }
 
-app.use(cors(corsOptions));
+// app.use(cors(corsOptions));
+app.use(cors({
+  origin: '*',
+
+}))
+
 
 app.use(express.json({limit:'50mb'}))
-app.use(cookieParser())
+// app.use(cookieParser())
 
 // SETUP OUR OWN ROUTERS AS MIDDLEWARE
 const mapsRouter = require('./routes/maps-router')
@@ -54,4 +59,4 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'))
 // PUT THE SERVER IN LISTENING MODE
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
 
-// Yipee! Testing AUto Deploy again
+// :3

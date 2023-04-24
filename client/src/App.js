@@ -1,8 +1,10 @@
 import { Box, ThemeProvider, createTheme } from '@mui/material';
-import { React, useEffect } from 'react';
+import { React } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
 
+import { Provider } from 'react-redux';
+import store from './app/store';
 import AppBanner from './components/AppBanner';
 import EditScreen from './components/EditMapScreen/EditScreen';
 import ForgotPasswordScreen from './components/ForgotPasswordScreen';
@@ -11,8 +13,6 @@ import LoginScreen from './components/LoginScreen';
 import MapsScreen from './components/MapListScreen/MapsScreen';
 import RegisterScreen from './components/RegisterScreen';
 import ViewMapScreen from './components/ViewMapScreen';
-import store from './app/store';
-import { Provider } from 'react-redux'
 
 const { palette } = createTheme();
 const { augmentColor } = palette;
@@ -50,6 +50,31 @@ const themeOptions = createTheme({
           fontFamily: 'koulen'
         }
       }
+    },
+    MuiTypography: {
+      styleOverrides: {
+        root: {
+          fontFamily: 'Roboto mono'
+        }
+      }
+    },
+    MuiSvgIcon: {
+      styleOverrides: {
+        root: {
+          '&:hover': {
+            color: '#FF3B6B',
+            transition: 'all 0.3s ease'
+          }
+        },
+
+      }
+    },
+    MuiFormControlLabel: {
+      styleOverrides: {
+        root: {
+          fontFamily: 'Roboto mono'
+        }
+      }
     }
   }
   
@@ -82,5 +107,5 @@ function App() {
     </BrowserRouter>
   );
 }
-// Epic! Netlify Tests Change ENV // Testing 
+// Epic! Netlify Tests Change ENV // Testing // I love cs // Netlify ENV?? // Aweosme
 export default App;

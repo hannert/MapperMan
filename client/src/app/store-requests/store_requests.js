@@ -88,12 +88,21 @@ export const publishMap = (id) => {
     })
 }
 
-export const editMapProperty = (id, index, property, value) =>{
+export const editMapProperty = (id, index, property, value, newProperty) =>{
     return api.put(`/map/${id}/editProperty`,{
         id: id,
         index: index,
         property: property,
-        value: value
+        value: value,
+        newProperty: newProperty
+    })
+}
+
+export const deleteMapProperty = (id, index, property) =>{
+    return api.put(`/map/${id}/deleteProperty`, {
+        id: id,
+        index: index,
+        property: property
     })
 }
 
@@ -110,7 +119,8 @@ const mapApis = {
     forkMap,
     publishMap,
     editMapProperty,
-    saveMap
+    saveMap,
+    deleteMapProperty
 }
 
 export default mapApis

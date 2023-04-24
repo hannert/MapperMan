@@ -1,11 +1,11 @@
-import { Box, CardActionArea, Grid, Typography } from '@mui/material';
+import { Box, Divider, Grid, Typography } from '@mui/material';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import dummy from '../../na.png';
 import MapCardActions from './MapCardActions';
 
-import { setActiveMap, setMapCardClicked } from '../../../app/store-actions/editMapList';
 import { useDispatch } from 'react-redux';
+import { setActiveMap, setMapCardClicked } from '../../../app/store-actions/editMapList';
 
 /**
  * This component is a card that displays a map in the Map List Screen. Deals with actions
@@ -18,7 +18,7 @@ import { useDispatch } from 'react-redux';
 export default function MapCard(props) {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-    const { map, togglePublishDialog} = props;
+    const { map, togglePublishDialog, toggleDeleteDialog, toggleForkDialog} = props;
 
     function handleMapClick(){
         console.log('Map clicked');
@@ -44,17 +44,15 @@ export default function MapCard(props) {
         }
     }
 
-    function mouseDown(e){
-        e.stopPropagation ();
-    }
-
     /**
-     * This function sets the 'mapCardClickedId" value in the store to the id of the card that was clicked in
-     * any of these actions. 
+     * This function sets the 'mapCardClickedId" value in the store to the id and name 
+     * of the card that was clicked in any of these actions. 
     */
     function handleActionClick(){
+        console.log("setting the mapId of the card that was clicked in the redux store to: " + map.id + " with name: " + map.name);
         dispatch(setMapCardClicked({
-            id:map.id
+            id:map.id,
+            name:map.name
         }))
     }
 
@@ -69,46 +67,58 @@ export default function MapCard(props) {
     }
 
     return (
-        <Box sx = {{'&:hover': {
-            opacity: [0.9, 0.8, 0.7],
-        }}}
-            onClick={handleMapClick}>
+        <Box 
+            sx = {
+                {'&:hover': {opacity:'0.85',marginTop:'-2',transition:'all 0.3s ease', boxShadow:'20'},
+                border: '10px',
+                borderRadius: '15px',
+                backgroundColor: 'white'
+                }}
+            onClick={handleMapClick}
+        >
             {/* Title with delete */}
-            <Box sx={{backgroundColor: '#d2d4d9', color: 'black', display: 'flex', height:'35px'}}>
+            <Box sx={{ color: 'black', display: 'flex'}}>
                 <Grid container rowSpacing={0}>
                     <Grid item xs = {6} sx={{textAlign:'left', fontSize:'24px'}}>
-                        <Typography sx = {{margin:'5px', fontSize: 18}}>
+                        <Typography sx = {{margin:'5px', fontSize: 18, marginLeft:'5%'}}>
                             {map.name}
                         </Typography>
                     </Grid>
                     <Grid item xs = {6} sx={{textAlign:'right'}}>
-                        <MapCardActions published={map.published} togglePublishDialog={togglePublishDialog} handleActionClick={handleActionClick}></MapCardActions>
+                        <MapCardActions 
+                            published={map.published} 
+                            togglePublishDialog={togglePublishDialog}
+                            toggleDeleteDialog={toggleDeleteDialog}
+                            toggleForkDialog={toggleForkDialog}
+                            handleActionClick={handleActionClick}>
+                        </MapCardActions>
                     </Grid>
                 </Grid>          
             </Box>  
-            <CardActionArea>
+            <Divider variant='middle' flexItem sx={{backgroundColor:'gray'}}/>
 
             {/* Picture of the map here */}
-            <Box sx ={{backgroundColor: '#56585c', color: 'white', minHeight: '200px', maxWidth:'100%', maxHeight:'100%'}}>
+            <Box sx ={{minHeight: '200px', maxWidth:'100%', maxHeight:'100%', padding:'5%'}}>
                 <img alt='?' src={dummy} width='100%' height='100%'></img>
             </Box>
-            
+
+            <Divider variant='middle' flexItem sx={{backgroundColor:'gray'}}/>
             {/* User who made map and published here */}
-            <Box sx ={{height:'25px', backgroundColor: 'black', color: 'white', marginTop:'-5px'}}>
+            <Box>
                 <Grid container rowSpacing={0}>
                     <Grid item xs = {6} sx={{textAlign:'left'}}>
-                        <Typography sx = {{margin: '3px',fontSize: 14}}>
+                        <Typography sx = {{margin: '3px',fontSize: 14, marginLeft:'10%'}}>
                             {'By: ' + map.owner}
                         </Typography>
                     </Grid>
+                    
                     <Grid item xs = {6} sx={{textAlign:'right'}}>
-                        <Typography sx = {{margin: '3px', fontSize: 14}}>
+                        <Typography sx = {{margin: '3px', fontSize: 14, marginRight:'10%'}}>
                             {'Published: ' + date}
                         </Typography>
                     </Grid>
                 </Grid>
             </Box>
-            </CardActionArea>
         </Box>
     );
 }

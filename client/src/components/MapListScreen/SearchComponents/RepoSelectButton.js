@@ -10,6 +10,7 @@ export default function RepoSelectButton(){
     const [anchorEl, setAnchorEl] = React.useState(null);
     const open = Boolean(anchorEl);
     const user = useSelector((state) => state.accountAuth.user);
+    const guest = useSelector((state) => state.accountAuth.guest);
 
     const dispatch = useDispatch();
     const handleClick = (event) => {
@@ -34,7 +35,7 @@ export default function RepoSelectButton(){
 
     const handleLoadPublicMaps = () => {
         console.log('load public maps');
-        if (user) {
+        if (user || guest) {
           dispatch(getPublicMapsThunk()).then((response) => {
               console.log("Get maps response")
               console.log(response);
@@ -66,7 +67,10 @@ export default function RepoSelectButton(){
             'aria-labelledby': 'basic-button',
           }}
         >
-          <MenuItem onClick={handleLoadUserMaps}>Your Maps</MenuItem>
+          {
+            user && <MenuItem onClick={handleLoadUserMaps}>Your Maps</MenuItem>
+          }
+          
           <MenuItem onClick={handleLoadPublicMaps}>Public Maps</MenuItem>
         </Menu>
       </div>

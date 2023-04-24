@@ -9,6 +9,7 @@ import { loginUser } from "../app/store-actions/accountAuth";
 function HomeWrapper() {
     const dispatch = useDispatch();
     const loggedIn = useSelector((state) => state.accountAuth.loggedIn);
+    const guest = useSelector((state) => state.accountAuth.guest);
 
     useEffect(() => {
         dispatch(getLoggedInThunk()).unwrap().then((response) => {
@@ -20,7 +21,7 @@ function HomeWrapper() {
         });
     }, [])
 
-    if(loggedIn){
+    if(loggedIn || guest){
         return <MapsScreen />
     }else{
         return <SplashScreen />

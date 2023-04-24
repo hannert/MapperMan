@@ -1,22 +1,18 @@
-import { useContext, useState } from 'react'
-import * as React from 'react';
-import Modal from '@mui/material/Modal';
-import Alert from '@mui/material/Alert';
-import Button from '@mui/material/Button';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import Grid from '@mui/material/Grid';
 import Link from '@mui/material/Link';
 import TextField from '@mui/material/TextField';
 import Typography from '@mui/material/Typography';
+import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import AuthErrorModal from './Modals/AuthErrorModal';
 
-import { loginThunk, setModalActive, setErrorMessage } from '../app/store-actions/accountAuth';
-import { loginUser } from '../app/store-actions/accountAuth';
+import { loginThunk, loginUser, setErrorMessage, setModalActive } from '../app/store-actions/accountAuth';
 
 export default function LoginScreen() {
     const dispatch = useDispatch();

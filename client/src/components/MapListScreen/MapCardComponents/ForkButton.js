@@ -1,5 +1,5 @@
 import ForkRightIcon from '@mui/icons-material/ForkRight';
-import { Button } from '@mui/material';
+import { Button, Tooltip , IconButton} from '@mui/material';
 
 /**
  * This component forks a map. Will call store commands to change the map to go into the repository
@@ -12,20 +12,23 @@ import { Button } from '@mui/material';
  * @returns Fork Button for Map Card Actions
  */
 export default function ForkButton(props){
+    const {toggleForkDialog, handleActionClick} = props;
 
-    const id = props.mapId
-    function handleDelete(e){
+    // Function to stage map to be forked. Should call store to open the ForkDialog, while passing MapID.
+    function handleFork(e){
         e.stopPropagation();
-        console.log(id)
+        console.log("Fork map button clicked")
+        handleActionClick();
+        toggleForkDialog();
     }
 
-    function mouseDown(e){
-        e.stopPropagation ();
-    }
     
     return (
-        <Button onClick={handleDelete} onMouseDown={mouseDown} style={{maxWidth: '35px', maxHeight: '35px', minWidth: '35px', minHeight: '35px'}}>
-            <ForkRightIcon style={{fontSize:'16pt', color:'gray'}} />
-        </Button>  
+        <Tooltip title='Fork map'>
+            <Button onClick={handleFork} style={{maxWidth: '35px', maxHeight: '35px', minWidth: '35px', minHeight: '35px'}}>
+                <ForkRightIcon style={{fontSize:'16pt', color:'gray'}} />
+            </Button>  
+        </Tooltip>
+        
     )
 }
