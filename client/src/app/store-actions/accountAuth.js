@@ -15,10 +15,8 @@ export const accountAuth = createSlice({
     initialState,
     reducers: {
         loginUser: (state, action) => {
-            console.log('Logging in with email: ' + action.payload.email);
             state.user = action.payload;
             state.loggedIn = true;
-            console.log(action.payload);
         },
         allowGuest: (state, action) => {
             state.guest = true;

@@ -51,11 +51,11 @@ createMap = async (req, res) => {
 
 getMapById = async (req, res) => {
     console.log("loading map");
-    console.log(req);
+    // console.log(req);
     // use bcrypt to check if the map is in the users owned list
     await Map.findById({ _id: req.params.id }).then((map) => {
         console.log("Found Map!")
-        console.log(map);
+        // console.log(map);
         if (map) {
             return res.status(200).json({ success: true, map: map})
         }
@@ -107,7 +107,7 @@ getPublicMaps = async (req, res) => {
     console.log("Getting public maps");
     let data = []
     await Map.find({published:true}).then(async(maps) => {
-        console.log(maps);
+        // console.log(maps);
 
         for (const map of maps){
             await Account.find({_id: map.owner}).then((account) => {
@@ -278,6 +278,79 @@ publishMap = async(req,res) =>{
     }).catch(err => console.log(err));
 }
 
+
+editMapProperty = async(req,res) =>{
+    const body = req.body;
+
+    if(!body){
+        return res.status(400).json({
+            success: false,
+            error: 'You must provide a body to update',
+        })
+    }
+
+    const id = body.id;
+    const index = body.index;
+    const property = body.property;
+    const value = body.value;
+
+
+
+    Map.findOneAndUpdate(
+        {_id: id},
+        {$set: {[`mapData.features.${index}.properties.${property}`]: value}},
+        {new: true,
+        upsert: true}
+    ).then((map)=>{
+        return res.status(200).json({
+            success: true,
+            id: map._id,
+            name: map.name,
+            indexChanged: index,
+            propertyChanged: property,
+            newPropertyValue: map.mapData.features[index].properties[property],
+            message: 'map property updated!'
+        });
+    }).catch(err => console.log(err));
+
+}
+
+deleteMapProperty = async(req,res) =>{
+    console.log("in delete map property")
+    const body = req.body;
+    console.log(body)
+
+    if(!body){
+        return res.status(400).json({
+            success: false,
+            error: 'You must provide a body to update',
+        })
+    }
+
+    const id = body.id;
+    const index = body.index;
+    const property = body.property;
+
+
+
+    Map.findOneAndUpdate(
+        {_id:id},
+        {$unset: {[`mapData.features.${index}.properties`]: property}},
+        {new: true}
+    ).then((map)=>{
+        return res.status(200).json({
+            success: true,
+            id: map._id,
+            name: map.name,
+            indexChanged: index,
+            propertyDeleted: property,
+            message: 'map property deleted!'
+        });
+    }).catch(err => console.log(err));
+
+
+}
+
 module.exports = {
     createMap,
     getMapById,
@@ -287,5 +360,7 @@ module.exports = {
     getMapsDataByAccount,
     renameMap,
     forkMap,
-    publishMap
+    publishMap,
+    editMapProperty,
+    deleteMapProperty
 }

@@ -31,6 +31,7 @@ getLoggedIn = async (req, res) => {
             loggedIn: true,
             user: loggedInUser
         })
+
     } catch (err) {
         console.log("err: " + err);
         res.json(false);
@@ -95,7 +96,7 @@ loginUser = async (req, res) => {
 
     } catch (err) {
         console.error(err);
-        res.status(500).send();
+        res.status(500).json({ errorMessage: "Server error" });
     }
 }
 
@@ -171,6 +172,7 @@ forgotPassword = async (req, res) => {
 }
 registerUser = async (req, res) => {
     console.log("REGISTERING USER IN BACKEND");
+    var re = /^\S+@\S+\.\S+$/;
     try {
         console.log(req.body);
         const { firstName, lastName, username, email, password, passwordVerify } = req.body;
@@ -180,6 +182,11 @@ registerUser = async (req, res) => {
             return res
                 .status(400)
                 .json({ errorMessage: "Please enter all required fields." });
+        }
+        if(re.test(email) === false) {
+            return res
+            .status(400)
+            .json({ errorMessage: "Email is not valid." });
         }
         console.log("all fields provided");
         if (password.length < 8) {

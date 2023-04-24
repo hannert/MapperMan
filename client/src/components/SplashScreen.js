@@ -14,7 +14,7 @@ function SplashScreen(){
             <Box>
                 <img src="https://i.ibb.co/SnCcPnW/Mapper-Man-Logo-Transparent.png" id="mapperman-logo"/>
                 <Typography variant='h1' id='logo-text' color={'white'} sx={{fontFamily: 'Koulen'}}>Mapper Man</Typography>
-                <Typography color={'white'} sx={{fontFamily: 'Lato'}}>Aiming to provide better map editing. One vertex at a time.</Typography>
+                <Typography color={'white'}>Aiming to provide better map editing. One vertex at a time.</Typography>
                 <Box id="splash-screen-buttons">
                     <Button id= "login-button" sx={{color:"white", mt:"20px", width:280, height: 80, fontSize: 24, borderRadius: 3, fontWeight: 'bold', justifyContent: 'space-around'}} 
                             variant="contained" 

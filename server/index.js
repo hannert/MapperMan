@@ -24,13 +24,27 @@ app.use((req, res, next) => {
   next()
 });
 
+// const whitelist = [process.env.FRONTEND_URL, process.env.BACKEND_URL];
+
+// var corsOptions = {
+//   origin: function (origin, callback) {
+//     if (whitelist.indexOf(origin) !== -1 || !origin) {
+//       callback(null, true)
+//     } else {
+//       callback(new Error('Not allowed by CORS'))
+//     }
+//   },
+//   credentials: true
+// }
+
+// app.use(cors(corsOptions));
 app.use(cors({
   origin: '*',
 
 }))
 
 
-app.use(express.json({limit:'2000kb'}))
+app.use(express.json({limit:'50mb'}))
 // app.use(cookieParser())
 
 // SETUP OUR OWN ROUTERS AS MIDDLEWARE

@@ -8,7 +8,8 @@ const initialState = {
     mapList: [],
     publicRepo: false,
     mapMarkedForDeletion: null,
-    mapCardClickedId: null
+    mapCardClickedId: null,
+    mapCardClickedName: null,
 }
 
 export const editMapList = createSlice({
@@ -41,6 +42,7 @@ export const editMapList = createSlice({
 
         setMapCardClicked: (state,action) =>{
             state.mapCardClickedId = action.payload.id;
+            state.mapCardClickedName = action.payload.name;
         },
 
         clear: (state, action) => {
@@ -51,6 +53,7 @@ export const editMapList = createSlice({
             state.publicRepo = false;
             state.mapMarkedForDeletion = null;
             state.mapCardClickedId = null;
+            state.mapCardClickedName = null;
         }
     }
 })

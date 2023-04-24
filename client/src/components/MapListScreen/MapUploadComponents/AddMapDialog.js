@@ -82,6 +82,7 @@ export default function AddMapDialog(props){
             if(event.target.files){
                 console.log(event.target.files);
                 setGeoJsonFile(event.target.files[0]);
+                console.log(event.target.files[0]);
                 var reader = new FileReader();
                 reader.onload = function() {
                     setGeoJsonFile(JSON.parse(reader.result));
@@ -101,23 +102,18 @@ export default function AddMapDialog(props){
     function handleShpDbfConfirm(){
         console.log("confirm button for shp");
         let combinedGeoJSON = shp.combine([shp.parseShp(shapefile),shp.parseDbf(dbfFile)]);
-        let options = {tolerance: 0.01, highQuality: false};
+        let options = {tolerance: 0.05, highQuality: false};
         let simplified = turf.simplify(combinedGeoJSON, options);
-        // if(user !== null){
-        //     apis.createMap(user, simplified).then((res) => {
-        //         console.log("map created");
-        //         if(res.data.success===true){
-        //             console.log("map created successfully");
-        //             dispatch(createNewMap(res.data.id));
-        //             navigator(`/maps/edit`);
-        //         }else{
-        //             console.log("map creation failed");
-        //             console.log(res);
-        //         }
-        //     }).catch((err) => {
-        //         console.log(err);
-        //     });
-        // }
+        if(user !== null){
+            dispatch(createMapThunk({owner: user, mapData: simplified})).unwrap().then((res) => {
+                console.log("trying to make a map from geojson");
+                console.log(res);
+                dispatch(createNewMap(res));
+                navigate('/maps/edit');
+            }).catch((err) => {
+                console.log(err);
+            });
+        }
 
         
     }
@@ -132,8 +128,8 @@ export default function AddMapDialog(props){
     function handleGeoJsonConfirm(){
         console.log("confirm button for geojson");
         
-        let options = {tolerance: 0.01, highQuality: false};
-        let simplified = turf.simplify(geoJsonFile, options);
+        let options = {tolerance: 0.001, highQuality: true};
+        // let simplified = turf.simplify(geoJsonFile, options);
         console.log(geoJsonFile);
         if(user !== null){
             dispatch(createMapThunk({owner: user, mapData: geoJsonFile})).unwrap().then((res) => {
