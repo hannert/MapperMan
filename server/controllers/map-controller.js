@@ -210,6 +210,40 @@ renameMap = async (req,res) =>{
     })
 }
 
+saveMap = async (req, res) => {
+    const body = req.body
+    console.log("Body: ");
+    console.log(body);
+    if(!body){
+        return res.status(400).json({
+            success: false,
+            error: 'You must provide a body to update',
+        })
+    }
+    Map.findOne({_id: body.id}).then((map) => {
+        // console.log("map found: " + JSON.stringify(map));
+        map.mapData = body.mapData;
+        map
+            .save()
+            .then(() =>{
+                console.log("successfully saved!");
+                return res.status(200).json({
+                    success: true,
+                    id: map._id,
+                    name: map.name,
+                    message: 'map updated!',
+                })
+            })
+            .catch(error =>{
+                console.log("Failed to save");
+                return res.status(404).json({
+                    error,
+                    message: 'Map not updated!',
+                })
+            })
+    })
+}
+
 forkMap = async (req, res) => {
     const body = req.body
     const mapId = req.body.map
@@ -362,5 +396,6 @@ module.exports = {
     forkMap,
     publishMap,
     editMapProperty,
+    saveMap,
     deleteMapProperty
 }

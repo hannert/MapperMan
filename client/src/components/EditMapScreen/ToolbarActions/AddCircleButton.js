@@ -1,39 +1,41 @@
-import PentagonIcon from '@mui/icons-material/Pentagon';
+import AdjustIcon from '@mui/icons-material/Adjust';
 import { Box, Button, Tooltip } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from 'react';
-import { editTools, endPolygonDraw, setEditTool, startPolygonDraw } from '../../../app/store-actions/leafletEditing';
+import { editTools, endCircleDraw, setEditTool, startCircleDraw } from '../../../app/store-actions/leafletEditing';
 import CancelButton from './CancelButton';
 
 
-export default function PolygonButton() {
+export default function AddCircleButton() {
     const [hidden, setHidden] = useState(true);
     const dispatch = useDispatch()
     const currentEditTool = useSelector(state => state.leafletEditing.editTool);
 
     function handleButtonClick(){
-        console.log('Polygon Button Clicked');
+        console.log('Circle Button Clicked');
         setHidden(false);
-        dispatch(setEditTool(editTools.polygon))
-        dispatch(startPolygonDraw())
+        // dispatch(startMouseTracking((e)=>{dispatch(startPolylineDraw(e.latlng))}))
+        dispatch(setEditTool(editTools.circle));
+        dispatch(startCircleDraw())
     }
     
     //kind of redunant, but this is to make sure that the button is hidden 
     //when the user switches to a different tool
     useEffect(()=>{
-        if (currentEditTool !== editTools.polygon){
+        console.log(currentEditTool);
+        if (currentEditTool !== editTools.circle){
             setHidden(true);
         }
     }, [currentEditTool])
 
     return (
         <Box sx={{display: 'flex', flexDirection:'row'}}>
-            <Tooltip enterDelay={1000} title='Draw Polygon' placement='right'>
+            <Tooltip enterDelay={1000} title='Draw Circle' placement='right'>
                 <Button onClick={handleButtonClick} variant='contained' sx={{backgroundColor:'#2B2B2B'}}>
-                    <PentagonIcon />
+                    <AdjustIcon />
                 </Button>
             </Tooltip>
-            { !hidden && <CancelButton setHidden={setHidden} cancelFunction={endPolygonDraw}/>}
+            { !hidden && <CancelButton setHidden={setHidden} cancelFunction={endCircleDraw}/>}
         </Box>
     );
 }

@@ -15,6 +15,7 @@ export default function MouseButton(){
     const layerGroup = useSelector(state => state.leafletEditing.layerGroup);
 
     function handleButtonClick(){
+        dispatch(unselectTool());
         console.log('Mouse Button Clicked');
         setHidden(false);
         dispatch(setEditTool(editTools.mouse));
@@ -27,7 +28,7 @@ export default function MouseButton(){
             e.target.disableEdit();
             dispatch(setLayerClickedId(null));
         }else{
-            e.target.setStyle({ color: "red" });
+            e.target.setStyle({ color: "black" });
             e.target.enableEdit();
             dispatch(setLayerClickedId(e.target._leaflet_id));
         }

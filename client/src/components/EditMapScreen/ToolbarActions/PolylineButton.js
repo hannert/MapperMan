@@ -15,7 +15,7 @@ export default function PolylineButton(){
     function handleButtonClick(){
         console.log('Polyline Button Clicked');
         setHidden(false);
-        // dispatch(startMouseTracking((e)=>{dispatch(startPolylineDraw(e.latlng))}))
+        dispatch(setEditTool(editTools.polyline));
         dispatch(startPolylineDraw())
     }
     

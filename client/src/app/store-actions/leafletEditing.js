@@ -14,6 +14,7 @@ export const editTools ={
     mouse: 'mouseButton',
     polyline: 'polyline',
     polygon: 'polygon',
+    circle: 'circle',
     marker: 'marker',
 }
 
@@ -30,7 +31,8 @@ const initialState = {
     layerClickedEditor: null,
     activeDrawing: null,
     mergeArray: [],
-    mergedFeature: null
+    mergedFeature: null,
+    chosenForDeletion: null
 }
 
 export const leafletEditing = createSlice({
@@ -115,6 +117,24 @@ export const leafletEditing = createSlice({
             state.mapRef.editTools.stopDrawing();
             state.editTool = null;
         },
+        startCircleDraw: (state, action) => {
+            state.editTool = editTools.circle;
+            let circle = state.mapRef.editTools.startCircle();
+            state.layerGroup.addLayer(circle);
+            state.activeDrawing = circle;
+        },
+        endCircleDraw: (state, action) => {
+            // console.log(state.activeDrawing);
+            // let circle = L.circle(state.activeDrawing._latlng, state.activeDrawing.getRadius(), {draggable: 'true'});
+            // circle.dragging.disable();
+
+            // state.layerGroup.removeLayer(state.activeDrawing);
+            // state.layerGroup.addLayer(circle);
+            state.activeDrawing.disableEdit();
+            state.mapRef.editTools.commitDrawing();
+            state.mapRef.editTools.stopDrawing();
+            state.editTool = null;
+        },
         startMarker: (state, action) => {
             state.editTool = editTools.marker;
             let marker = state.mapRef.editTools.startMarker();
@@ -124,9 +144,36 @@ export const leafletEditing = createSlice({
             state.mapRef.editTools.stopDrawing();
             state.editTool = null;
         },
-        
-        startDeletionTool: (state, action) => {
-            
+        startRemoveTool: (state, action) =>{
+            state.layerGroup.eachLayer(function(layer){
+                layer.off(
+                    'click'
+                );
+            });
+            console.log('Attaching onClick');
+            state.layerGroup.eachLayer(function(layer){
+                layer.on({
+                    'click': action.payload
+                });
+            });
+        },
+        setChosenForDeletion: (state, action) => {
+            state.chosenForDeletion = action.payload;
+        },
+        removeFeature: (state, action) => {
+            console.log('Removing feature');
+            console.log(action.payload);
+            console.log(state.layerClickedEditor);
+            state.layerGroup.removeLayer(state.chosenForDeletion);
+
+            console.log(state.chosenForDeletion);
+            state.layerClickedEditor.deleteShapeAt(action.payload);
+
+            state.layerGroup.eachLayer(function(layer){
+                layer.off(
+                    'click'
+                );
+            });        
         },
         startMouseTool: (state, action) =>{
             console.log('Attaching onClick');
@@ -165,22 +212,12 @@ export const leafletEditing = createSlice({
          * @param {*} action payload is a function to do something on click
          */
         startMouseTracking(state, action){    
-            // state.layerGroup.eachLayer(function(layer){
-            //     layer.on({
-            //         'mousemove': (e)=>{
-            //             console.log(e.latlng);
-            //         }
-            //     });
-            // });
             state.mapRef.addEventListener('click', action.payload);
         },
         stopMouseTracking(state, action){
             state.mapRef.off('click');
         },
-        addVertex(state, action){
-            console.log(state.layerClickedEditor);
-            state.layerClickedEditor.push(action.payload);
-        },
+
         startMergeTool: (state, action) => {
             console.log('Attaching onClick for merge button');
             state.layerGroup.eachLayer(function(layer){
@@ -197,26 +234,18 @@ export const leafletEditing = createSlice({
                 }
             });
         },
-
-
-        /**
-         * Delete a path shape at a given latlng point
-         * @param {*} state 
-         * @param {*} action Has to be a latlng point of some shape
-         */
-        deleteSubregion: (state, action) => {
-            state.mapRef.editTools.deleteShapeAt(action.payload);
-        },
         unselectTool: (state, action) => {
             state.layerGroup.eachLayer(function(layer){
                 layer.off(
                     'click'
                 );
                 // Reset array colors if there was a merge selected
-                layer.setStyle({fillColor: '#3388FF'}) 
+                // Idk y this sometimes breaks 
+                // layer.setStyle({fillColor: '#3388FF'})
             });     
             
             state.editTool = null;
+            state.layerClickedId = null;
             state.mergeArray = []; // Reset mergeArray when clicking out of merge
         },
         setLayerGroup(state, action){
@@ -262,7 +291,8 @@ export const { setPrevGeoJSON, setCurrentGeoJSON, setInitialized, setEditTool, s
 startPolylineDraw, endPolylineDraw, unselectTool, setLayerGroup, setFeatureClicked, setFeatureIndexClicked,
  startMouseTracking, setLayerClickedId, setLayerClickedEditor, addVertex, stopMouseTracking,
 setDraggable, unsetDraggable, startPolygonDraw, endPolygonDraw, startMarker, endMarker, 
-startMouseTool, setMergeArray, mergeRegion, finishMergeRegion, startMergeTool} = leafletEditing.actions;
+startMouseTool, setMergeArray, mergeRegion, finishMergeRegion, startMergeTool, removeFeature, startRemoveTool, 
+setChosenForDeletion, startCircleDraw, endCircleDraw} = leafletEditing.actions;
 export default leafletEditing.reducer;
 
 
@@ -276,6 +306,15 @@ export const editMapPropertyThunk = createAsyncThunk('/map/:id/editProperty', as
     }
 });
 
+export const saveGeojsonThunk = createAsyncThunk('/map/:id', async(payload, {rejectWithValue}) => {
+    console.log("id sent to saveGeojson thunk: " + payload.id);
+    try{
+        const response = await mapApis.saveMap(payload.owner, payload.mapData, payload.id);
+        return response.data;
+    }catch(err){
+        return rejectWithValue(err.response.data.errorMessage);
+    }
+});
 export const deleteMapPropertyThunk = createAsyncThunk('/map/:id/deleteProperty', async(payload, {rejectWithValue}) => {
     console.log("id sent to deleteProperty thunk: " + payload.id)
     try{
