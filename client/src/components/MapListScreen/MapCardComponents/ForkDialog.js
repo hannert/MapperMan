@@ -4,7 +4,7 @@ import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { forkMapThunk } from '../../../app/store-actions/editMapList';
+import { forkMapThunk, getMapsDataByAccountThunk, setMapList } from '../../../app/store-actions/editMapList';
 
 export default function ForkDialog (props) {
     const {open, toggleForkDialog } = props;
@@ -20,7 +20,18 @@ export default function ForkDialog (props) {
           user: user
       })).catch((error) =>{
           console.log(error);
+      }).then(() => {
+          dispatch(getMapsDataByAccountThunk({user: user})).unwrap().then((response) => {
+            console.log("Getting maps")
+            dispatch(setMapList(response.maps));
+          }).catch((error) => {
+              console.log(error);
+          });
+
+
       })
+      
+      
       toggleForkDialog();
     }
 

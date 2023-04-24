@@ -5,10 +5,20 @@ import { Box, Icon } from '@mui/material';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { Link } from 'react-router-dom';
-
+import { useDispatch } from 'react-redux';
+import { allowGuest } from '../app/store-actions/accountAuth';
 
 
 function SplashScreen(){
+
+    const dispatch = useDispatch()
+
+    function handleGuest(){
+        dispatch(allowGuest())
+    }
+
+
+
     return(
         <Box id="splash-screen">
             <Box>
@@ -37,7 +47,8 @@ function SplashScreen(){
                     <Button id="continue-as-guest" sx={{color:"white", mt:"20px",  width:280, height: 80, fontSize: 24, borderRadius: 3, fontWeight: 'bold', justifyContent: 'space-around'}}
                             variant="contained" 
                             color="buttonColor"
-                            component={Link} to="/maps"
+                            onClick={handleGuest}
+                            to="/maps"
                     >
                         Continue as guest
                         <PersonIcon sx={{fontSize: 60}}/>

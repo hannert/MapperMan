@@ -1,5 +1,5 @@
 import { Face5 } from '@mui/icons-material';
-import { Alert, Snackbar } from '@mui/material';
+import { Alert, Snackbar, Tooltip} from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
@@ -80,7 +80,7 @@ function AppBanner() {
             console.log(response)
             dispatch(logout());
             dispatch(clear());
-            navigate('/login');
+            navigate('/');
         }).catch((error) => {
             console.log(error);
         });
@@ -208,36 +208,42 @@ function AppBanner() {
 
     if (loggedIn === true) {
        accountCircle = 
-        <Box sx={{ height: "50px", display: { xs: 'none', md: 'flex' }}}>
-            <IconButton
-                size="large"
-                edge="end"
-                aria-label="account of current user"
-                aria-controls={menuId}
-                aria-haspopup="true"
-                onClick={handleProfileMenuOpen}
-                color="inherit"
-            >
-                <Typography>
-                    {userInitials}
-                </Typography>
-            </IconButton>
-        </Box>
+            <Box sx={{ height: "50px", display: { xs: 'none', md: 'flex' }}}>
+                <Tooltip title='You are currently logged in as a user'>
+                    <IconButton
+                        size="large"
+                        edge="end"
+                        aria-label="account of current user"
+                        aria-controls={menuId}
+                        aria-haspopup="true"
+                        onClick={handleProfileMenuOpen}
+                        color="inherit"
+                    >
+                        <Typography>
+                            {userInitials}
+                        </Typography>
+                    </IconButton>                    
+                </Tooltip>
+
+            </Box>
     } else if (loggedIn === false){
         accountCircle = (
             <Box sx={{ height: "50px", display: { xs: 'none', md: 'flex' }}}>
-            <IconButton
-                size="large"
-                edge="end"
-                aria-label="account of current user"
-                aria-controls={menuId}
-                aria-haspopup="true"
-                onClick={handleProfileMenuOpen}
-                color="inherit"
-            >
-                <Face5 />
-            </IconButton>
-        </Box>
+                <Tooltip title='You are currently a guest.'>
+                    <IconButton
+                        size="large"
+                        edge="end"
+                        aria-label="account of current user"
+                        aria-controls={menuId}
+                        aria-haspopup="true"
+                        onClick={handleProfileMenuOpen}
+                        color="inherit"
+                    >
+                        <Face5 />
+                    </IconButton>                    
+                </Tooltip>
+
+            </Box>
         )
     }
     return (
