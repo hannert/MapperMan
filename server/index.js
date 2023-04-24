@@ -40,7 +40,7 @@ var corsOptions = {
 app.use(cors(corsOptions));
 
 app.use(express.json({limit:'50mb'}))
-app.use(cookieParser())
+// app.use(cookieParser())
 
 // SETUP OUR OWN ROUTERS AS MIDDLEWARE
 const mapsRouter = require('./routes/maps-router')
