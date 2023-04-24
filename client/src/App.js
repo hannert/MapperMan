@@ -6,7 +6,7 @@ import './App.css';
 import { Provider } from 'react-redux';
 import store from './app/store';
 import AppBanner from './components/AppBanner';
-import EditScreen from './components/EditScreen';
+import EditScreen from './components/EditMapScreen/EditScreen';
 import ForgotPasswordScreen from './components/ForgotPasswordScreen';
 import HomeWrapper from './components/HomeWrapper';
 import LoginScreen from './components/LoginScreen';
@@ -22,6 +22,7 @@ const themeOptions = createTheme({
     mode: 'dark',
     primary: {
       main: '#1976d2',
+      dark: '#2B2B2B'
     },
     secondary: {
       main: '#9c27b0',
@@ -80,7 +81,6 @@ const themeOptions = createTheme({
 });
 
 function App() {
-
   return (
     // <div className="App">
     //   <FileUpload />

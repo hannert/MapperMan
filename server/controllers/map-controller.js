@@ -278,6 +278,43 @@ publishMap = async(req,res) =>{
     }).catch(err => console.log(err));
 }
 
+
+editMapProperty = async(req,res) =>{
+    const body = req.body;
+
+    if(!body){
+        return res.status(400).json({
+            success: false,
+            error: 'You must provide a body to update',
+        })
+    }
+
+    const id = body.id;
+    const index = body.index;
+    const property = body.property;
+    const value = body.value;
+
+
+
+    Map.findOneAndUpdate(
+        {_id: id},
+        {$set: {[`mapData.features.${index}.properties.${property}`]: value}},
+        {new: true,
+        upsert: true}
+    ).then((map)=>{
+        return res.status(200).json({
+            success: true,
+            id: map._id,
+            name: map.name,
+            indexChanged: index,
+            propertyChanged: property,
+            newPropertyValue: map.mapData.features[index].properties[property],
+            message: 'map property updated!'
+        });
+    }).catch(err => console.log(err));
+
+}
+
 module.exports = {
     createMap,
     getMapById,
@@ -287,5 +324,6 @@ module.exports = {
     getMapsDataByAccount,
     renameMap,
     forkMap,
-    publishMap
+    publishMap,
+    editMapProperty
 }

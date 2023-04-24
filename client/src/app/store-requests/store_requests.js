@@ -21,11 +21,13 @@ export const createMap = (owner, mapData) => {
         tags: []
     })
 }
-export const deleteMapById = (id) => api.delete(`/map/${id}`)
-export const getMapById = (id) => api.get(`/map/${id}`)
-export const getUserMaps = (id) => api.get(`/userMaps/${id}`)
-export const getPublicMaps = () => api.get(`/publicMaps/`)
+export const deleteMapById = (id) => api.delete(`/map/${id}`);
+export const getMapById = (id) => api.get(`/map/${id}`);
+export const getUserMaps = (id) => api.get(`/userMaps/${id}`);
+export const getPublicMaps = () => api.get(`/publicMaps/`);
 export const getMapsDataByAccount = (user) => api.post(`/maps`, user);
+
+
 
 export const deleteMap = (id, user) => {
     console.log('Deleting map with ');
@@ -78,6 +80,17 @@ export const publishMap = (id) => {
     })
 }
 
+export const editMapProperty = (id, index, property, value) =>{
+    return api.put(`/map/${id}/editProperty`,{
+        id: id,
+        index: index,
+        property: property,
+        value: value
+    })
+}
+
+
+
 const mapApis = {
     createMap,
     deleteMapById,
@@ -87,7 +100,8 @@ const mapApis = {
     getMapsDataByAccount,
     renameMap, 
     forkMap,
-    publishMap
+    publishMap,
+    editMapProperty
 }
 
 export default mapApis

@@ -13,9 +13,14 @@ import FilterMaps from './SearchComponents/FilterMaps';
 import Pages from './SearchComponents/Pages';
 
 export default function MapsScreen(){
-    const [currentList, setCurrentList] = useState([
-        {name: 'Africa', published: '3/7/2023', index: 0},
-    ])    
+    const [currentList, setCurrentList] = useState([])
+    const [publishDialogOpen, setPublishDialogOpen] = React.useState(false);
+    const loggedIn = useSelector((state) => state.accountAuth.loggedIn);
+
+    const togglePublishDialog = () =>{
+        setPublishDialogOpen(!publishDialogOpen);
+        console.log("clicked on publish button!")
+    }
 
     const navigate = useNavigate();
     const dispatch = useDispatch();
@@ -42,25 +47,22 @@ export default function MapsScreen(){
     const user = useSelector((state) => state.accountAuth.user);
     const guest = useSelector((state) => state.accountAuth.guest);
     const maps = useSelector((state) => state.editMapList.mapList);
+    
+    // useEffect(() => {
+    //     dispatch(getLoggedInThunk()).unwrap().then((response) => {
+    //         dispatch(loginUser(response.user));
+    //     })
+    // }, [])
 
     useEffect(() => {
-        dispatch(getLoggedInThunk()).unwrap().then((response) => {
-            console.log(response.loggedIn);
-            console.log(response)
-            dispatch(loginUser(response.user));
-        })
-    }, [])
-
-    useEffect(() => {
-        console.log(user);
         if (user) {
             dispatch(getMapsDataByAccountThunk({user: user})).unwrap().then((response) => {
-                console.log("Get maps response")
-                console.log(response);
                 dispatch(setMapList(response.maps));
             }).catch((error) => {
                 console.log(error);
             });
+        }else{
+            navigate('/');
         }
     }, [user])
 
@@ -72,9 +74,13 @@ export default function MapsScreen(){
 
     //If user's aren't logged in don't let them see this
     //If the user is not a guest AND not a user, don't let them see this
-    if (!loggedIn || (!guest && (user === null))) {
-        navigate('/');
-    }
+    
+    // if (!loggedIn || (!guest && (user === null))) {
+    //     console.log(loggedIn);
+    //     console.log(guest);
+    //     console.log(user);
+    //     navigate('/');
+    // }
 
 
     /**Conditional rendering of the publish dialog:  */

@@ -64,7 +64,6 @@ export default function MapCard(props) {
         let day = dateObj.getUTCDate();
         let year = dateObj.getUTCFullYear();
         date = year + "/" + month + "/" + day;
-        console.log(date);
     }
 
     return (
