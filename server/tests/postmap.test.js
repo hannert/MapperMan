@@ -33,7 +33,11 @@ const request = require('supertest');
     it('Should reject this request', function(done){
       request('https://mapperman.herokuapp.com/api')
           .post('/newmap')
-          .send({nonsense:'asldkjfhsadkjf'})
+          .send(
+            {nonsense:'asldkjfhsadkjf'}
+            
+            
+            )
           .expect(400)
           .end(function(err, res) {
             if (err) return done(err);
