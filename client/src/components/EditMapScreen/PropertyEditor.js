@@ -13,7 +13,15 @@ import { editMapPropertyThunk } from '../../app/store-actions/leafletEditing';
 
 
 
-
+/** Creates an instance with the below options: */
+const jsondiffpatch = require('jsondiffpatch').create({
+    /** Match object by name */
+    objectHash: function(obj) {
+        return obj.name;
+    },
+    /** Clones the values that are stored in the delta */
+    cloneDiffValues: true
+});
 
 export default function PropertyEditor(props){
     const {handleToggleProperty} = props;
@@ -81,24 +89,41 @@ export default function PropertyEditor(props){
     function handleConfirm(event) {
         console.log("confirm");
         if(newNameText!=='' && newValue!==''){
-            dispatch(editMapPropertyThunk({id: currMapId, index: featureIndex, property: newNameText, value: newValue, newProperty: {isNew: true, type: newType}})).unwrap().then((res)=>{
-                console.log(res);
-                let featureCopy = structuredClone(geoJSON.features[featureIndex]);
-                featureCopy.properties[newNameText]=newValue
-                console.log(featureCopy.properties);
-                let geoJSONCopy = structuredClone(geoJSON);
-                geoJSONCopy.features[featureIndex] = featureCopy;
-                console.log("geoJSON copy: ", geoJSONCopy)
-                console.log("setting the current geojson")
-                dispatch(setCurrentGeoJSON(geoJSONCopy));
-                resetFields();
-                setAddNewPropertyMenuOpen(false);
 
-            }).catch((err)=>{
-                console.log(err);
-                resetFields();
-                setAddNewPropertyMenuOpen(false);
-            });
+            /** Create the delta object, send it to the server, also make changes in the frontend */
+            let featureCopy = structuredClone(geoJSON.features[featureIndex]);
+            featureCopy.properties[newNameText]=newValue
+            console.log(featureCopy.properties);
+            let geoJSONCopy = structuredClone(geoJSON);
+            geoJSONCopy.features[featureIndex] = featureCopy;
+
+            /**Store this delta object in the transaction stack so it can be undone */
+            let delta = jsondiffpatch.diff(geoJSON, geoJSONCopy);
+
+            // console.log("geoJSON copy: ", geoJSONCopy)
+            // console.log("setting the current geojson")
+            dispatch(setCurrentGeoJSON(geoJSONCopy));
+
+
+
+            // dispatch(editMapPropertyThunk({id: currMapId, index: featureIndex, property: newNameText, value: newValue, newProperty: {isNew: true, type: newType}})).unwrap().then((res)=>{
+            //     console.log(res);
+            //     let featureCopy = structuredClone(geoJSON.features[featureIndex]);
+            //     featureCopy.properties[newNameText]=newValue
+            //     console.log(featureCopy.properties);
+            //     let geoJSONCopy = structuredClone(geoJSON);
+            //     geoJSONCopy.features[featureIndex] = featureCopy;
+            //     console.log("geoJSON copy: ", geoJSONCopy)
+            //     console.log("setting the current geojson")
+            //     dispatch(setCurrentGeoJSON(geoJSONCopy));
+            //     resetFields();
+            //     setAddNewPropertyMenuOpen(false);
+
+            // }).catch((err)=>{
+            //     console.log(err);
+            //     resetFields();
+            //     setAddNewPropertyMenuOpen(false);
+            // });
         }
         
     }

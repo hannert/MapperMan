@@ -52,6 +52,7 @@
     "@reduxjs/toolkit": "^1.9.4",
     "@turf/turf": "^6.5.0",
     "cypress": "^12.9.0",
+    "jsondiffpatch": "^0.4.1",
     "react-redux": "^8.0.5",
     "shpjs": "^4.0.4"
   }
