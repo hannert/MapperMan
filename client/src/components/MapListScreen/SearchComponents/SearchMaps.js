@@ -1,13 +1,50 @@
-import { Box, Container, Autocomplete, InputAdornment, TextField, Grid } from "@mui/material";
-import { useState } from "react";
 import SearchIcon from "@mui/icons-material/Search";
+import { Autocomplete, InputAdornment, TextField } from "@mui/material";
+import { enqueueSnackbar } from 'notistack';
+import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { getPublicMapsByNameThunk, setMapList } from '../../../app/store-actions/editMapList';
 
 export default function SearchMaps(){
+
+    const dispatch = useDispatch();
+
     const [input, setInput] = useState("");
 
     const handleChange = (event) => {
       setInput(event.target.value);
     };
+
+    const handleSubmit = (event) => {
+      if(event.key === 'Enter'){
+
+        dispatch(getPublicMapsByNameThunk({
+          name: input
+        })).then((response) => {
+          console.log("Getting maps with name ", input)
+          console.log('Maps', response.payload?.maps)
+
+          if(response.payload){
+            if(response.payload?.maps.length === 0) {
+              enqueueSnackbar('No maps found with that name!', {variant:'warning'})
+            } 
+            else {
+              dispatch(setMapList(response.payload.maps));
+              enqueueSnackbar('Maps successfully retreived!', {variant:'success'})
+            }
+          } 
+          if(!response.payload){
+            enqueueSnackbar('Please input a search critera.', {variant:'info'})
+          }
+          
+          
+        }).catch((error) => {
+          enqueueSnackbar('Something went wrong while trying to fetch public maps.', {variant:'error'})
+          console.log(error);
+        });
+      }
+    }
+
     const currentList = [
         {map: 'Africa', published: '3/7/2023', index: 0},
         {map: 'South America', published: '3/4/2023', index: 1},
@@ -40,6 +77,9 @@ export default function SearchMaps(){
                         </InputAdornment>
                     ),
                   }}
+                  value={input}
+                  onChange={handleChange}
+                  onKeyDown={handleSubmit}
                 />
               )}
             />
