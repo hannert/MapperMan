@@ -34,7 +34,8 @@ const initialState = {
     activeDrawing: null,
     mergeArray: [],
     mergedFeature: null,
-    chosenForDeletion: null
+    chosenForDeletion: null,
+    collaborators: []
 }
 
 export const leafletEditing = createSlice({
@@ -306,7 +307,10 @@ export const leafletEditing = createSlice({
         },
         setProperties: (state, action) => {
             state.properties = action.payload;
-        }
+        },
+        setCollaborators: (state, action) => {
+            state.collaborators = action.payload;
+        },
     }
 });
 
@@ -315,7 +319,8 @@ startPolylineDraw, endPolylineDraw, unselectTool, setLayerGroup, setFeatureClick
  startMouseTracking, setLayerClickedId, setLayerClickedEditor, addVertex, stopMouseTracking,
 setDraggable, unsetDraggable, startPolygonDraw, endPolygonDraw, startMarker, endMarker, 
 startMouseTool, setMergeArray, mergeRegion, finishMergeRegion, startMergeTool, removeFeature, startRemoveTool, 
-setChosenForDeletion, startCircleDraw, endCircleDraw, incrementFeatureIndex, setProperties, setFeatureIndex} = leafletEditing.actions;
+setChosenForDeletion, startCircleDraw, endCircleDraw, incrementFeatureIndex, setProperties, setFeatureIndex,
+setCollaborators} = leafletEditing.actions;
 export default leafletEditing.reducer;
 
 

@@ -1,4 +1,4 @@
-import { Box, Button, Grid } from '@mui/material';
+import { Box, Grid } from '@mui/material';
 import hash from 'object-hash';
 import { useEffect, useState } from 'react';
 import { GeoJSON, MapContainer, TileLayer } from "react-leaflet";
@@ -6,8 +6,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from "react-router-dom";
 import { getMapByIdThunk, setActiveMap } from '../app/store-actions/editMapList';
 
-
-import { socket } from '../socket';
 
 function ViewMapScreen() {
     /*USE THIS ID TO GET FROM BACKEND:*/
@@ -47,27 +45,9 @@ function ViewMapScreen() {
     }, [id])
 
 
-    function connect() {
-        
-        console.log("Connecting ", username)
-        socket.auth = { username }
-        socket.connect();
-    }
-    function disconnect() {
-        console.log("Disconnecting")
-        socket.disconnect();
-    }
-
-    socket.on('connected', (connected) => {
-    })
-
-    
-
     return(
         <Box sx={{height:"100%"}}>
             <Grid container direction='row'sx={{height:'100%'}}>
-                <Button onClick={connect}> Connect </Button>
-                <Button onClick={disconnect}> Disconnect </Button>
                 <Grid item xs={4}>
                     <Box display="flex" justifyContent="center" alignItems="center" height="100%">
                         {/* <CommentsList /> */}

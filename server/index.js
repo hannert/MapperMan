@@ -74,21 +74,44 @@ const io = new Server({
 
 io.on('connection', (socket) => {
   console.log('User connected')
-  socket.emit('connected', connected)
+  const roomId = socket.handshake.query['roomId']
+  console.log('RoomId:', roomId)
+
+  socket.join(roomId)
+  socket.emit('awesome')
+  
+  // socket.broadcast.emit("user connected", {
+  //   userID: socket.id,
+  //   username: socket.username,
+  // });
+  socket.on('join room', (roomName) => {
+      socket.join(roomName);
+      console.log(socket.id, " joined room ", roomName)
+  })
+
+
+
 })
+
 
 io.on('disconnect', (socket) => {
   console.log('User disconnected')
 })
-io.use((socket, next) => {
-  const username = socket.handshake.auth.username;
-  if (!username) {
-    return next(new Error("invalid username"));
-  }
-  console.log("Connected user ", username)
-  socket.username = username;
-  next();
-});
+// io.use((socket, next) => {
+//   const username = socket.handshake.auth.username;
+//   if (!username) {
+//     return next(new Error("invalid username"));
+//   }
+//   console.log("Connected user ", username)
+  
+//   socket.username = username;
+//   next();
+// });
+
+// Logging when a room was created // Should occur when a user clicks on a shared map to edit
+// io.of("/").adapter.on("create-room", (room) => {
+//   console.log(`room ${room} was created`);
+// });
 
 
 

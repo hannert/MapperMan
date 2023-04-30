@@ -1,12 +1,13 @@
 import { Button } from '@mui/material';
 import { Box } from "@mui/system";
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getMapByIdThunk } from '../../app/store-actions/editMapList';
 
 import 'leaflet-editable';
 
 import { setCurrentGeoJSON } from '../../app/store-actions/leafletEditing';
+import { SocketContext } from '../../socket';
 import LeafletContainer from './LeafletContainer';
 import MergeStatus from './MergeStatus';
 import PropertyEditor from './PropertyEditor';
@@ -18,6 +19,8 @@ export default function EditScreen(){
     const mapId = useSelector((state) => state.editMapList.activeMapId);
     const featureIndex = useSelector((state)=>state.leafletEditing.featureClickedIndex);
     const dispatch = useDispatch();
+    const socket = useContext(SocketContext);
+
 
     useEffect(() => {
         if (mapId) {
@@ -26,6 +29,15 @@ export default function EditScreen(){
             }).catch((error) => {
                 console.log(error);
             });
+            //  If there is a map, we connect to the server if it is shared
+            // Add condition to the connection
+            socket.connect()
+            console.log('MapID in the useEffect', mapId)
+            // At this point this client will be connected to the server 
+            // Now we try to join the room created with the mapID (unique)
+            socket.emit('join room', mapId)
+
+
         }   
     }, [mapId])
     
@@ -45,8 +57,6 @@ export default function EditScreen(){
             setPropertyOpen(!propertyOpen);
         }
     }
-
-
 
 
     let propertyComponent = '';
