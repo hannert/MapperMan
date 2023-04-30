@@ -23,7 +23,6 @@ export default function MergeStatus() {
     }, [mergeArray])
 
     function handleConfirm() {
-        dispatch(incrementFeatureIndex());
         dispatch(mergeRegion())
     }
 

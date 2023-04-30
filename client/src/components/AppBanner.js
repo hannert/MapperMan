@@ -245,7 +245,6 @@ function AppBanner() {
                         <Face5 />
                     </IconButton>                    
                 </Tooltip>
-
             </Box>
         )
     }

@@ -15,9 +15,8 @@ export default function PolygonButton() {
         console.log('Polygon Button Clicked');
         setHidden(false);
         dispatch(setEditTool(editTools.polygon))
-        
+
         //TODO bandaid fix
-        dispatch(incrementFeatureIndex());
         dispatch(startPolygonDraw())
     }
     

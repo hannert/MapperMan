@@ -96,6 +96,7 @@ export const leafletEditing = createSlice({
 
             polyline.featureIndex = state.featureIndex;
             state.properties[state.featureIndex] = {name: 'New Polyline'};
+            state.featureIndex += 1;
 
             state.layerGroup.removeLayer(state.activeDrawing);
             state.layerGroup.addLayer(polyline);
@@ -117,7 +118,7 @@ export const leafletEditing = createSlice({
 
             polygon.featureIndex = state.featureIndex;
             state.properties[state.featureIndex] = {name: 'New Polygon'};
-
+            state.featureIndex += 1;
             state.layerGroup.removeLayer(state.activeDrawing);
             state.layerGroup.addLayer(polygon);
 
@@ -287,6 +288,7 @@ export const leafletEditing = createSlice({
 
             let polygon = L.polygon(L.GeoJSON.geometryToLayer(mergedFeature.geometry)._latlngs, {draggable:true});
             polygon.featureIndex = state.featureIndex;
+            state.featureIndex += 1;
             state.properties[state.featureIndex] = {name: 'New Merged Region'};
 
             state.layerGroup.addLayer(polygon);

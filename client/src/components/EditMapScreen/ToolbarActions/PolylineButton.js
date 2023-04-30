@@ -18,7 +18,6 @@ export default function PolylineButton(){
         dispatch(setEditTool(editTools.polyline));
 
         //TODO bandaid fix
-        dispatch(incrementFeatureIndex());
         dispatch(startPolylineDraw())
         
     }
