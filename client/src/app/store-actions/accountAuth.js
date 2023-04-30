@@ -48,7 +48,7 @@ export const accountAuth = createSlice({
     }
 })
 
-export const { loginUser, allowGuest, logout, registerUser, forgotPassword, setModalActive, setErrorMessage} = accountAuth.actions
+export const { loginUser, allowGuest, logout, registerUser, forgotPassword, sendVerification, setModalActive, setErrorMessage} = accountAuth.actions
 export default accountAuth.reducer
 
 export const loginThunk = createAsyncThunk('/login', async (payload, {rejectWithValue}) => {
@@ -92,15 +92,15 @@ export const getLoggedInThunk = createAsyncThunk('/getLoggedIn', async (_, {reje
         return rejectWithValue(err.response.data.errorMessage);
     }
 })
-export const forgotPasswordThunk = createAsyncThunk('/forgotPassword', async (payload, {rejectWithValue}) => {
+export const forgotPasswordThunk = createAsyncThunk('/changePassword/:userId/:token', async (payload, {rejectWithValue}) => {
     try {
-        const response = await authApis.forgotPassword(payload.email, payload.password, payload.passwordVerify)
+        const response = await authApis.forgotPassword(payload.password, payload.passwordVerify, payload.userId)
         return response.data;
     } catch(err){
         return rejectWithValue(err.response.data.errorMessage);
     }
 })
-export const sendVerificationThunk = createAsyncThunk('/sendmail', async (payload, {rejectWithValue}) => {
+export const sendVerificationThunk = createAsyncThunk('/forgotPassword', async (payload, {rejectWithValue}) => {
     try {
         const response = await authApis.sendVerification(payload.email)
         return response.data;

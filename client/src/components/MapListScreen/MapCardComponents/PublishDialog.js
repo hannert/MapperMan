@@ -1,4 +1,5 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from "@mui/material";
+import { enqueueSnackbar } from "notistack";
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { getMapsDataByAccountThunk, publishMapThunk, setMapList } from "../../../app/store-actions/editMapList";
 
@@ -19,7 +20,9 @@ export default function PublishDialog(props){
             dispatch(getMapsDataByAccountThunk({user: user})).unwrap().then((response) => {
                 console.log("Getting maps")
                 dispatch(setMapList(response.maps));
+                enqueueSnackbar('Map successfully published!', {variant:'success'})
             }).catch((error) => {
+                enqueueSnackbar('Something went wrong while trying to publish map.', {variant:'error'})
                 console.log(error);
             });
         })

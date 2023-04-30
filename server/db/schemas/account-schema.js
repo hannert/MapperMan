@@ -20,7 +20,8 @@ const accountSchema = new Schema(
         firstName: { type: String,  required: true },
         lastName: { type: String,  required: true },
         mapsOwned: {type: [String], required: true},
-        mapAccess: {type: [String], required: true}
+        mapAccess: {type: [String], required: true},
+        token: {type: String, requried: true}
     },
     { timestamps: true },
 )

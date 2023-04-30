@@ -1,9 +1,11 @@
 const auth = require('../auth')
 // const User = require('../models/user-model')
 const Account = require('../db/schemas/account-schema')
+const Token = require('../db/schemas/token-schema')
 const bcrypt = require('bcryptjs')
 const jwt = require("jsonwebtoken")
 const dotenv = require('dotenv')
+const crypto = require('crypto')
 const sendEmail = require('../nodemailer/sendMail.js')
 dotenv.config()
 
@@ -113,9 +115,10 @@ logoutUser = async (req, res) => {
 forgotPassword = async (req, res) => {
     console.log("CHANGING PASSWORD");
     try {
-        const { email, password, passwordVerify } = req.body;
-        console.log("Email and new passwords: " + email + " " + password + " " + passwordVerify);
-        if (!email || !password || !passwordVerify){
+        const { userId, password, passwordVerify } = req.body;
+        console.log(userId);
+        console.log("New passwords: " + password + " " + passwordVerify);
+        if (!password || !passwordVerify){
             console.log("Nope");
             return res
                 .status(400)
@@ -136,23 +139,27 @@ forgotPassword = async (req, res) => {
                 });
         }
         console.log("Both passwords match");
-        const existingUser = await Account.findOne({ email: email });
+        
+        const saltRounds = 10;
+        const salt = await bcrypt.genSalt(saltRounds);
+        const newpasswordHash = await bcrypt.hash(password, salt);
+        console.log("passwordHash: " + newpasswordHash);
+        const existingUser = await Account.findById(userId);
         console.log("existingUser: " + existingUser);
         if (!existingUser) {
             return res
                 .status(400)
                 .json({
                     success: false,
-                    errorMessage: "There is no account in the database."
+                    errorMessage: "An account with this email address does not exist."
                 })
         }
-        const saltRounds = 10;
-        const salt = await bcrypt.genSalt(saltRounds);
-        const newpasswordHash = await bcrypt.hash(password, salt);
-        console.log("passwordHash: " + newpasswordHash);
         existingUser.passwordHash = newpasswordHash;
         await existingUser.save();
-
+        const token = await Token.findOne({
+            userId: existingUser._id,
+            token: req.params.token
+        })
         res.status(200).json({success: true, 
             user: {
             username: existingUser.username,
@@ -161,7 +168,8 @@ forgotPassword = async (req, res) => {
             firstName: existingUser.firstName,
             lastName: existingUser.lastName,  
             mapsOwned: existingUser.mapsOwned,
-            mapAccess: existingUser.mapAccess
+            mapAccess: existingUser.mapAccess,
+            token: null
         }
     });
 
@@ -243,7 +251,7 @@ registerUser = async (req, res) => {
                 email: savedUser.email,
                 passwordHash: savedUser.passwordHash,
                 mapsOwned: savedUser.mapsOwned,
-                mapAccess: savedUser.mapAccess       
+                mapAccess: savedUser.mapAccess   
             }
         })
         console.log("token sent");
@@ -259,11 +267,29 @@ sendVerification = async (req, res) => {
 
     try {
         const send_to = email;
+        const existingUser = await Account.findOne({ email: email });
+        console.log("existingUser: " + existingUser);
+        if (!existingUser) {
+            return res
+                .status(400)
+                .json({
+                    success: false,
+                    errorMessage: "There is no account with this email."
+                })
+        }
+        const token = crypto.randomBytes(20).toString("hex")
+        let t = await Token.findOne({userId: existingUser._id});
+        if (!t){
+            t = await new Token({
+                userId: existingUser._id,
+                token: token
+            }).save()
+        }
         const send_from = "verifymapperman@gmail.com"
         const reply_to = email;
         const subject = "Verify your email for password reset."
         const message = `
-            <p>Hi! You have requested to do a password reset. Please click here to verify and complete it!</p>
+            <p>Hi! You have requested to do a password reset. Please click <a href=${process.env.FRONTEND_URL}changePassword/${existingUser._id}/${t.token}>here</a> to verify and complete it!</p>
             <p>Regards, </p>
             <p>Mapperman team</p>`
         await sendEmail(subject, message, send_to, send_from, reply_to)

@@ -7,13 +7,13 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
+import { enqueueSnackbar } from 'notistack';
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import store from '../app/store';
 import { logout, logoutThunk } from '../app/store-actions/accountAuth';
 import { clear } from '../app/store-actions/editMapList';
-import { saveGeojsonThunk } from '../app/store-actions/leafletEditing';
 import EditMapActions from './AppBanner/EditMapActions';
 import ViewMapActions from './AppBanner/ViewMapActions';
 
@@ -34,25 +34,6 @@ function AppBanner() {
     const [anchorEl, setAnchorEl] = useState(null);
 
     const isMenuOpen = Boolean(anchorEl);
-
-
-    // ! - State for dialogs
-
-    const [saveOpen, setSaveOpen] = useState(false);
-    const handleSaveOpen = () => {
-        setSaveOpen(true);
-    }
-
-    const handleSaveClose = (event, reason) => {
-        if (reason === 'clickaway') {
-            return; 
-        }
-
-        setSaveOpen(false);    
-    }
-
-
-    // ! ------------------ End of State for dialogs
 
     // User initials for account icon
     // Guests will not have an account icon
@@ -98,25 +79,6 @@ function AppBanner() {
         handleMenuClose();
         navigate('/register/')
     }
-
-    // ! Areas for placeholder functions as Store is not implemented yet, 
-    // ! Have components bunched up in AppBanner: Modals for Copy, Delete, Add Collaborator
-
-    const saveDialog = (
-        <Snackbar
-            open={saveOpen}
-            autoHideDuration={2000}
-            onClose={handleSaveClose}
-        >
-            <Alert onClose={handleSaveClose} severity='success' sx={{width:'100%'}}>
-                Successfully saved map!
-            </Alert>
-
-        </Snackbar>
-    )
-
-    // ! ------------- End for placeholder modals
-
 
     const menuId = 'primary-search-account-menu';
     const loggedOutMenu = (
@@ -170,6 +132,9 @@ function AppBanner() {
                 <Typography>
                     Logout
                 </Typography>
+            </MenuItem>
+            <MenuItem onClick={()=>{enqueueSnackbar('MenuItem clicked!')}}>
+            Awesome
             </MenuItem>
         </Menu>        
 
@@ -275,10 +240,7 @@ function AppBanner() {
                     
                 </Toolbar>
             </AppBar>
-
-            {saveDialog}
             {menu}
-
         </Box>
     );
 }
