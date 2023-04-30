@@ -3,7 +3,8 @@ import { IconButton, Tooltip } from "@mui/material";
 import { Box, Container } from '@mui/system';
 import { useState } from "react";
 import { useSelector } from "react-redux";
-import ForkModal from "./PublishModal";
+import ExportMapButton from "./ExportMapButton.js";
+import ForkModal from "./ForkModal.js";
 
 /**
  * This component is a container for the buttons that appear on App Banner when on the ViewMapScreen
@@ -38,6 +39,7 @@ export default function ViewMapActions () {
                         <ForkRight onClick={toggleForkDialog} />
                     </IconButton>
                 </Tooltip>
+                <ExportMapButton />
                 
             </Box>
 

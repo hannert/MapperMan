@@ -7,5 +7,6 @@ context('Actions', () => {
       cy.get('#email').type('TestingAccount@gmail.com')
       cy.get('#password').type('12345678')
       cy.get('#sign-in-button').click()
+      
     })
   })

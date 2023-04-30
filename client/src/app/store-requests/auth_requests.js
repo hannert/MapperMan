@@ -31,16 +31,16 @@ export const registerUser = (firstName, lastName,username, email, password, pass
     })
 }
 
-export const forgotPassword = (email, newpassword, passwordVerify) => {
-    return api.put(`/forgotPassword`, {
-        email: email,
-        password: newpassword,
-        passwordVerify : passwordVerify
+export const sendVerification = (email) => {
+    return api.post(`/forgotPassword`, {
+        email: email
     })
 }
-export const sendVerification = (email) => {
-    return api.post(`/sendmail`, {
-        email: email
+export const forgotPassword = (password, passwordVerify, userId, token) => {
+    return api.post(`/changePassword/${userId}/${token}`, {
+        password: password,
+        passwordVerify: passwordVerify,
+        userId: userId
     })
 }
 const authApis = {
