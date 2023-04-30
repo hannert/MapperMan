@@ -26,7 +26,7 @@ export default function AfterVerifyScreen() {
     const handleSubmit = (event) => {
         event.preventDefault();
         const url = window.location.pathname
-        const userId = url.split("/")[2]
+        const userId = url.split("/")[4]
         console.log(userId)
         const formData = new FormData(event.currentTarget);
         const password = formData.get('new-password')

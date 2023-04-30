@@ -48,7 +48,7 @@ export const accountAuth = createSlice({
     }
 })
 
-export const { loginUser, allowGuest, logout, registerUser, forgotPassword, setModalActive, setErrorMessage} = accountAuth.actions
+export const { loginUser, allowGuest, logout, registerUser, forgotPassword, sendVerification, setModalActive, setErrorMessage} = accountAuth.actions
 export default accountAuth.reducer
 
 export const loginThunk = createAsyncThunk('/login', async (payload, {rejectWithValue}) => {
