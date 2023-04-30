@@ -2,7 +2,7 @@ import { Box, ThemeProvider, createTheme } from '@mui/material';
 import { React } from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import './App.css';
-
+import {SnackbarProvider} from 'notistack'
 import { Provider } from 'react-redux';
 import store from './app/store';
 import AppBanner from './components/AppBanner';
@@ -90,6 +90,7 @@ function App() {
     // </div>
     <BrowserRouter>
       <ThemeProvider theme={themeOptions}>
+      <SnackbarProvider>
       <Provider store={store}>
         <Box sx={{display: "flex", height:"100%", flexDirection:"column"}}>
           <AppBanner />
@@ -105,6 +106,7 @@ function App() {
           </Routes>          
         </Box>
       </Provider>
+      </SnackbarProvider>
       </ThemeProvider>
     </BrowserRouter>
   );
