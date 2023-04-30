@@ -1,15 +1,18 @@
-import { Box, Grid } from '@mui/material';
+import { Box, Button, Grid } from '@mui/material';
 import hash from 'object-hash';
 import { useEffect, useState } from 'react';
 import { GeoJSON, MapContainer, TileLayer } from "react-leaflet";
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from "react-router-dom";
 import { getMapByIdThunk, setActiveMap } from '../app/store-actions/editMapList';
-import CommentsList from "./CommentsList";
 
+
+import { socket } from '../socket';
 
 function ViewMapScreen() {
     /*USE THIS ID TO GET FROM BACKEND:*/
+    let username = (Math.random() + 1).toString(36).substring(7);
+
     const { id } = useParams();
     const dispatch= useDispatch();
     const [mapFile, setMapFile] = useState({
@@ -44,18 +47,30 @@ function ViewMapScreen() {
     }, [id])
 
 
+    function connect() {
+        
+        console.log("Connecting ", username)
+        socket.auth = { username }
+        socket.connect();
+    }
+    function disconnect() {
+        console.log("Disconnecting")
+        socket.disconnect();
+    }
 
-
+    socket.on('connected', (connected) => {
+    })
 
     
 
     return(
         <Box sx={{height:"100%"}}>
             <Grid container direction='row'sx={{height:'100%'}}>
-
+                <Button onClick={connect}> Connect </Button>
+                <Button onClick={disconnect}> Disconnect </Button>
                 <Grid item xs={4}>
                     <Box display="flex" justifyContent="center" alignItems="center" height="100%">
-                        <CommentsList />
+                        {/* <CommentsList /> */}
                     </Box>
                 </Grid>
                 <Grid item bgcolor='#2B2B2B' component="main" direction="column" justify="flex-end" alignItems="center" xs={8}>

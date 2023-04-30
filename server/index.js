@@ -1,13 +1,18 @@
 // THESE ARE NODE APIs WE WISH TO USE
 const express = require('express')
+
+// CREATE OUR SERVER
+const app = express()
+
 const cors = require('cors')
 const dotenv = require('dotenv')
 // const cookieParser = require('cookie-parser')
 
-// CREATE OUR SERVER
+
+// Retreive our env variables
 dotenv.config()
 const PORT = process.env.PORT || 4000;
-const app = express()
+
 
 // SETUP THE MIDDLEWARE
 
@@ -56,7 +61,40 @@ app.use('/auth', authRouter)
 const db = require('./db')
 db.on('error', console.error.bind(console, 'MongoDB connection error:'))
 
-// PUT THE SERVER IN LISTENING MODE
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+
+// Socket IO stuff
+const server = require('http').createServer(app);
+const { Server } = require('socket.io')
+const io = new Server({
+    server,
+    cors:{ 
+      origin: "http://localhost:3000"
+    }
+}).listen(server)
+
+io.on('connection', (socket) => {
+  console.log('User connected')
+  socket.emit('connected', connected)
+})
+
+io.on('disconnect', (socket) => {
+  console.log('User disconnected')
+})
+io.use((socket, next) => {
+  const username = socket.handshake.auth.username;
+  if (!username) {
+    return next(new Error("invalid username"));
+  }
+  console.log("Connected user ", username)
+  socket.username = username;
+  next();
+});
+
+
+
+
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+// server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+
 
 // :3 // Testing backend // Really cool
