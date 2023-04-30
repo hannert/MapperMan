@@ -13,6 +13,7 @@ import LoginScreen from './components/LoginScreen';
 import MapsScreen from './components/MapListScreen/MapsScreen';
 import RegisterScreen from './components/RegisterScreen';
 import ViewMapScreen from './components/ViewMapScreen';
+import AfterVerifyScreen from './components/AfterVerifyScreen';
 
 const { palette } = createTheme();
 const { augmentColor } = palette;
