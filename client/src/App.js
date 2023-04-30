@@ -13,7 +13,6 @@ import LoginScreen from './components/LoginScreen';
 import MapsScreen from './components/MapListScreen/MapsScreen';
 import RegisterScreen from './components/RegisterScreen';
 import ViewMapScreen from './components/ViewMapScreen';
-import AfterVerifyScreen from './components/AfterVerifyScreen';
 
 const { palette } = createTheme();
 const { augmentColor } = palette;
@@ -90,6 +89,7 @@ function App() {
     // </div>
     <BrowserRouter>
       <ThemeProvider theme={themeOptions}>
+      <SnackbarProvider>
       <Provider store={store}>
         <Box sx={{display: "flex", height:"100%", flexDirection:"column"}}>
           <AppBanner />
@@ -105,6 +105,7 @@ function App() {
           </Routes>          
         </Box>
       </Provider>
+      </SnackbarProvider>
       </ThemeProvider>
     </BrowserRouter>
   );

@@ -129,6 +129,29 @@ getPublicMaps = async (req, res) => {
     }).catch(err => console.log(err))
 }
 
+getPublicMapsByName = async (req, res) => {
+
+    let queryName = req.query.name;
+    console.log("Getting public maps with name ", queryName);
+    let data = []
+    await Map.find({name: new RegExp(queryName, 'i'), published:true}).then(async(maps) => {
+        for (const map of maps){
+            console.log(map)
+            await Account.find({_id: map.owner}).then((account) => {
+                let mapEntry = {
+                    id: map._id,
+                    name: map.name,
+                    owner: account[0].username,
+                    createdAt: map.createdAt,
+                    published: map.published
+                };
+                data.push(mapEntry);
+            })
+        }
+        return res.status(200).json({success: true, maps: data})
+    }).catch(err => console.log(err))
+}
+
 getMapsDataByAccount = async (req, res) => {
     console.log('req');
     console.log(req.body);
@@ -174,6 +197,8 @@ getMapsDataByAccount = async (req, res) => {
 
     .catch(err => console.log(err))
 }
+
+
 
 /** TODO: try to add user authentication here i.e. check if the map belongs to
  * them
@@ -394,6 +419,7 @@ module.exports = {
     deleteMapById,
     deleteMap,
     getPublicMaps,
+    getPublicMapsByName,
     getMapsDataByAccount,
     renameMap,
     forkMap,

@@ -16,6 +16,7 @@
     "leaflet-editable": "^1.2.0",
     "leaflet-path-drag": "^1.8.0-beta.3",
     "leaflet-simple-map-screenshoter": "^0.4.2",
+    "notistack": "^3.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-leaflet": "^4.2.1",

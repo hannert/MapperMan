@@ -108,6 +108,16 @@ export const getPublicMapsThunk = createAsyncThunk('/publicMaps/', async (_, {re
     }
 });
 
+export const getPublicMapsByNameThunk = createAsyncThunk('/publicMapsByName/', async (payload, {rejectWithValue}) => {
+    try {
+        console.log(payload.name)
+        const response = await mapApis.getPublicMapsByName(payload.name);
+        return response.data;
+    } catch(err){
+        return rejectWithValue(err.response.data.errorMessage);
+    }
+});
+
 export const getMapsDataByAccountThunk = createAsyncThunk('/maps', async (payload, {rejectWithValue}) => {
     try {
         const response = await mapApis.getMapsDataByAccount(payload.user);
