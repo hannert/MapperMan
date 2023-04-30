@@ -17,21 +17,26 @@ import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import AuthErrorModal from './Modals/AuthErrorModal';
 
-import { sendVerificationThunk, setModalActive, setErrorMessage } from '../app/store-actions/accountAuth';
+import { forgotPasswordThunk, setModalActive, setErrorMessage } from '../app/store-actions/accountAuth';
 
-export default function ForgotPasswordScreen() {
-    
+export default function AfterVerifyScreen() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        const url = window.location.pathname
+        const userId = url.split("/")[2]
+        console.log(userId)
         const formData = new FormData(event.currentTarget);
-        const email = formData.get('email')
-        dispatch(sendVerificationThunk({email: email})).unwrap().then((response) => {
-            console.log("email sent")
-            navigate('/login')
+        const password = formData.get('new-password')
+        const passwordVerify = formData.get('confirm-newpassword')
+        console.log(password + " " + passwordVerify)
+        dispatch(forgotPasswordThunk({password: password, passwordVerify: passwordVerify, userId: userId})).unwrap().then((response) => {
+            console.log("password changed")
+            navigate("/login")
         }).catch((error) => {
+            console.log(error)
             dispatch(setErrorMessage(error))
             dispatch(setModalActive(true))
         });
@@ -56,7 +61,7 @@ export default function ForgotPasswordScreen() {
                         <LockResetIcon/>
                     </Avatar>
                     <Typography component="h1" variant="h5">
-                        Verify Email
+                        Change Password
                     </Typography>
                     
                     <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
@@ -64,11 +69,21 @@ export default function ForgotPasswordScreen() {
                             margin="normal"
                             required
                             fullWidth
-                            id="email"
-                            label="Email Address"
-                            name="email"
-                            autoComplete="email"
-                            autoFocus
+                            name="new-password"
+                            label="New Password"
+                            type="password"
+                            id="new-password"
+                            autoComplete="new-password"
+                        />
+                        <TextField
+                            margin="normal"
+                            required
+                            fullWidth
+                            name="confirm-newpassword"
+                            label="Confirm New Password"
+                            type="password"
+                            id="confirm-newpassword"
+                            autoComplete="confirm-new-password"
                         />
                         <Button
                             type="submit"
@@ -77,7 +92,7 @@ export default function ForgotPasswordScreen() {
                             sx={{ mt: 3, mb: 2 }}
                             id="confirm-change-password-button"
                         >
-                            Verify Email
+                            Change Password
                         </Button>
                     </Box>
                 </Box>
