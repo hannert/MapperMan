@@ -107,7 +107,6 @@ export const deleteMapProperty = (id, index, property) =>{
 }
 
 
-
 const mapApis = {
     createMap,
     deleteMapById,
