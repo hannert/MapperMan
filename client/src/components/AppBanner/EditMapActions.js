@@ -1,14 +1,15 @@
 import { Delete, Edit, Groups, Publish, Save } from "@mui/icons-material";
 import { IconButton, Tooltip } from "@mui/material";
 import { Box, Container } from '@mui/system';
+import { enqueueSnackbar } from "notistack";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { saveGeojsonThunk } from "../../app/store-actions/leafletEditing";
+import CollaboratorModal from "./CollaboratorModal";
 import DeleteModal from "./DeleteModal";
 import EditModal from "./EditModal";
+import ExportMapButton from "./ExportMapButton";
 import PublishModal from "./PublishModal";
-import CollaboratorModal from "./CollaboratorModal";
-import { saveGeojsonThunk } from "../../app/store-actions/leafletEditing";
-import * as L from 'leaflet';
 /**
  * This component is a container for the buttons that appear on App Banner when on the EditScreen
  * Responsible for conditional rendering of the buttons. 
@@ -65,8 +66,10 @@ export default function EditMapActions () {
             mapData: geoJSON, 
             id: mapId}
             )).unwrap().then((response) => {
-            console.log(response);
+                enqueueSnackbar('Map successfully saved!', {variant:'success'})
+                console.log(response);
         }).catch((error) => {
+            enqueueSnackbar('Error while trying to save map!', {variant:'error'})
             console.log(error);
         });
 
@@ -111,7 +114,8 @@ export default function EditMapActions () {
                     <IconButton>
                         <Save onClick={handleSave} />
                     </IconButton>
-                </Tooltip>    
+                </Tooltip>
+                <ExportMapButton />
             </Box>
 
             {editDialog}

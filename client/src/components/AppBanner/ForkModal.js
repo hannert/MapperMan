@@ -5,13 +5,13 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
 import { enqueueSnackbar } from 'notistack';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
-import { forkMapThunk, getMapsDataByAccountThunk, setMapList } from '../../../app/store-actions/editMapList';
+import { forkMapThunk, getMapsDataByAccountThunk } from '../../app/store-actions/editMapList';
 
-export default function ForkDialog (props) {
+export default function ForkModal (props) {
     const {open, toggleForkDialog } = props;
     const dispatch = useDispatch();
-    const mapID = useSelector((state) => state.editMapList.mapCardClickedId, shallowEqual);
-    const mapName = useSelector((state) => state.editMapList.mapCardClickedName, shallowEqual);
+    const mapID = useSelector((state) => state.editMapList.activeMapId, shallowEqual);
+    const mapName = useSelector((state) => state.editMapList.activeMapName, shallowEqual);
     const user = useSelector((state) => state.accountAuth.user);
 
     const handleConfirm = () => {
@@ -23,18 +23,12 @@ export default function ForkDialog (props) {
           console.log(error);
       }).then(() => {
           dispatch(getMapsDataByAccountThunk({user: user})).unwrap().then((response) => {
-            console.log("Getting maps")
-            dispatch(setMapList(response.maps));
-            enqueueSnackbar('Successfully forked map!', {variant:'success'})
+            enqueueSnackbar('Map successfully forked!', {variant:'success'})
           }).catch((error) => {
-            enqueueSnackbar('Something went wrong while trying to fork map.', {variant:'error'})
+            enqueueSnackbar('Something went wrong while trying to fork map!', {variant:'error', autoHideDuration: 2000})
             console.log(error);
           });
-
-
       })
-      
-      
       toggleForkDialog();
     }
 

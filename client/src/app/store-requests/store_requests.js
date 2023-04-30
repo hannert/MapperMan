@@ -25,6 +25,17 @@ export const deleteMapById = (id) => api.delete(`/map/${id}`);
 export const getMapById = (id) => api.get(`/map/${id}`);
 export const getUserMaps = (id) => api.get(`/userMaps/${id}`);
 export const getPublicMaps = () => api.get(`/publicMaps/`);
+export const getPublicMapsByName = (name) => {
+    return api.get(`/publicMapsByName/${name}`,
+    {
+        params:{
+            name: name
+        }
+        
+    });
+}
+
+
 export const getMapsDataByAccount = (user) => api.post(`/maps`, user);
 
 
@@ -114,6 +125,7 @@ const mapApis = {
     deleteMap,
     getMapById,
     getPublicMaps,
+    getPublicMapsByName,
     getMapsDataByAccount,
     renameMap, 
     forkMap,
