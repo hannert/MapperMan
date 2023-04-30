@@ -37,7 +37,7 @@ export default function AfterVerifyScreen() {
             navigate("/login")
         }).catch((error) => {
             console.log(error)
-            dispatch(setErrorMessage(error))
+            dispatch(setErrorMessage(error.message))
             dispatch(setModalActive(true))
         });
     };
