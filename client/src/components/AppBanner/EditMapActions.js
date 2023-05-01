@@ -93,14 +93,12 @@ export default function EditMapActions () {
         <Container>
             <Box>
                 <CollaboratorGroup />
-                {
-                    (user.mapsOwned.includes(mapId) === true ) && 
-                    <Tooltip title='Add collaborators'>
-                        <IconButton>
-                            <Groups onClick={toggleCollaboratorDialog}/>
-                        </IconButton>
-                    </Tooltip>
-                }
+                    
+                <Tooltip title='Add collaborators'>
+                    <IconButton>
+                        <Groups onClick={toggleCollaboratorDialog}/>
+                    </IconButton>
+                </Tooltip>
                 
                 
                 <Tooltip title='Edit map name'>
