@@ -8,10 +8,11 @@ export default function CancelButton(props){
     const {cancelFunction, setHidden} = props;
     const dispatch = useDispatch();
 
-    function handleClick(){
+    function handleClick(e){
+        e.stopPropagation();
         setHidden(true);
         dispatch(setEditTool(null));
-        dispatch(cancelFunction());
+        cancelFunction();
     }
 
     return (

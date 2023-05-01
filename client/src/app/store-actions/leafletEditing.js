@@ -1,9 +1,10 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice, current } from "@reduxjs/toolkit";
 import * as turf from '@turf/turf';
 import * as L from 'leaflet';
 import 'leaflet-editable';
 import 'leaflet-path-drag';
 import mapApis from "../store-requests/store_requests";
+import jsTPS from "../jsTPS/jsTPS";
 
 export const editTools ={
     addVertex: 'addVertex',
@@ -16,6 +17,12 @@ export const editTools ={
     polygon: 'polygon',
     circle: 'circle',
     marker: 'marker',
+    tps: null
+}
+
+export const shapes = {
+    polygon: 'polygon',
+    polyline: 'polyline',
 }
 
 const initialState = {
@@ -84,49 +91,68 @@ export const leafletEditing = createSlice({
         },
         startPolylineDraw: (state, action) => {
             state.editTool = editTools.polyline;
-            // Something is wrong with the dragging library? Won't let polyline get out of edit
-            let polyline = state.mapRef.editTools.startPolyline();
+            let polyline = state.mapRef.editTools.startPolyline(undefined, {draggable: true});
+            state.featureIndex += 1;
+            polyline.featureIndex = state.featureIndex;
+            polyline.shape = shapes.polyline;
+            // in stack with create polyline transaction
+            polyline.inStack = true;
+            polyline.dragging.disable();
+
             state.layerGroup.addLayer(polyline);
             state.activeDrawing = polyline;
         },
+        /**
+         * Deprecated
+         */
         endPolylineDraw: (state, action) => {
-            console.log(state.activeDrawing);
-            // Work around is to make a copy of the polyline with draggable after it's done
-            // and remove the old one. Setting it with draggable true initially glitches out
-            let polyline = L.polyline(state.activeDrawing.getLatLngs(), {draggable: 'true'});
-            polyline.dragging.disable();
+            // console.log(state.activeDrawing);
+            // // Work around is to make a copy of the polyline with draggable after it's done
+            // // and remove the old one. Setting it with draggable true initially glitches out
+            // let polyline = L.polyline(state.activeDrawing.getLatLngs(), {draggable: 'true'});
+            // polyline.dragging.disable();
 
-            polyline.featureIndex = state.featureIndex;
-            state.properties[state.featureIndex] = {name: 'New Polyline'};
-            state.featureIndex += 1;
+            // polyline.featureIndex = state.featureIndex;
+            // state.properties[state.featureIndex] = {name: 'New Polyline'};
+            // state.featureIndex += 1;
 
-            state.layerGroup.removeLayer(state.activeDrawing);
-            state.layerGroup.addLayer(polyline);
+            // state.layerGroup.removeLayer(state.activeDrawing);
+            // state.layerGroup.addLayer(polyline);
 
-            state.mapRef.editTools.commitDrawing();
-            state.mapRef.editTools.stopDrawing();
-            state.editTool = null;
+            // state.mapRef.editTools.commitDrawing();
+            // state.mapRef.editTools.stopDrawing();
+            // state.editTool = null;
         },
         startPolygonDraw: (state, action) => {
             state.editTool = editTools.polygon;
-            let polygon = state.mapRef.editTools.startPolygon();
+            let polygon = state.mapRef.editTools.startPolygon(undefined, {draggable: 'true'});
+            state.featureIndex += 1;
+            polygon.featureIndex = state.featureIndex;
+            polygon.shape = shapes.polygon;
+            // in stack with create polygon transaction
+            polygon.inStack = true;
+            polygon.dragging.disable();
+
             state.layerGroup.addLayer(polygon);
             state.activeDrawing = polygon;
         },
+        /**
+         * Deprecated
+         */
         endPolygonDraw: (state, action) => {
-            console.log(state.activeDrawing);
-            let polygon = L.polygon(state.activeDrawing.getLatLngs(), {draggable: 'true'});
-            polygon.dragging.disable();
+            // console.log(state.activeDrawing);
+            // let polygon = L.polygon(state.activeDrawing.getLatLngs(), {draggable: 'true'});
+            // polygon.dragging.disable();
 
-            polygon.featureIndex = state.featureIndex;
-            state.properties[state.featureIndex] = {name: 'New Polygon'};
-            state.featureIndex += 1;
-            state.layerGroup.removeLayer(state.activeDrawing);
-            state.layerGroup.addLayer(polygon);
+            // polygon.featureIndex = state.featureIndex;
+            // state.properties[state.featureIndex] = {name: 'New Polygon'};
+            // state.featureIndex += 1;
+            // state.layerGroup.removeLayer(state.activeDrawing);
+            // state.layerGroup.addLayer(polygon);
 
-            state.mapRef.editTools.commitDrawing();
-            state.mapRef.editTools.stopDrawing();
-            state.editTool = null;
+            // state.mapRef.editTools.commitDrawing();
+            // state.mapRef.editTools.stopDrawing();
+            // state.editTool = null;
         },
         startCircleDraw: (state, action) => {
             state.editTool = editTools.circle;
@@ -174,17 +200,7 @@ export const leafletEditing = createSlice({
         removeFeature: (state, action) => {
             console.log('Removing feature');
             console.log(action.payload);
-            console.log(state.layerClickedEditor);
-            state.layerGroup.removeLayer(state.chosenForDeletion);
-
-            console.log(state.chosenForDeletion);
-            state.layerClickedEditor.deleteShapeAt(action.payload);
-
-            state.layerGroup.eachLayer(function(layer){
-                layer.off(
-                    'click'
-                );
-            });        
+            console.log(state.layerClickedEditor);      
         },
         startMouseTool: (state, action) =>{
             console.log('Attaching onClick');
@@ -317,6 +333,9 @@ export const leafletEditing = createSlice({
         setSharedWith: (state, action) => {
             state.sharedWith = action.payload;
         },
+        updateProperties: (state, action) => {
+            state.properties.push(action.payload.properties);
+        }
     }
 });
 
@@ -325,8 +344,7 @@ startPolylineDraw, endPolylineDraw, unselectTool, setLayerGroup, setFeatureClick
  startMouseTracking, setLayerClickedId, setLayerClickedEditor, addVertex, stopMouseTracking,
 setDraggable, unsetDraggable, startPolygonDraw, endPolygonDraw, startMarker, endMarker, 
 startMouseTool, setMergeArray, mergeRegion, finishMergeRegion, startMergeTool, removeFeature, startRemoveTool, 
-setChosenForDeletion, startCircleDraw, endCircleDraw, incrementFeatureIndex, setProperties, setFeatureIndex,
-setCollaborators, setSharedWith} = leafletEditing.actions;
+setCollaborators, setSharedWith, setChosenForDeletion, startCircleDraw, endCircleDraw, incrementFeatureIndex, setProperties, setFeatureIndex, updateProperties} = leafletEditing.actions;
 export default leafletEditing.reducer;
 
 

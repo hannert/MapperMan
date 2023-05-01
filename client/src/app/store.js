@@ -2,6 +2,8 @@ import { configureStore } from '@reduxjs/toolkit'
 import editMapListReducer from './store-actions/editMapList'
 import accountAuthReducer from './store-actions/accountAuth'
 import leafletEditingReducer from './store-actions/leafletEditing'
+import transactionsReducer from './store-actions/transactions'
+
 export default configureStore({
 
     middleware: getDefaultMiddleware => 
@@ -13,7 +15,8 @@ export default configureStore({
     reducer: {
         editMapList: editMapListReducer,
         accountAuth: accountAuthReducer,
-        leafletEditing: leafletEditingReducer
+        leafletEditing: leafletEditingReducer,
+        transactions: transactionsReducer
     },
 
 
