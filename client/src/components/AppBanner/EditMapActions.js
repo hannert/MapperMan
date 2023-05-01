@@ -5,8 +5,8 @@ import { enqueueSnackbar } from "notistack";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { saveGeojsonThunk } from "../../app/store-actions/leafletEditing";
-import CollaboratorModal from "./CollaboratorModal";
 import CollaboratorGroup from "./CollaboratorGroup.js";
+import CollaboratorModal from "./CollaboratorModal";
 import DeleteModal from "./DeleteModal";
 import EditModal from "./EditModal";
 import ExportMapButton from "./ExportMapButton";
@@ -42,6 +42,7 @@ export default function EditMapActions () {
         setPublishDialogOpen(!publishDialogOpen)
     }
     const toggleCollaboratorDialog = () => {
+        console.log(user)
         setCollaboratorDialogOpen(!collaboratorDialogOpen)
     }
 
@@ -92,11 +93,16 @@ export default function EditMapActions () {
         <Container>
             <Box>
                 <CollaboratorGroup />
-                <Tooltip title='Add collaborators'>
-                    <IconButton>
-                        <Groups onClick={toggleCollaboratorDialog}/>
-                    </IconButton>
-                </Tooltip>
+                {
+                    (user.mapsOwned.includes(mapId) === true ) && 
+                    <Tooltip title='Add collaborators'>
+                        <IconButton>
+                            <Groups onClick={toggleCollaboratorDialog}/>
+                        </IconButton>
+                    </Tooltip>
+                }
+                
+                
                 <Tooltip title='Edit map name'>
                     <IconButton>
                         <Edit onClick={toggleEditDialog} />

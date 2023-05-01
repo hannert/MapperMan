@@ -4,9 +4,10 @@ const Account = require('../db/schemas/account-schema');
 
 
 createMap = async (req, res) => {
+
     const {owner, mapData} = req.body;
-    console.log(req.body);
-    console.log("createMap body: " + JSON.stringify(mapData))
+
+    // console.log("createMap body: " + JSON.stringify(mapData))
 
     //Find account first 
     Account.find({email: owner.email}).then((account) => {
@@ -154,8 +155,6 @@ getPublicMapsByName = async (req, res) => {
 }
 
 getMapsDataByAccount = async (req, res) => {
-    console.log('req');
-    console.log(req.body);
     const user = req.body;
     // console.log('User')
     // console.log(user);
@@ -199,7 +198,41 @@ getMapsDataByAccount = async (req, res) => {
     .catch(err => console.log(err))
 }
 
+getSharedMapsDataByAccount = async (req, res) => {
+    console.log('-------------------', req.body);
+    console.log("Getting shared maps")
+    const user = req.body;
+    console.log(user)
 
+    //below is wrong, returns array of ids
+    //need to iterate through ids, get info for each one,
+    //then return a big JSON of all the maps with things we need
+    //for the map list like Name, Owner, createdAt for published, etc.
+    let data = []
+    await Account.find({email: user.email}).then(async (account) => {
+        console.log("account found!", account)
+        if(account[0].mapAccess.length === 0){
+            return res.status(200).json({success: true, maps: data})
+        }
+        for(const map of account[0].mapAccess){
+            await Map.findById(map).then((map) => {
+                console.log(map.name)
+                let mapEntry = {
+                    id: map._id,
+                    name: map.name,
+                    owner: account[0].username,
+                    createdAt: map.createdAt,
+                    published: map.published
+                };
+                data.push(mapEntry);
+            }).catch(err => console.log(err));
+        }
+    }).then(() => {
+        return res.status(200).json({success: true, maps: data})
+    })
+
+    .catch(err => console.log(err))
+}
 
 /** TODO: try to add user authentication here i.e. check if the map belongs to
  * them
@@ -542,6 +575,7 @@ module.exports = {
     getPublicMaps,
     getPublicMapsByName,
     getMapsDataByAccount,
+    getSharedMapsDataByAccount,
     renameMap,
     forkMap,
     publishMap,

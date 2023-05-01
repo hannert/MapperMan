@@ -1,10 +1,10 @@
-import { Button, Menu, MenuItem } from "@mui/material";
 import FolderIcon from '@mui/icons-material/Folder';
+import { Button, Menu, MenuItem } from "@mui/material";
 import React from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import { setMapList, setPublicRepo } from "../../../app/store-actions/editMapList";
+import { setMapList } from "../../../app/store-actions/editMapList";
 
-import { getMapsDataByAccountThunk, getPublicMapsThunk } from "../../../app/store-actions/editMapList";
+import { getMapsDataByAccountThunk, getPublicMapsThunk, getUserSharedMapsThunk } from "../../../app/store-actions/editMapList";
 
 export default function RepoSelectButton(){
     const [anchorEl, setAnchorEl] = React.useState(null);
@@ -46,6 +46,18 @@ export default function RepoSelectButton(){
         }   
     }
 
+    const handleLoadSharedMaps = () => {
+      console.log('load shared maps');
+      if (user) {
+        dispatch(getUserSharedMapsThunk({user: user})).then((response) => {
+            if(response?.payload?.success){
+                console.log(response)
+                dispatch(setMapList(response.payload.maps));
+            }
+        });
+      }   
+    }
+
     return (
       <div>
         <Button
@@ -72,6 +84,9 @@ export default function RepoSelectButton(){
           }
           
           <MenuItem onClick={handleLoadPublicMaps}>Public Maps</MenuItem>
+          {
+            user && <MenuItem onClick={handleLoadSharedMaps}>Shared Maps</MenuItem>
+          }
         </Menu>
       </div>
     );

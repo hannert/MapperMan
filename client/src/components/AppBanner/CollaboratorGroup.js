@@ -1,4 +1,3 @@
-import { Box } from '@mui/material';
 import { useSelector } from 'react-redux';
 
 export default function CollaboratorGroup(props){
@@ -6,7 +5,6 @@ export default function CollaboratorGroup(props){
 
     return (
         <>
-            <Box>Hello</Box>
             {collaborators?.length}
         </>
     )

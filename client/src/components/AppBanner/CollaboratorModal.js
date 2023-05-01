@@ -1,5 +1,6 @@
 import CloseIcon from '@mui/icons-material/Close';
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconButton, TextField, Typography } from "@mui/material";
+import { enqueueSnackbar } from 'notistack';
 import { useEffect, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { updateCollaboratorThunk } from '../../app/store-actions/leafletEditing';
@@ -75,9 +76,9 @@ export default function CollaboratorModal(props){
             id: mapID,
             user: user,
             collaborators: localCollab
-        })
+        }))        
+        enqueueSnackbar('Successfully updated collaborators!', {variant:'success', autoHideDuration:1000})
 
-        )
         toggleCollaboratorDialog()
 
 

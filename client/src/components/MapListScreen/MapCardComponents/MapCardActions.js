@@ -10,7 +10,7 @@ import PublishButton from './PublishButton';
  * @returns Box of all of the Map Card Actions
  */
 export default function MapCardActions(props){
-    let {published, togglePublishDialog, toggleDeleteDialog, toggleForkDialog, handleActionClick} = props;
+    let {mapId, published, togglePublishDialog, toggleDeleteDialog, toggleForkDialog, handleActionClick} = props;
     const publicRepo = useSelector((state) => state.editMapList.publicRepo);
     const guest = useSelector((state) => state.accountAuth.guest);
 

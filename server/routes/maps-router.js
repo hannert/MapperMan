@@ -7,6 +7,7 @@ router.get('/map/:id', MapController.getMapById)
 router.get('/publicmaps', MapController.getPublicMaps)
 router.get('/publicmapsByName/:name', MapController.getPublicMapsByName)
 router.post('/maps', MapController.getMapsDataByAccount)
+router.post('/sharedMaps', MapController.getSharedMapsDataByAccount)
 
 router.post('/map', MapController.deleteMap)
 router.post('/map/:id', MapController.saveMap)

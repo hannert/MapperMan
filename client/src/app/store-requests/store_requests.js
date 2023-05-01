@@ -38,6 +38,8 @@ export const getPublicMapsByName = (name) => {
 
 
 export const getMapsDataByAccount = (user) => api.post(`/maps`, user);
+export const getSharedMapsDataByAccount = (user) => api.post(`/sharedMaps`, user);
+
 
 
 export const saveMap = (owner, mapData, id) => {
@@ -138,6 +140,7 @@ const mapApis = {
     getPublicMaps,
     getPublicMapsByName,
     getMapsDataByAccount,
+    getSharedMapsDataByAccount,
     renameMap, 
     forkMap,
     publishMap,

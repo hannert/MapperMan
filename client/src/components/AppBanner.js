@@ -7,16 +7,15 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { enqueueSnackbar } from 'notistack';
-import { useEffect, useState, useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import store from '../app/store';
 import { logout, logoutThunk } from '../app/store-actions/accountAuth';
 import { clear } from '../app/store-actions/editMapList';
+import { SocketContext } from '../socket';
 import EditMapActions from './AppBanner/EditMapActions';
 import ViewMapActions from './AppBanner/ViewMapActions';
-import { SocketContext } from '../socket';
 
 function AppBanner() {
 
@@ -137,9 +136,6 @@ function AppBanner() {
                 <Typography>
                     Logout
                 </Typography>
-            </MenuItem>
-            <MenuItem onClick={()=>{enqueueSnackbar('MenuItem clicked!')}}>
-            Awesome
             </MenuItem>
         </Menu>        
 
