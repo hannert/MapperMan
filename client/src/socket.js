@@ -1,7 +1,7 @@
 import { createContext } from 'react';
 import { io } from 'socket.io-client';
 
-const URL = 'http://localhost:4000';
+const URL = process.env.REACT_APP_BACKEND;
 
 export const socket = io(URL, {
     autoConnect: false,
