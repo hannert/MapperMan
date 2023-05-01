@@ -31,26 +31,15 @@ export default function LeafletContainer(){
             layerGroup.clearLayers()
             console.log('Layergroup after clear: ', layerGroup);
 
-            console.log(geoJSON);
-            let properties = [];
-
-            let idx = 0;
-            for(let feature of geoJSON.features){
-                // Have to add draggable here first then disable/enable it when wanted
-                const polygon = L.polygon(L.GeoJSON.geometryToLayer(feature)._latlngs, {draggable:true});
-                polygon.dragging.disable();
-                // polygon._latlngs[0].push(L.latLng(0, 0));
-                polygon.featureIndex = idx;
-                polygon.properties = geoJSON.features[idx].properties
- 
-                dispatch(initTps());
-                polygon.on('editable:vertex:click', (e) => {
+            mapRef.current.on('editable:enable', (e) => {
+                console.log('Enable edit');
+                console.log(e);
+                e.layer.on('editable:vertex:click', (e) => {
                     console.log(e.vertex.getIndex());
                     dispatch(setVertexIndex(e.vertex.getIndex()));
                 });
 
-
-                polygon.on('editable:vertex:deleted', (e) => {
+                e.layer.on('editable:vertex:deleted', (e) => {
                     console.log(e);
                     dispatch(addDeleteVertexTransaction({
                         layerGroup: layerGroup, 
@@ -59,14 +48,14 @@ export default function LeafletContainer(){
                     }))
                 });
 
-                polygon.on('editable:vertex:dragstart', (e) => {
+                e.layer.on('editable:vertex:dragstart', (e) => {
                     //cursed format
                     let latlng = L.latLng(e.vertex.latlng['lat'], e.vertex.latlng['lng']);
                     dispatch(setvStartPos(latlng));
 
                 });
 
-                polygon.on('editable:vertex:dragend', (e) => {
+                e.layer.on('editable:vertex:dragend', (e) => {
                     let latlng = L.latLng(e.vertex.latlng['lat'], e.vertex.latlng['lng']);
                     dispatch(addMoveVertexTransaction({
                         layerGroup: layerGroup,
@@ -75,13 +64,13 @@ export default function LeafletContainer(){
                     }))
                 });
 
-                polygon.on('dragstart', (e) => {
+                e.layer.on('dragstart', (e) => {
                     console.log(e);
                     console.log(e.target._latlngs[0][0])
                     dispatch(setfStartPos(e.target._latlngs[0][0]));
                 });
                 
-                polygon.on('dragend', (e) => {
+                e.layer.on('dragend', (e) => {
                     console.log(e);
                     console.log(e.target._latlngs[0][0])
 
@@ -94,7 +83,8 @@ export default function LeafletContainer(){
                     }))
                 });
 
-                polygon.on('editable:shape:delete', (e) => {
+                e.layer.on('remove', (e) => {
+                    console.log('remove event')
                     let arr = []
                     for(let latlng of e.sourceTarget.getLatLngs()[0]){
                         
@@ -104,17 +94,107 @@ export default function LeafletContainer(){
 
                         arr.push(copy);
                     }
+                    console.log(arr);
 
                     // TODO For some reason this causes an error
 
-                    // dispatch(addDeleteFeatureTransaction({
-                    //     layerGroup: layerGroup,
-                    //     latlngs: arr,
-                    //     properties: e.sourceTarget.properties,
-                    //     featureIndex: e.sourceTarget.featureIndex
-                    // }))
+                    dispatch(addDeleteFeatureTransaction({
+                        layerGroup: layerGroup,
+                        latlngs: arr,
+                        properties: e.sourceTarget.properties,
+                        featureIndex: e.sourceTarget.featureIndex
+                    }))
                     
                 });
+            });
+
+            console.log(geoJSON);
+            let properties = [];
+
+            let idx = 0;
+            for(let feature of geoJSON.features){
+                // Have to add draggable here first then disable/enable it when wanted
+                const polygon = L.polygon(L.GeoJSON.geometryToLayer(feature)._latlngs, {draggable:true});
+                polygon.dragging.disable();
+                // polygon._latlngs[0].push(L.latLng(0, 0));
+                polygon.featureIndex = idx;
+                polygon.properties = geoJSON.features[idx].properties
+                // console.log(polygon);
+                dispatch(initTps());
+                // polygon.on('editable:vertex:click', (e) => {
+                //     console.log(e.vertex.getIndex());
+                //     dispatch(setVertexIndex(e.vertex.getIndex()));
+                // });
+
+
+                // polygon.on('editable:vertex:deleted', (e) => {
+                //     console.log(e);
+                //     dispatch(addDeleteVertexTransaction({
+                //         layerGroup: layerGroup, 
+                //         latlng: e.latlng, 
+                //         featureIndex: e.sourceTarget.featureIndex
+                //     }))
+                // });
+
+                // polygon.on('editable:vertex:dragstart', (e) => {
+                //     //cursed format
+                //     let latlng = L.latLng(e.vertex.latlng['lat'], e.vertex.latlng['lng']);
+                //     dispatch(setvStartPos(latlng));
+
+                // });
+
+                // polygon.on('editable:vertex:dragend', (e) => {
+                //     let latlng = L.latLng(e.vertex.latlng['lat'], e.vertex.latlng['lng']);
+                //     dispatch(addMoveVertexTransaction({
+                //         layerGroup: layerGroup,
+                //         featureIndex: e.target.featureIndex,
+                //         endPos: latlng
+                //     }))
+                // });
+
+                // polygon.on('dragstart', (e) => {
+                //     console.log(e);
+                //     console.log(e.target._latlngs[0][0])
+                //     dispatch(setfStartPos(e.target._latlngs[0][0]));
+                // });
+                
+                // polygon.on('dragend', (e) => {
+                //     console.log(e);
+                //     console.log(e.target._latlngs[0][0])
+
+                //     // TODO need to account for it going in different directions, like quadrant 1, 2, 3 or 4 of a graph
+                    
+                //     dispatch(addMoveFeatureTransaction({
+                //         layerGroup: layerGroup,
+                //         featureIndex: e.target.featureIndex,
+                //         endPos: e.target._latlngs[0][0]
+                //     }))
+                // });
+
+                // polygon.on('remove', (e) => {
+                //     console.log('remove event')
+                //     let arr = []
+                //     for(let latlng of e.sourceTarget.getLatLngs()[0]){
+                        
+                //         let copy = L.latLng(
+                //             JSON.parse(JSON.stringify(latlng['lat'])), 
+                //             JSON.parse(JSON.stringify(latlng['lng'])))
+
+                //         arr.push(copy);
+                //     }
+                //     console.log(arr);
+
+                //     // TODO For some reason this causes an error
+
+                //     dispatch(addDeleteFeatureTransaction({
+                //         layerGroup: layerGroup,
+                //         latlngs: arr,
+                //         properties: e.sourceTarget.properties,
+                //         featureIndex: e.sourceTarget.featureIndex,
+                //         mapRef: mapRef.current
+                //     }))
+                    
+                // });
                 
                 // TODO prob a better way to do this
                 properties.push(geoJSON.features[idx].properties);

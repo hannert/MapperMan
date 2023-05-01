@@ -174,17 +174,7 @@ export const leafletEditing = createSlice({
         removeFeature: (state, action) => {
             console.log('Removing feature');
             console.log(action.payload);
-            console.log(state.layerClickedEditor);
-            state.layerGroup.removeLayer(state.chosenForDeletion);
-
-            console.log(state.chosenForDeletion);
-            state.layerClickedEditor.deleteShapeAt(action.payload);
-
-            state.layerGroup.eachLayer(function(layer){
-                layer.off(
-                    'click'
-                );
-            });        
+            console.log(state.layerClickedEditor);      
         },
         startMouseTool: (state, action) =>{
             console.log('Attaching onClick');

@@ -42,8 +42,6 @@ export default function MouseButton(){
             console.log("feature: ", layerGroup.getLayer(layerClickedId).featureIndex);
             
             dispatch((setFeatureIndexClicked(featureIndex)))
-
-            dispatch(setLayerClickedEditor(layerGroup.getLayer(layerClickedId).editor));
             dispatch(setDraggable(layerClickedId))
         }
     }, [layerClickedId])

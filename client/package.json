@@ -50,7 +50,7 @@
   },
   "devDependencies": {
     "@mui/material": "^5.11.16",
-    "@reduxjs/toolkit": "^1.9.4",
+    "@reduxjs/toolkit": "^1.9.5",
     "@turf/turf": "^6.5.0",
     "cypress": "^12.9.0",
     "react-redux": "^8.0.5",

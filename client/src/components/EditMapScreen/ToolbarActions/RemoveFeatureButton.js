@@ -26,7 +26,12 @@ export default function RemoveFeatureButton() {
         if(chosenForDeletion !== null){
             console.log('removeFeature');
             console.log(chosenForDeletion)
-            dispatch(removeFeature(e.latlng));
+            layerGroup.removeLayer(chosenForDeletion);
+            layerGroup.eachLayer(function(layer){
+                layer.off(
+                    'click'
+                );
+            });             
             dispatch(setChosenForDeletion(null))
         }else{
             console.log('chooseFeature');

@@ -53,16 +53,16 @@ export const transactions = createSlice({
             state.fStartPos = action.payload;
         },
         addMoveFeatureTransaction: (state, action) => {
-            let offsetX = state.fStartPos['lat'] - action.payload.endPos['lat'];
-            let offsetY = state.fStartPos['lng'] - action.payload.endPos['lng'];
+            let offsetX = action.payload.endPos['lat'] - state.fStartPos['lat'];
+            let offsetY = action.payload.endPos['lng'] - state.fStartPos['lng'];
             
-            console.log(offsetX);
-            console.log(offsetY);
+ 
 
             let transaction = new MoveFeature_Transaction(action.payload.layerGroup, action.payload.featureIndex, offsetX, offsetY);
             state.tps.addTransaction(transaction);
         },
         addDeleteFeatureTransaction: (state, action) => {
+            console.log('delete transaction');
             let transaction = new DeleteFeature_Transaction(action.payload.layerGroup, action.payload.latlngs, action.payload.properties, action.payload.featureIndex);
             state.tps.addTransaction(transaction);
         }

@@ -22,23 +22,18 @@ export default class DeleteFeature_Transaction extends jsTPS_Transaction {
                 this.layerGroup.removeLayer(layer);
             }
         }
-
     }
 
     /**
      *  Add back feature with latlngs and properties
      */
     undoTransaction() {
-        for(let layer of this.layerGroup.getLayers()){
-            if(layer.featureIndex === this.featureIndex){
-                const polygon = L.polygon(this.latlngs, {draggable:true});
-                polygon.dragging.disable();
-                console.log(polygon);
-                polygon.featureIndex = this.featureIndex;
-                polygon.properties = this.properties;
-                this.layerGroup.addLayer(polygon);
-            }
-        }
+        const polygon = L.polygon(this.latlngs, {draggable:true});
+        polygon.dragging.disable();
+        console.log(polygon);
+        polygon.featureIndex = this.featureIndex;
+        polygon.properties = this.properties;
 
+        this.layerGroup.addLayer(polygon);
     }
 }

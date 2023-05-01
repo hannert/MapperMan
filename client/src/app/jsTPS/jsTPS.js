@@ -132,9 +132,8 @@ export default class jsTPS {
      * @param {jsTPS_Transaction} transaction Transaction to add to the stack and do.
      */
     addTransaction(transaction) {
-        console.log(Object.hasOwn(transaction, 'layerGroup'));
-        console.log(transaction);
         // ARE WE BRANCHING?
+        console.log(transaction);
         if ((this.mostRecentTransaction < 0) 
             || (this.mostRecentTransaction < (this.transactions.length - 1))) {
                 for (let i = this.transactions.length - 1; i > this.mostRecentTransaction; i--) {

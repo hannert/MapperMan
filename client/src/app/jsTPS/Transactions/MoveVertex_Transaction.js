@@ -17,13 +17,11 @@ export default class MoveVertex_Transaction extends jsTPS_Transaction {
             if(layer.featureIndex === this.featureIndex){
                 //can't search through latlngs like this on everything :(
                 for(let latlng of layer._latlngs[0]){
-                    console.log(this.startPos);
                     if(latlng.equals(this.startPos)){
-                        console.log('found it');
                         let idx = layer._latlngs[0].indexOf(latlng);
                         layer._latlngs[0].splice(idx, 1);
                         layer._latlngs[0].splice(idx, 0, this.endPos);
-
+                        console.log('moved')
                         //absolutely brutal on client side performance
                         layer.redraw();
                         layer.disableEdit();
@@ -43,9 +41,8 @@ export default class MoveVertex_Transaction extends jsTPS_Transaction {
             if(layer.featureIndex === this.featureIndex){
                 //can't search through latlngs like this on everything :(
                 for(let latlng of layer._latlngs[0]){
-                    console.log(this.endPos);
                     if(latlng.equals(this.endPos)){
-                        console.log('found it');
+                        console.log('moved')
                         let idx = layer._latlngs[0].indexOf(latlng);
                         layer._latlngs[0].splice(idx, 1);
                         layer._latlngs[0].splice(idx, 0, this.startPos);

@@ -44,6 +44,7 @@ export default class MoveFeature_Transaction extends jsTPS_Transaction {
                     latlng['lat'] -= this.offsetX;
                     latlng['lng'] -= this.offsetY;                
                 }
+                
                 layer.redraw();
                 layer.disableEdit();
                 layer.enableEdit();

@@ -22,6 +22,7 @@ export default class DeleteVertex_Transaction extends jsTPS_Transaction {
                         console.log(idx);
                         layer._latlngs[0].splice(idx, 1);
                         
+                        console.log('deleted vertex')
                         //absolutely brutal on client side performance
                         layer.redraw();
                         layer.disableEdit();
@@ -45,6 +46,7 @@ export default class DeleteVertex_Transaction extends jsTPS_Transaction {
                 console.log(this.vertexIndex)
                 layer._latlngs[0].splice(this.vertexIndex, 0, this.latlng);
 
+                console.log('added vertex')
                 //absolutely brutal on client side performance
                 layer.redraw();
                 layer.disableEdit();
