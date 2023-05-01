@@ -119,6 +119,16 @@ export const deleteMapProperty = (id, index, property) =>{
         property: property
     })
 }
+
+
+export const addComment = (id, comment, username) => {
+    return api.put(`/map/${id}/addComment`, {
+        id: id,
+        comment: comment,
+        username: username
+    })
+}
+
 export const updateMapCollaborator = (id, user, collaborators) =>{
     return api.put(`/updateCollaborator`, {
         id: id,
@@ -129,6 +139,7 @@ export const updateMapCollaborator = (id, user, collaborators) =>{
 export const isValidEmail = (email) =>{
     return api.put(`/isValidEmail/${email}`, {
         email: email
+
     })
 }
 
@@ -147,8 +158,9 @@ const mapApis = {
     editMapProperty,
     saveMap,
     deleteMapProperty,
+    addComment,
     updateMapCollaborator,
-    isValidEmail,
+    isValidEmail
 }
 
 export default mapApis

@@ -19,7 +19,7 @@ const mapSchema = new Schema(
         owner: { type: ObjectId, ref: 'Account', required: true },
         mapData: { type: Object, required: true },
         published: {type: Boolean, required: true},
-        comments: {type: [String], ref: 'Comment', required: true },
+        comments: {type: [{owner: String, content: String}], required: true },
         sharedWith: {type: [String], required: true},
         tags: {type: Map, of: String, required: true},
     },

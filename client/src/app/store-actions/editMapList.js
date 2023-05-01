@@ -166,3 +166,13 @@ export const publishMapThunk = createAsyncThunk('/map/:id/publish', async(payloa
         return rejectWithValue(err.response.data.errorMessage);
     }
 });
+
+export const addCommentThunk = createAsyncThunk('/map/:id/addComment', async(payload, {rejectWithValue}) => {
+    console.log("adding comment to map id " + payload.id)
+    try{
+        const response = await mapApis.addComment(payload.id, payload.comment, payload.username)
+        return response.data
+    }catch(err){
+        return rejectWithValue(err.response.data.errorMessage);
+    }
+});
