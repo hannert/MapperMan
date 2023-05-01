@@ -2,6 +2,7 @@
 const Map = require('../db/schemas/map-schema')
 const Account = require('../db/schemas/account-schema');
 
+
 createMap = async (req, res) => {
     const {owner, mapData} = req.body;
     console.log(req.body);
@@ -156,8 +157,8 @@ getMapsDataByAccount = async (req, res) => {
     console.log('req');
     console.log(req.body);
     const user = req.body;
-    console.log('User')
-    console.log(user);
+    // console.log('User')
+    // console.log(user);
 
     //below is wrong, returns array of ids
     //need to iterate through ids, get info for each one,
@@ -165,14 +166,14 @@ getMapsDataByAccount = async (req, res) => {
     //for the map list like Name, Owner, createdAt for published, etc.
     let data = []
     await Account.find({email: user.email}).then(async (account) => {
-        console.log('Username: ' + account[0].username);
-        console.log("Maps: ")
-        console.log(account[0].mapsOwned);
+        // console.log('Username: ' + account[0].username);
+        // console.log("Maps: ")
+        // console.log(account[0].mapsOwned);
         for(const map of account[0].mapsOwned){
-            console.log(map);
+            // console.log(map);
             await Map.findById(map).then((map) => {
-                console.log("Map: ");
-                console.log(map);
+                // console.log("Map: ");
+                // console.log(map);
                 let mapEntry = {
                     id: map._id,
                     name: map.name,
@@ -180,18 +181,18 @@ getMapsDataByAccount = async (req, res) => {
                     createdAt: map.createdAt,
                     published: map.published
                 };
-                console.log("Map Entry: ");
-                console.log(mapEntry);
+                // console.log("Map Entry: ");
+                // console.log(mapEntry);
 
                 data.push(mapEntry);
 
-                console.log('data');
-                console.log(data);
+                // console.log('data');
+                // console.log(data);
             }).catch(err => console.log(err));
         }
     }).then(() => {
-        console.log('data at the end');
-        console.log(data);
+        // console.log('data at the end');
+        // console.log(data);
         return res.status(200).json({success: true, maps: data})
     })
 
@@ -413,6 +414,68 @@ deleteMapProperty = async(req,res) =>{
 
 }
 
+updateCollaborator = async(req,res) =>{
+    console.log("Updating collaborators")
+    const body = req.body;
+    console.log(body)
+
+    if(!body){
+        return res.status(400).json({
+            success: false,
+            error: 'You must provide a body to update',
+        })
+    }
+
+    const id = body.id;
+    const user = body.user;
+    const collaborators = body.collaborators;
+
+    console.log(id, user, collaborators)
+
+    // Currently just adds unique collaborators, Does not remove them!
+    // ! To remove, we must have a copy of the original sharedWith Array and then compare to see what is missing
+    // ! based on the missing items, iterate through them and update the accounts owned maps respectively
+
+    Map.findOne({_id: id}).then((map) => { 
+        if(map){
+            console.log('original share', map.sharedWith)
+            let originalShare = map.sharedWith
+            for(var i = 0; i < collaborators?.length; i++){
+                console.log(collaborators[i])
+                let email = collaborators[i];
+                if(originalShare.find((str) => str === email)){
+                    console.log("Found duplicate of ", email)
+                } else {
+                    Account.find({email: email}).then((account) => {
+                        if(account[0]){
+                            console.log(account[0])
+                            account[0].mapAccess.push(id)
+                            account[0]
+                            .save()
+                            .catch(err => {
+                                console.log(err)
+                                return res.status(400).json({success:false, error: err});
+                            })
+                        }
+                    })
+                }
+
+            }
+            map.sharedWith = collaborators;
+            map
+                .save()
+                .then(() => {
+                    return res.status(200).json({success: true, message:'Map collaborators updated!'})
+                })
+
+        }
+
+
+
+    })
+    
+
+}
 module.exports = {
     createMap,
     getMapById,
@@ -426,5 +489,6 @@ module.exports = {
     publishMap,
     editMapProperty,
     saveMap,
-    deleteMapProperty
+    deleteMapProperty,
+    updateCollaborator
 }

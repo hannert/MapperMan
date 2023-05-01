@@ -8,7 +8,7 @@ import { getMapByIdThunk } from '../../app/store-actions/editMapList';
 import 'leaflet-editable';
 
 import { enqueueSnackbar } from 'notistack';
-import { setCollaborators, setCurrentGeoJSON } from '../../app/store-actions/leafletEditing';
+import { setCollaborators, setCurrentGeoJSON, setSharedWith } from '../../app/store-actions/leafletEditing';
 import { SocketContext } from '../../socket';
 import LeafletContainer from './LeafletContainer';
 import MergeStatus from './MergeStatus';
@@ -28,8 +28,10 @@ export default function EditScreen(){
 
     useEffect(() => {
         if (mapId) {
+            console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!id')
             dispatch(getMapByIdThunk({id: mapId})).unwrap().then(async(response) => {
                 dispatch(setCurrentGeoJSON(response.map.mapData));
+                dispatch(setSharedWith(response.map.sharedWith))
             }).catch((error) => {
                 console.log(error);
             });

@@ -23,5 +23,6 @@ router.put('/map/:id/publish', MapController.publishMap)
 router.put('/map/:id/editProperty', MapController.editMapProperty)
 router.put('/map/:id/deleteProperty', MapController.deleteMapProperty)
 
+router.put('/updateCollaborator', MapController.updateCollaborator)
 
 module.exports = router

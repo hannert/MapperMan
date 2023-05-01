@@ -21,8 +21,7 @@ export const editMapList = createSlice({
             state.activeMapName = action.payload.name;
         },
         setActiveMap: (state, action) => {
-            console.log('Setting active map to ');
-            console.log(action.payload);
+            console.log('Setting active map to ', action.payload);
             state.activeMapId = action.payload.id;
             state.activeMapName = action.payload.name;
         },

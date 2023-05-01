@@ -35,7 +35,8 @@ const initialState = {
     mergeArray: [],
     mergedFeature: null,
     chosenForDeletion: null,
-    collaborators: []
+    collaborators: [],
+    sharedWith: []
 }
 
 export const leafletEditing = createSlice({
@@ -311,6 +312,9 @@ export const leafletEditing = createSlice({
         setCollaborators: (state, action) => {
             state.collaborators = action.payload;
         },
+        setSharedWith: (state, action) => {
+            state.sharedWith = action.payload;
+        },
     }
 });
 
@@ -320,7 +324,7 @@ startPolylineDraw, endPolylineDraw, unselectTool, setLayerGroup, setFeatureClick
 setDraggable, unsetDraggable, startPolygonDraw, endPolygonDraw, startMarker, endMarker, 
 startMouseTool, setMergeArray, mergeRegion, finishMergeRegion, startMergeTool, removeFeature, startRemoveTool, 
 setChosenForDeletion, startCircleDraw, endCircleDraw, incrementFeatureIndex, setProperties, setFeatureIndex,
-setCollaborators} = leafletEditing.actions;
+setCollaborators, setSharedWith} = leafletEditing.actions;
 export default leafletEditing.reducer;
 
 
@@ -347,6 +351,15 @@ export const deleteMapPropertyThunk = createAsyncThunk('/map/:id/deleteProperty'
     console.log("id sent to deleteProperty thunk: " + payload.id)
     try{
         const response = await mapApis.deleteMapProperty(payload.id, payload.index, payload.property);
+        return response.data
+    }catch(err){
+        return rejectWithValue(err.response.data.errorMessage);
+    }
+});
+
+export const updateCollaboratorThunk = createAsyncThunk('/map/:id/deleteProperty', async(payload, {rejectWithValue}) => {
+    try{
+        const response = await mapApis.updateMapCollaborator(payload.id, payload.user, payload.collaborators);
         return response.data
     }catch(err){
         return rejectWithValue(err.response.data.errorMessage);

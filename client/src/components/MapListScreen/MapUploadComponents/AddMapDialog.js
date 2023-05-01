@@ -108,7 +108,7 @@ export default function AddMapDialog(props){
                 console.log("trying to make a map from geojson");
                 console.log(res);
                 dispatch(createNewMap(res));
-                navigate('/maps/edit');
+                navigate('/maps');
                 enqueueSnackbar('Map successfully uploaded!', {variant:'success'})
             }).catch((err) => {
                 enqueueSnackbar('Something went wrong while trying to upload SPF/DBF!', {variant:'error'})
@@ -137,7 +137,7 @@ export default function AddMapDialog(props){
                 console.log("trying to make a map from geojson");
                 console.log(res);
                 dispatch(createNewMap(res));
-                navigate('/maps/edit');
+                navigate('/maps');
                 enqueueSnackbar('Map successfully uploaded!', {variant:'success'})
             }).catch((err) => {
                 enqueueSnackbar('Something went wrong while trying to upload GeoJSON!', {variant:'error'})

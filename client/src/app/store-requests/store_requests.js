@@ -18,6 +18,7 @@ export const createMap = (owner, mapData) => {
         mapData: mapData,
         published: false,
         comments: [],
+        sharedWith: [],
         tags: []
     })
 }
@@ -116,7 +117,13 @@ export const deleteMapProperty = (id, index, property) =>{
         property: property
     })
 }
-
+export const updateMapCollaborator = (id, user, collaborators) =>{
+    return api.put(`/updateCollaborator`, {
+        id: id,
+        user: user,
+        collaborators: collaborators,
+    })
+}
 
 const mapApis = {
     createMap,
@@ -131,7 +138,8 @@ const mapApis = {
     publishMap,
     editMapProperty,
     saveMap,
-    deleteMapProperty
+    deleteMapProperty,
+    updateMapCollaborator
 }
 
 export default mapApis
