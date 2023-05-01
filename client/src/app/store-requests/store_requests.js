@@ -126,6 +126,8 @@ export const addComment = (id, comment, username) => {
         id: id,
         comment: comment,
         username: username
+    })
+}
 
 export const updateMapCollaborator = (id, user, collaborators) =>{
     return api.put(`/updateCollaborator`, {
