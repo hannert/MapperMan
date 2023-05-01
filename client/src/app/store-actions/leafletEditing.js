@@ -2,8 +2,8 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import * as turf from '@turf/turf';
 import * as L from 'leaflet';
 import 'leaflet-editable';
-import mapApis from "../store-requests/store_requests";
 import 'leaflet-path-drag';
+import mapApis from "../store-requests/store_requests";
 
 export const editTools ={
     addVertex: 'addVertex',
@@ -34,7 +34,9 @@ const initialState = {
     activeDrawing: null,
     mergeArray: [],
     mergedFeature: null,
-    chosenForDeletion: null
+    chosenForDeletion: null,
+    collaborators: [],
+    sharedWith: []
 }
 
 export const leafletEditing = createSlice({
@@ -308,7 +310,13 @@ export const leafletEditing = createSlice({
         },
         setProperties: (state, action) => {
             state.properties = action.payload;
-        }
+        },
+        setCollaborators: (state, action) => {
+            state.collaborators = action.payload;
+        },
+        setSharedWith: (state, action) => {
+            state.sharedWith = action.payload;
+        },
     }
 });
 
@@ -317,7 +325,8 @@ startPolylineDraw, endPolylineDraw, unselectTool, setLayerGroup, setFeatureClick
  startMouseTracking, setLayerClickedId, setLayerClickedEditor, addVertex, stopMouseTracking,
 setDraggable, unsetDraggable, startPolygonDraw, endPolygonDraw, startMarker, endMarker, 
 startMouseTool, setMergeArray, mergeRegion, finishMergeRegion, startMergeTool, removeFeature, startRemoveTool, 
-setChosenForDeletion, startCircleDraw, endCircleDraw, incrementFeatureIndex, setProperties, setFeatureIndex} = leafletEditing.actions;
+setChosenForDeletion, startCircleDraw, endCircleDraw, incrementFeatureIndex, setProperties, setFeatureIndex,
+setCollaborators, setSharedWith} = leafletEditing.actions;
 export default leafletEditing.reducer;
 
 
@@ -349,3 +358,21 @@ export const deleteMapPropertyThunk = createAsyncThunk('/map/:id/deleteProperty'
         return rejectWithValue(err.response.data.errorMessage);
     }
 });
+
+export const updateCollaboratorThunk = createAsyncThunk('/map/:id/deleteProperty', async(payload, {rejectWithValue}) => {
+    try{
+        const response = await mapApis.updateMapCollaborator(payload.id, payload.user, payload.collaborators);
+        return response.data
+    }catch(err){
+        return rejectWithValue(err.response.data.errorMessage);
+    }
+});
+
+// export const isValidEmailThunk = createAsyncThunk('/isValidEmail/:email', async(payload, {rejectWithValue}) => {
+//     try{
+//         const response = await mapApis.updateMapCollaborator(payload.email);
+//         return response.data
+//     }catch(err){
+//         return rejectWithValue(err.response.data.errorMessage);
+//     }
+// });

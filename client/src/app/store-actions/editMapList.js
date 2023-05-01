@@ -21,8 +21,7 @@ export const editMapList = createSlice({
             state.activeMapName = action.payload.name;
         },
         setActiveMap: (state, action) => {
-            console.log('Setting active map to ');
-            console.log(action.payload);
+            console.log('Setting active map to ', action.payload);
             state.activeMapId = action.payload.id;
             state.activeMapName = action.payload.name;
         },
@@ -62,6 +61,7 @@ export const { createNewMap, setMapList, renameMap, deleteMap, setPublicRepo,set
 export default editMapList.reducer
 
 export const createMapThunk = createAsyncThunk('/newmap', async (payload) => {
+    console.log('payload:', payload)
     const response = await mapApis.createMap(
         payload.owner,
         payload.mapData
@@ -99,6 +99,15 @@ export const getUserMapsThunk = createAsyncThunk('/userMaps/:id', async (payload
     }
 });
 
+export const getUserSharedMapsThunk = createAsyncThunk('/sharedMaps', async (payload, {rejectWithValue}) => {
+    try {
+        const response = await mapApis.getSharedMapsDataByAccount(payload.user);
+        return response.data;
+    } catch(err){
+        return rejectWithValue(err.response.data.errorMessage);
+    }
+});
+
 export const getPublicMapsThunk = createAsyncThunk('/publicMaps/', async (_, {rejectWithValue}) => {
     try {
         const response = await mapApis.getPublicMaps();
@@ -127,6 +136,8 @@ export const getMapsDataByAccountThunk = createAsyncThunk('/maps', async (payloa
     }
 });
 
+
+
 export const renameMapThunk = createAsyncThunk('/map/:id', async (payload, {rejectWithValue}) => {
     try{
         const response = await mapApis.renameMap(payload.id, payload.newName);
@@ -150,6 +161,16 @@ export const publishMapThunk = createAsyncThunk('/map/:id/publish', async(payloa
     console.log("id sent to publish map thunk: " + payload.id)
     try{
         const response = await mapApis.publishMap(payload.id);
+        return response.data
+    }catch(err){
+        return rejectWithValue(err.response.data.errorMessage);
+    }
+});
+
+export const addCommentThunk = createAsyncThunk('/map/:id/addComment', async(payload, {rejectWithValue}) => {
+    console.log("adding comment to map id " + payload.id)
+    try{
+        const response = await mapApis.addComment(payload.id, payload.comment, payload.username)
         return response.data
     }catch(err){
         return rejectWithValue(err.response.data.errorMessage);

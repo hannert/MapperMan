@@ -25,7 +25,8 @@ export default function AfterVerifyScreen() {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        const url = window.location.pathname
+        const url = window.location.href
+        console.log(url)
         const userId = url.split("/")[4]
         console.log(userId)
         const formData = new FormData(event.currentTarget);
