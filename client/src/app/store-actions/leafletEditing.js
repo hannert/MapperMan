@@ -4,6 +4,7 @@ import * as L from 'leaflet';
 import 'leaflet-editable';
 import mapApis from "../store-requests/store_requests";
 import 'leaflet-path-drag';
+import jsTPS from "../jsTPS/jsTPS";
 
 export const editTools ={
     addVertex: 'addVertex',
@@ -16,6 +17,7 @@ export const editTools ={
     polygon: 'polygon',
     circle: 'circle',
     marker: 'marker',
+    tps: null
 }
 
 const initialState = {
@@ -308,7 +310,7 @@ export const leafletEditing = createSlice({
         },
         setProperties: (state, action) => {
             state.properties = action.payload;
-        }
+        },
     }
 });
 

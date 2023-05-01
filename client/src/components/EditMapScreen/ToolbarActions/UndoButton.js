@@ -1,11 +1,18 @@
 import { Undo } from "@mui/icons-material";
 import { Button, Tooltip } from "@mui/material";
-
-
+import { useDispatch, useSelector } from "react-redux";
+import { undoTransaction } from "../../../app/store-actions/transactions";
 export default function UndoButton() {
+
+    const dispatch = useDispatch();
+
+    function handleClick(){
+        dispatch(undoTransaction());
+    }
+
     return (
         <Tooltip enterDelay={1000} title='Undo Edit' placement='right'>
-            <Button variant='contained' sx={{backgroundColor:'#2B2B2B'}}>
+            <Button onClick={handleClick} variant='contained' sx={{backgroundColor:'#2B2B2B'}}>
                 <Undo />
             </Button>
         </Tooltip>

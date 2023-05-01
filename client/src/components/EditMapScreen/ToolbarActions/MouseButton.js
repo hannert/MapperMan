@@ -14,6 +14,7 @@ export default function MouseButton(){
     const layerClickedId = useSelector(state => state.leafletEditing.layerClickedId);
     const layerGroup = useSelector(state => state.leafletEditing.layerGroup);
 
+
     function handleButtonClick(){
         dispatch(unselectTool());
         console.log('Mouse Button Clicked');

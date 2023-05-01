@@ -5,25 +5,18 @@ import hash from 'object-hash';
 import React, { useEffect, useRef } from 'react';
 import { GeoJSON, MapContainer, TileLayer } from 'react-leaflet';
 import { useDispatch, useSelector } from 'react-redux';
-import { incrementFeatureIndex, setFeatureIndex, setMapRef, setProperties } from '../../app/store-actions/leafletEditing';
+import { setFeatureIndex, setMapRef, setProperties } from '../../app/store-actions/leafletEditing';
+import DeleteVertex_Transaction from '../../app/jsTPS/Transactions/DeleteVertex_Transaction';
+import { addDeleteFeatureTransaction, addDeleteVertexTransaction, addMoveFeatureTransaction, addMoveVertexTransaction, initTps, setVertexIndex, setfStartPos, setvStartPos } from '../../app/store-actions/transactions';
 
 export default function LeafletContainer(){
 
 
     const geoJSON = useSelector((state) => state.leafletEditing.currentGeoJSON);
-    const editTool = useSelector((state) => state.leafletEditing.editTool);
     const layerGroup = useSelector((state) => state.leafletEditing.layerGroup);
-    const mergeArray = useSelector((state) => state.leafletEditing.mergeArray);
-    const mergedFeature = useSelector((state) => state.leafletEditing.mergedFeature);
-
+    
     const mapRef = useRef(null);
     const dispatch = useDispatch();
-    // For a ref out of a leaflet div
-
-    // L.Map.addInitHook(function () {
-    //    mapRef = this; 
-    // });
-    
     useEffect(() => {
         if(mapRef.current !== null){
             console.log('Leaflet render')
@@ -46,14 +39,86 @@ export default function LeafletContainer(){
                 // Have to add draggable here first then disable/enable it when wanted
                 const polygon = L.polygon(L.GeoJSON.geometryToLayer(feature)._latlngs, {draggable:true});
                 polygon.dragging.disable();
-
+                // polygon._latlngs[0].push(L.latLng(0, 0));
                 polygon.featureIndex = idx;
+                polygon.properties = geoJSON.features[idx].properties
+ 
+                dispatch(initTps());
+                polygon.on('editable:vertex:click', (e) => {
+                    console.log(e.vertex.getIndex());
+                    dispatch(setVertexIndex(e.vertex.getIndex()));
+                });
+
+
+                polygon.on('editable:vertex:deleted', (e) => {
+                    console.log(e);
+                    dispatch(addDeleteVertexTransaction({
+                        layerGroup: layerGroup, 
+                        latlng: e.latlng, 
+                        featureIndex: e.sourceTarget.featureIndex
+                    }))
+                });
+
+                polygon.on('editable:vertex:dragstart', (e) => {
+                    //cursed format
+                    let latlng = L.latLng(e.vertex.latlng['lat'], e.vertex.latlng['lng']);
+                    dispatch(setvStartPos(latlng));
+
+                });
+
+                polygon.on('editable:vertex:dragend', (e) => {
+                    let latlng = L.latLng(e.vertex.latlng['lat'], e.vertex.latlng['lng']);
+                    dispatch(addMoveVertexTransaction({
+                        layerGroup: layerGroup,
+                        featureIndex: e.target.featureIndex,
+                        endPos: latlng
+                    }))
+                });
+
+                polygon.on('dragstart', (e) => {
+                    console.log(e);
+                    console.log(e.target._latlngs[0][0])
+                    dispatch(setfStartPos(e.target._latlngs[0][0]));
+                });
+                
+                polygon.on('dragend', (e) => {
+                    console.log(e);
+                    console.log(e.target._latlngs[0][0])
+                    dispatch(addMoveFeatureTransaction({
+                        layerGroup: layerGroup,
+                        featureIndex: e.target.featureIndex,
+                        endPos: e.target._latlngs[0][0]
+                    }))
+                });
+
+                polygon.on('editable:shape:delete', (e) => {
+                    let arr = []
+                    for(let latlng of e.sourceTarget.getLatLngs()[0]){
+                        
+                        let copy = L.latLng(
+                            JSON.parse(JSON.stringify(latlng['lat'])), 
+                            JSON.parse(JSON.stringify(latlng['lng'])))
+
+                        arr.push(copy);
+                    }
+
+                    // TODO For some reason this causes an error
+
+                    // dispatch(addDeleteFeatureTransaction({
+                    //     layerGroup: layerGroup,
+                    //     latlngs: arr,
+                    //     properties: e.sourceTarget.properties,
+                    //     featureIndex: e.sourceTarget.featureIndex
+                    // }))
+                    
+                });
+                
                 // TODO prob a better way to do this
-                console.log(idx);
                 properties.push(geoJSON.features[idx].properties);
                 idx += 1;
                 layerGroup.addLayer(polygon);
             }
+
             // TODO prob a better way to do this
             dispatch(setProperties(properties));
             dispatch(setFeatureIndex(idx));
