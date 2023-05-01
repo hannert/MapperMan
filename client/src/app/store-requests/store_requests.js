@@ -106,6 +106,13 @@ export const deleteMapProperty = (id, index, property) =>{
     })
 }
 
+export const addComment = (id, comment, username) => {
+    return api.put(`/map/${id}/addComment`, {
+        id: id,
+        comment: comment,
+        username: username
+    })
+}
 
 const mapApis = {
     createMap,
@@ -119,7 +126,8 @@ const mapApis = {
     publishMap,
     editMapProperty,
     saveMap,
-    deleteMapProperty
+    deleteMapProperty,
+    addComment
 }
 
 export default mapApis

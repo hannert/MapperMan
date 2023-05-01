@@ -1,6 +1,7 @@
 // const Map = require('../models/map-model')
 const Map = require('../db/schemas/map-schema')
 const Account = require('../db/schemas/account-schema');
+const Comment = require('../db/schemas/comment-schema')
 
 createMap = async (req, res) => {
     const {owner, mapData} = req.body;
@@ -127,6 +128,28 @@ getPublicMaps = async (req, res) => {
 
         return res.status(200).json({success: true, maps: data})
     }).catch(err => console.log(err))
+}
+addComment = async(req, res) => {
+    console.log("adding comment")
+    if(!req.body){
+        return res.status(400).json({
+            success: false,
+            error: 'You must provide a body to update',
+        })
+    }
+    let comment = req.body.comment;
+    let id = req.body.id
+    let username = req.body.username
+    console.log(id)
+    console.log(comment)
+    let response = await Map.findByIdAndUpdate(
+        id,
+        {$push: {"comments": {owner: username, content: comment}}}
+    );
+    console.log("adding done!")
+    return res.status(200).json({
+        success: true
+    })
 }
 
 getMapsDataByAccount = async (req, res) => {
@@ -388,6 +411,7 @@ deleteMapProperty = async(req,res) =>{
 
 }
 
+
 module.exports = {
     createMap,
     getMapById,
@@ -400,5 +424,6 @@ module.exports = {
     publishMap,
     editMapProperty,
     saveMap,
-    deleteMapProperty
+    deleteMapProperty,
+    addComment
 }
