@@ -3,6 +3,7 @@ import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, IconBut
 import { useEffect, useState } from 'react';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { updateCollaboratorThunk } from '../../app/store-actions/leafletEditing';
+import { isValidEmail } from '../../app/store-requests/store_requests';
 
 export default function CollaboratorModal(props){
     const { open, toggleCollaboratorDialog } = props;
@@ -29,7 +30,7 @@ export default function CollaboratorModal(props){
     }
 
     // Handles the enter key input to add people
-    function handleAdd(event) {
+    async function handleAdd(event) {
         if(event.key === 'Enter'){
             // Not a valid email if test is false
             if(re.test(input) === false){
@@ -37,11 +38,34 @@ export default function CollaboratorModal(props){
                 setInput('')
                 return
             }
-            let copy = [...localCollab] // Copy the array
-            copy.push(input)
-            setLocalCollab(copy)
-            setInput('')
-            setErrorText('')
+            if(user.email === input){
+                setErrorText('You are the owner!')
+                setInput('')
+                return
+            }
+            await isValidEmail(input).then((response) => {
+                if(response.status === 200){
+                    let copy = [...localCollab] // Copy the array
+                    copy.push(input)
+                    setLocalCollab(copy)
+                    setInput('')
+                    setErrorText('')
+                }
+                if(response.status === 204){
+                    setErrorText('Not a user.')
+                    setInput('')
+                    return
+                }
+            }).catch((error) => {
+                setErrorText('Enter a valid email.')
+                setInput('')
+                return
+            })
+            // let copy = [...localCollab] // Copy the array
+            // copy.push(input)
+            // setLocalCollab(copy)
+            // setInput('')
+            // setErrorText('')
         }
     }
 
@@ -54,6 +78,7 @@ export default function CollaboratorModal(props){
         })
 
         )
+        toggleCollaboratorDialog()
 
 
     }
@@ -96,7 +121,7 @@ export default function CollaboratorModal(props){
                     {
                     localCollab?.map((user, index) => (
                         <Box sx={{backgroundColor:'#121316', borderRadius:'1rem', padding:'4px', display:'flex', justifyContent:'space-between' }}>
-                            <Typography>
+                            <Typography sx={{alignItems:'center'}}>
                                 {user}
                             </Typography>
                                 

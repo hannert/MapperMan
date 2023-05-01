@@ -74,10 +74,10 @@ const io = new Server({
 
 io.on('connection', (socket) => {
   console.log('User connected')
-  const roomId = socket.handshake.query['roomId']
-  console.log('RoomId:', roomId)
+  // // const roomId = socket.handshake.query['roomId']
+  // // console.log('RoomId:', roomId)
 
-  socket.join(roomId)
+  // socket.join(roomId)
   socket.emit('awesome')
   
   // socket.broadcast.emit("user connected", {

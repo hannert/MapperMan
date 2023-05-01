@@ -24,5 +24,6 @@ router.put('/map/:id/editProperty', MapController.editMapProperty)
 router.put('/map/:id/deleteProperty', MapController.deleteMapProperty)
 
 router.put('/updateCollaborator', MapController.updateCollaborator)
+router.put('/isValidEmail/:email', MapController.isValidEmail)
 
 module.exports = router

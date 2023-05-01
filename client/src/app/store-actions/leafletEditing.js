@@ -2,8 +2,8 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import * as turf from '@turf/turf';
 import * as L from 'leaflet';
 import 'leaflet-editable';
-import mapApis from "../store-requests/store_requests";
 import 'leaflet-path-drag';
+import mapApis from "../store-requests/store_requests";
 
 export const editTools ={
     addVertex: 'addVertex',
@@ -365,3 +365,12 @@ export const updateCollaboratorThunk = createAsyncThunk('/map/:id/deleteProperty
         return rejectWithValue(err.response.data.errorMessage);
     }
 });
+
+// export const isValidEmailThunk = createAsyncThunk('/isValidEmail/:email', async(payload, {rejectWithValue}) => {
+//     try{
+//         const response = await mapApis.updateMapCollaborator(payload.email);
+//         return response.data
+//     }catch(err){
+//         return rejectWithValue(err.response.data.errorMessage);
+//     }
+// });

@@ -124,6 +124,11 @@ export const updateMapCollaborator = (id, user, collaborators) =>{
         collaborators: collaborators,
     })
 }
+export const isValidEmail = (email) =>{
+    return api.put(`/isValidEmail/${email}`, {
+        email: email
+    })
+}
 
 const mapApis = {
     createMap,
@@ -139,7 +144,8 @@ const mapApis = {
     editMapProperty,
     saveMap,
     deleteMapProperty,
-    updateMapCollaborator
+    updateMapCollaborator,
+    isValidEmail,
 }
 
 export default mapApis

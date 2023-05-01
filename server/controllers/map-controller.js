@@ -414,10 +414,35 @@ deleteMapProperty = async(req,res) =>{
 
 }
 
+
+isValidEmail = async(req,res) => {
+    const body = req.body;
+    if(!body){
+        return res.status(400).json({
+            success: false,
+            error: 'You must provide a body to update',
+        })
+    }
+
+    const email = body.email;
+
+    Account.find({email: email}).then((account) => {
+        if(account[0]?.email){
+            return res.status(200).json({
+                success: true,
+                message: 'email exists'
+            })
+        }
+        else {
+            return res.status(204).json({success:false, message: 'email does not exist'});
+        }  
+    }).catch((err) => {return res.status(400).json({error: err})})
+
+}
+
 updateCollaborator = async(req,res) =>{
     console.log("Updating collaborators")
     const body = req.body;
-    console.log(body)
 
     if(!body){
         return res.status(400).json({
@@ -430,7 +455,7 @@ updateCollaborator = async(req,res) =>{
     const user = body.user;
     const collaborators = body.collaborators;
 
-    console.log(id, user, collaborators)
+    // console.log(id, user, collaborators)
 
     // Currently just adds unique collaborators, Does not remove them!
     // ! To remove, we must have a copy of the original sharedWith Array and then compare to see what is missing
@@ -438,17 +463,26 @@ updateCollaborator = async(req,res) =>{
 
     Map.findOne({_id: id}).then((map) => { 
         if(map){
-            console.log('original share', map.sharedWith)
+            // console.log('original share', map.sharedWith)
             let originalShare = map.sharedWith
+
+            // Keep an array of booleans to check which of the original array still remains
+            let findCheck = new Array(originalShare?.length).fill(false)
+
+
+            // Loop through the new array and find new ones
             for(var i = 0; i < collaborators?.length; i++){
-                console.log(collaborators[i])
+                // console.log(collaborators[i])
                 let email = collaborators[i];
-                if(originalShare.find((str) => str === email)){
-                    console.log("Found duplicate of ", email)
-                } else {
+                let index = originalShare.indexOf(email)
+                if(index !== -1){
+                    console.log("Found duplicate of ", email, " with index of ", i)
+                    findCheck[index] = true
+                } 
+                else {
                     Account.find({email: email}).then((account) => {
                         if(account[0]){
-                            console.log(account[0])
+                            // console.log(account[0].username)
                             account[0].mapAccess.push(id)
                             account[0]
                             .save()
@@ -461,6 +495,30 @@ updateCollaborator = async(req,res) =>{
                 }
 
             }
+
+            // Then loop through the boolean array to see if any are false, Means that 
+            // The new sharedWith array doesnt include them ( Remove them )
+            for(var i = 0; i < findCheck?.length; i++){
+                if(findCheck[i] === true){
+                    continue
+                }
+                // False value -> Go and remove it from that users map access list
+                Account.find({email: originalShare[i]}).then((account) => {
+                    if(account[0]){
+                        // console.log(account[0].username)
+                        account[0].mapAccess = account[0].mapAccess.filter(x => x !== id)
+                        account[0]
+                        .save()
+                        .catch(err => {
+                            console.log(err)
+                            return res.status(400).json({success:false, error: err});
+                        })
+                    }
+                })
+
+            }
+
+            // Update the maps shared array and then save
             map.sharedWith = collaborators;
             map
                 .save()
@@ -490,5 +548,6 @@ module.exports = {
     editMapProperty,
     saveMap,
     deleteMapProperty,
-    updateCollaborator
+    updateCollaborator,
+    isValidEmail
 }

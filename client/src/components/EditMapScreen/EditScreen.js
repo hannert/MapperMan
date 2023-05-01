@@ -63,11 +63,11 @@ export default function EditScreen(){
 
     useEffect(()=>{
         socket.on('Successfully joined room', (users) => {
-            enqueueSnackbar('Successfully joined room')
+            enqueueSnackbar('Successfully joined room', {variant:'success', autoHideDuration:1000})
             dispatch(setCollaborators(users))
         })
         socket.on('other user joined', (users) => {
-            enqueueSnackbar('Other user joined')
+            enqueueSnackbar('Other user joined', {variant:'info', autoHideDuration:1000})
             dispatch(setCollaborators(users))
         })
 
