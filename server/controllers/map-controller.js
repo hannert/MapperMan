@@ -3,10 +3,12 @@ const Map = require('../db/schemas/map-schema')
 const Account = require('../db/schemas/account-schema');
 const Comment = require('../db/schemas/comment-schema')
 
+
 createMap = async (req, res) => {
+
     const {owner, mapData} = req.body;
-    console.log(req.body);
-    console.log("createMap body: " + JSON.stringify(mapData))
+
+    // console.log("createMap body: " + JSON.stringify(mapData))
 
     //Find account first 
     Account.find({email: owner.email}).then((account) => {
@@ -152,27 +154,15 @@ addComment = async(req, res) => {
     })
 }
 
-getMapsDataByAccount = async (req, res) => {
-    console.log('req');
-    console.log(req.body);
-    const user = req.body;
-    console.log('User')
-    console.log(user);
+getPublicMapsByName = async (req, res) => {
 
-    //below is wrong, returns array of ids
-    //need to iterate through ids, get info for each one,
-    //then return a big JSON of all the maps with things we need
-    //for the map list like Name, Owner, createdAt for published, etc.
+    let queryName = req.query.name;
+    console.log("Getting public maps with name ", queryName);
     let data = []
-    await Account.find({email: user.email}).then(async (account) => {
-        console.log('Username: ' + account[0].username);
-        console.log("Maps: ")
-        console.log(account[0].mapsOwned);
-        for(const map of account[0].mapsOwned){
-            console.log(map);
-            await Map.findById(map).then((map) => {
-                console.log("Map: ");
-                console.log(map);
+    await Map.find({name: new RegExp(queryName, 'i'), published:true}).then(async(maps) => {
+        for (const map of maps){
+            console.log(map)
+            await Account.find({_id: map.owner}).then((account) => {
                 let mapEntry = {
                     id: map._id,
                     name: map.name,
@@ -180,18 +170,87 @@ getMapsDataByAccount = async (req, res) => {
                     createdAt: map.createdAt,
                     published: map.published
                 };
-                console.log("Map Entry: ");
-                console.log(mapEntry);
+                data.push(mapEntry);
+            })
+        }
+        return res.status(200).json({success: true, maps: data})
+    }).catch(err => console.log(err))
+}
+
+getMapsDataByAccount = async (req, res) => {
+    const user = req.body;
+    // console.log('User')
+    // console.log(user);
+
+    //below is wrong, returns array of ids
+    //need to iterate through ids, get info for each one,
+    //then return a big JSON of all the maps with things we need
+    //for the map list like Name, Owner, createdAt for published, etc.
+    let data = []
+    await Account.find({email: user.email}).then(async (account) => {
+        // console.log('Username: ' + account[0].username);
+        // console.log("Maps: ")
+        // console.log(account[0].mapsOwned);
+        for(const map of account[0].mapsOwned){
+            // console.log(map);
+            await Map.findById(map).then((map) => {
+                // console.log("Map: ");
+                // console.log(map);
+                let mapEntry = {
+                    id: map._id,
+                    name: map.name,
+                    owner: account[0].username,
+                    createdAt: map.createdAt,
+                    published: map.published
+                };
+                // console.log("Map Entry: ");
+                // console.log(mapEntry);
 
                 data.push(mapEntry);
 
-                console.log('data');
-                console.log(data);
+                // console.log('data');
+                // console.log(data);
             }).catch(err => console.log(err));
         }
     }).then(() => {
-        console.log('data at the end');
-        console.log(data);
+        // console.log('data at the end');
+        // console.log(data);
+        return res.status(200).json({success: true, maps: data})
+    })
+
+    .catch(err => console.log(err))
+}
+
+getSharedMapsDataByAccount = async (req, res) => {
+    console.log('-------------------', req.body);
+    console.log("Getting shared maps")
+    const user = req.body;
+    console.log(user)
+
+    //below is wrong, returns array of ids
+    //need to iterate through ids, get info for each one,
+    //then return a big JSON of all the maps with things we need
+    //for the map list like Name, Owner, createdAt for published, etc.
+    let data = []
+    await Account.find({email: user.email}).then(async (account) => {
+        console.log("account found!", account)
+        if(account[0].mapAccess.length === 0){
+            return res.status(200).json({success: true, maps: data})
+        }
+        for(const map of account[0].mapAccess){
+            await Map.findById(map).then((map) => {
+                console.log(map.name)
+                let mapEntry = {
+                    id: map._id,
+                    name: map.name,
+                    owner: account[0].username,
+                    createdAt: map.createdAt,
+                    published: map.published
+                };
+                data.push(mapEntry);
+            }).catch(err => console.log(err));
+        }
+    }).then(() => {
         return res.status(200).json({success: true, maps: data})
     })
 
@@ -412,18 +471,142 @@ deleteMapProperty = async(req,res) =>{
 }
 
 
+isValidEmail = async(req,res) => {
+    const body = req.body;
+    if(!body){
+        return res.status(400).json({
+            success: false,
+            error: 'You must provide a body to update',
+        })
+    }
+
+    const email = body.email;
+
+    Account.find({email: email}).then((account) => {
+        if(account[0]?.email){
+            return res.status(200).json({
+                success: true,
+                message: 'email exists'
+            })
+        }
+        else {
+            return res.status(204).json({success:false, message: 'email does not exist'});
+        }  
+    }).catch((err) => {return res.status(400).json({error: err})})
+
+}
+
+updateCollaborator = async(req,res) =>{
+    console.log("Updating collaborators")
+    const body = req.body;
+
+    if(!body){
+        return res.status(400).json({
+            success: false,
+            error: 'You must provide a body to update',
+        })
+    }
+
+    const id = body.id;
+    const user = body.user;
+    const collaborators = body.collaborators;
+
+    // console.log(id, user, collaborators)
+
+    // Currently just adds unique collaborators, Does not remove them!
+    // ! To remove, we must have a copy of the original sharedWith Array and then compare to see what is missing
+    // ! based on the missing items, iterate through them and update the accounts owned maps respectively
+
+    Map.findOne({_id: id}).then((map) => { 
+        if(map){
+            // console.log('original share', map.sharedWith)
+            let originalShare = map.sharedWith
+
+            // Keep an array of booleans to check which of the original array still remains
+            let findCheck = new Array(originalShare?.length).fill(false)
+
+
+            // Loop through the new array and find new ones
+            for(var i = 0; i < collaborators?.length; i++){
+                // console.log(collaborators[i])
+                let email = collaborators[i];
+                let index = originalShare.indexOf(email)
+                if(index !== -1){
+                    console.log("Found duplicate of ", email, " with index of ", i)
+                    findCheck[index] = true
+                } 
+                else {
+                    Account.find({email: email}).then((account) => {
+                        if(account[0]){
+                            // console.log(account[0].username)
+                            account[0].mapAccess.push(id)
+                            account[0]
+                            .save()
+                            .catch(err => {
+                                console.log(err)
+                                return res.status(400).json({success:false, error: err});
+                            })
+                        }
+                    })
+                }
+
+            }
+
+            // Then loop through the boolean array to see if any are false, Means that 
+            // The new sharedWith array doesnt include them ( Remove them )
+            for(var i = 0; i < findCheck?.length; i++){
+                if(findCheck[i] === true){
+                    continue
+                }
+                // False value -> Go and remove it from that users map access list
+                Account.find({email: originalShare[i]}).then((account) => {
+                    if(account[0]){
+                        // console.log(account[0].username)
+                        account[0].mapAccess = account[0].mapAccess.filter(x => x !== id)
+                        account[0]
+                        .save()
+                        .catch(err => {
+                            console.log(err)
+                            return res.status(400).json({success:false, error: err});
+                        })
+                    }
+                })
+
+            }
+
+            // Update the maps shared array and then save
+            map.sharedWith = collaborators;
+            map
+                .save()
+                .then(() => {
+                    return res.status(200).json({success: true, message:'Map collaborators updated!'})
+                })
+
+        }
+
+
+
+    })
+    
+
+}
 module.exports = {
     createMap,
     getMapById,
     deleteMapById,
     deleteMap,
     getPublicMaps,
+    getPublicMapsByName,
     getMapsDataByAccount,
+    getSharedMapsDataByAccount,
     renameMap,
     forkMap,
     publishMap,
     editMapProperty,
     saveMap,
     deleteMapProperty,
-    addComment
+    addComment,
+    updateCollaborator,
+    isValidEmail
+
 }

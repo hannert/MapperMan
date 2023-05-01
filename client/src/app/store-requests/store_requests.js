@@ -18,6 +18,7 @@ export const createMap = (owner, mapData) => {
         mapData: mapData,
         published: false,
         comments: [],
+        sharedWith: [],
         tags: []
     })
 }
@@ -25,7 +26,20 @@ export const deleteMapById = (id) => api.delete(`/map/${id}`);
 export const getMapById = (id) => api.get(`/map/${id}`);
 export const getUserMaps = (id) => api.get(`/userMaps/${id}`);
 export const getPublicMaps = () => api.get(`/publicMaps/`);
+export const getPublicMapsByName = (name) => {
+    return api.get(`/publicMapsByName/${name}`,
+    {
+        params:{
+            name: name
+        }
+        
+    });
+}
+
+
 export const getMapsDataByAccount = (user) => api.post(`/maps`, user);
+export const getSharedMapsDataByAccount = (user) => api.post(`/sharedMaps`, user);
+
 
 
 export const saveMap = (owner, mapData, id) => {
@@ -106,11 +120,24 @@ export const deleteMapProperty = (id, index, property) =>{
     })
 }
 
+
 export const addComment = (id, comment, username) => {
     return api.put(`/map/${id}/addComment`, {
         id: id,
         comment: comment,
         username: username
+
+export const updateMapCollaborator = (id, user, collaborators) =>{
+    return api.put(`/updateCollaborator`, {
+        id: id,
+        user: user,
+        collaborators: collaborators,
+    })
+}
+export const isValidEmail = (email) =>{
+    return api.put(`/isValidEmail/${email}`, {
+        email: email
+
     })
 }
 
@@ -120,14 +147,18 @@ const mapApis = {
     deleteMap,
     getMapById,
     getPublicMaps,
+    getPublicMapsByName,
     getMapsDataByAccount,
+    getSharedMapsDataByAccount,
     renameMap, 
     forkMap,
     publishMap,
     editMapProperty,
     saveMap,
     deleteMapProperty,
-    addComment
+    addComment,
+    updateMapCollaborator,
+    isValidEmail
 }
 
 export default mapApis

@@ -5,7 +5,9 @@ const MapController = require('../controllers/map-controller')
 router.post('/newmap', MapController.createMap)
 router.get('/map/:id', MapController.getMapById)
 router.get('/publicmaps', MapController.getPublicMaps)
+router.get('/publicmapsByName/:name', MapController.getPublicMapsByName)
 router.post('/maps', MapController.getMapsDataByAccount)
+router.post('/sharedMaps', MapController.getSharedMapsDataByAccount)
 
 router.post('/map', MapController.deleteMap)
 router.post('/map/:id', MapController.saveMap)
@@ -22,6 +24,11 @@ router.put('/map/:id/publish', MapController.publishMap)
 router.put('/map/:id/editProperty', MapController.editMapProperty)
 router.put('/map/:id/deleteProperty', MapController.deleteMapProperty)
 
+
 router.put('/map/:id/addComment', MapController.addComment)
+
+router.put('/updateCollaborator', MapController.updateCollaborator)
+router.put('/isValidEmail/:email', MapController.isValidEmail)
+
 
 module.exports = router

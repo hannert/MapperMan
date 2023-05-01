@@ -1,13 +1,18 @@
 // THESE ARE NODE APIs WE WISH TO USE
 const express = require('express')
+
+// CREATE OUR SERVER
+const app = express()
+
 const cors = require('cors')
 const dotenv = require('dotenv')
 // const cookieParser = require('cookie-parser')
 
-// CREATE OUR SERVER
+
+// Retreive our env variables
 dotenv.config()
 const PORT = process.env.PORT || 4000;
-const app = express()
+
 
 // SETUP THE MIDDLEWARE
 
@@ -56,7 +61,72 @@ app.use('/auth', authRouter)
 const db = require('./db')
 db.on('error', console.error.bind(console, 'MongoDB connection error:'))
 
-// PUT THE SERVER IN LISTENING MODE
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+
+// Socket IO stuff
+const server = require('http').createServer(app);
+const { Server } = require('socket.io')
+const io = new Server({
+    server,
+    cors:{ 
+      origin: '*'
+    }
+}).listen(server)
+
+io.on('connection', (socket) => {
+  console.log('User connected')
+  // // const roomId = socket.handshake.query['roomId']
+  // // console.log('RoomId:', roomId)
+
+  // socket.join(roomId)
+  socket.emit('awesome')
+  
+  // socket.broadcast.emit("user connected", {
+  //   userID: socket.id,
+  //   username: socket.username,
+  // });
+  socket.on('join room', async (roomName) => {
+      socket.join(roomName);
+      console.log(socket.id, " joined room ", roomName)
+      const allConnectedUsers = await io.in(roomName).fetchSockets()
+      const connectedSockets = Object.keys(allConnectedUsers)
+      console.log(connectedSockets)
+      socket.emit('Successfully joined room',connectedSockets)
+      socket.to(roomName).emit('other user joined', connectedSockets)
+  })
+
+  socket.on('disconnect', (socket) => {
+    console.log(socket.id, ' disconnected')
+  })
+
+
+
+})
+
+
+io.on('disconnect', (socket) => {
+  console.log('User disconnected')
+})
+// io.use((socket, next) => {
+//   const username = socket.handshake.auth.username;
+//   if (!username) {
+//     return next(new Error("invalid username"));
+//   }
+//   console.log("Connected user ", username)
+  
+//   socket.username = username;
+//   next();
+// });
+
+// Logging when a room was created // Should occur when a user clicks on a shared map to edit
+// io.of("/").adapter.on("create-room", (room) => {
+//   console.log(`room ${room} was created`);
+// });
+
+
+
+
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+// server.listen(PORT, () => console.log(`Server running on port ${PORT}`))
+
 
 // :3 // Testing backend // Really cool

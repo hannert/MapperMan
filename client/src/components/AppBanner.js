@@ -1,5 +1,5 @@
 import { Face5 } from '@mui/icons-material';
-import { Alert, Snackbar, Tooltip } from '@mui/material';
+import { Tooltip } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
@@ -7,23 +7,22 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import store from '../app/store';
 import { logout, logoutThunk } from '../app/store-actions/accountAuth';
 import { clear } from '../app/store-actions/editMapList';
-import { saveGeojsonThunk } from '../app/store-actions/leafletEditing';
+import { SocketContext } from '../socket';
 import EditMapActions from './AppBanner/EditMapActions';
 import ViewMapActions from './AppBanner/ViewMapActions';
-
-// import PlaylisterToolbar from './PlaylisterToolbar';
 
 function AppBanner() {
 
     const mapName = useSelector((state) => state.editMapList.activeMapName);
     const loggedIn = useSelector((state) => state.accountAuth.loggedIn);
     const user = useSelector((state) => state.accountAuth.user);
+    const socket = useContext(SocketContext);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -35,25 +34,6 @@ function AppBanner() {
 
     const isMenuOpen = Boolean(anchorEl);
 
-
-    // ! - State for dialogs
-
-    const [saveOpen, setSaveOpen] = useState(false);
-    const handleSaveOpen = () => {
-        setSaveOpen(true);
-    }
-
-    const handleSaveClose = (event, reason) => {
-        if (reason === 'clickaway') {
-            return; 
-        }
-
-        setSaveOpen(false);    
-    }
-
-
-    // ! ------------------ End of State for dialogs
-
     // User initials for account icon
     // Guests will not have an account icon
     const [userInitials, setUserInitials] = useState('');
@@ -63,6 +43,11 @@ function AppBanner() {
             setUserInitials(user.firstName.charAt(0) + user.lastName.charAt(0));
         }
     }, [loggedIn, user]);
+
+
+    const handleHomeClick = () => {
+        navigate('/');
+    }
 
     // Handle click for top right user icon in banner
     const handleProfileMenuOpen = (event) => {
@@ -98,25 +83,6 @@ function AppBanner() {
         handleMenuClose();
         navigate('/register/')
     }
-
-    // ! Areas for placeholder functions as Store is not implemented yet, 
-    // ! Have components bunched up in AppBanner: Modals for Copy, Delete, Add Collaborator
-
-    const saveDialog = (
-        <Snackbar
-            open={saveOpen}
-            autoHideDuration={2000}
-            onClose={handleSaveClose}
-        >
-            <Alert onClose={handleSaveClose} severity='success' sx={{width:'100%'}}>
-                Successfully saved map!
-            </Alert>
-
-        </Snackbar>
-    )
-
-    // ! ------------- End for placeholder modals
-
 
     const menuId = 'primary-search-account-menu';
     const loggedOutMenu = (
@@ -185,7 +151,7 @@ function AppBanner() {
     let actionText='';
 
     // If we are on MapEditScreen
-    if(screen === '/maps/edit') {
+    if(screen.startsWith('/maps/edit')) {
         actionText = (
             <Typography sx={{fontFamily:'Roboto mono'}}>
                 Now Editing: {mapName}
@@ -275,10 +241,7 @@ function AppBanner() {
                     
                 </Toolbar>
             </AppBar>
-
-            {saveDialog}
             {menu}
-
         </Box>
     );
 }

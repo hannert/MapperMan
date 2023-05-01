@@ -14,6 +14,7 @@ import MapsScreen from './components/MapListScreen/MapsScreen';
 import RegisterScreen from './components/RegisterScreen';
 import ViewMapScreen from './components/ViewMapScreen';
 import AfterVerifyScreen from './components/AfterVerifyScreen';
+import { SocketContext, socket } from './socket';
 
 const { palette } = createTheme();
 const { augmentColor } = palette;
@@ -90,6 +91,7 @@ function App() {
     // </div>
     <BrowserRouter>
       <ThemeProvider theme={themeOptions}>
+      <SocketContext.Provider value={socket}>
       <SnackbarProvider>
       <Provider store={store}>
         <Box sx={{display: "flex", height:"100%", flexDirection:"column"}}>
@@ -98,7 +100,7 @@ function App() {
             <Route path="/" element={<HomeWrapper />} />
             <Route path="/login" element={<LoginScreen />} />
             <Route path="/register" element={<RegisterScreen />} />
-            <Route path='/maps/edit' element={<EditScreen/>}/>
+            <Route path='/maps/edit/:id' element={<EditScreen/>}/>
             <Route path='/maps' element = {<MapsScreen/>}/>
             <Route path='/maps/view/:id' element = {<ViewMapScreen />} />
             <Route path='/forgotPassword' element ={<ForgotPasswordScreen/>}/>
@@ -107,6 +109,7 @@ function App() {
         </Box>
       </Provider>
       </SnackbarProvider>
+      </SocketContext.Provider>
       </ThemeProvider>
     </BrowserRouter>
   );

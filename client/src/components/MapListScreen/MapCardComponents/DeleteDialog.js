@@ -3,6 +3,7 @@ import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
+import { enqueueSnackbar } from 'notistack';
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { deleteMapThunk, getMapsDataByAccountThunk, setMapList } from '../../../app/store-actions/editMapList';
@@ -26,8 +27,10 @@ export default function DeleteDialog (props) {
         dispatch(getMapsDataByAccountThunk({user: user})).unwrap().then((response) => {
           console.log("Getting maps")
           dispatch(setMapList(response.maps));
+          enqueueSnackbar('Map successfully deleted!', {variant:'success'})
         }).catch((error) => {
-            console.log(error);
+          enqueueSnackbar('Something went wrong while trying to delete map.', {variant:'error'})
+          console.log(error);
         });
       })
       toggleDeleteDialog();
