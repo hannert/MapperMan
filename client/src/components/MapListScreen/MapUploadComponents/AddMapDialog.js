@@ -7,7 +7,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import * as shp from 'shpjs';
-import { createMapThunk, createNewMap, getMapsDataByAccountThunk, setMapList} from '../../../app/store-actions/editMapList';
+import { createMapThunk, getMapsDataByAccountThunk, setMapList } from '../../../app/store-actions/editMapList';
 
 /**
  * This component is a dialog that allows the user to upload a map to the user repository in either
@@ -107,10 +107,16 @@ export default function AddMapDialog(props){
             dispatch(createMapThunk({owner: user, mapData: simplified})).unwrap().then((res) => {
                 console.log("trying to make a map from geojson");
                 console.log(res);
-                dispatch(createNewMap(res));
-                navigate('/maps');
-                onClose();
-                enqueueSnackbar('Map successfully uploaded!', {variant:'success'})
+                dispatch(getMapsDataByAccountThunk({user: user})).unwrap().then((response) => {
+                    console.log("Getting maps")
+                    navigate('/maps');
+                    dispatch(setMapList(response.maps));
+                    onClose();
+                    enqueueSnackbar('Map successfully uploaded!', {variant:'success'})
+                  }).catch((error) => {
+                    enqueueSnackbar('Something went wrong while trying refresh!', {variant:'error'})
+                    console.log(error);
+                  });
             }).catch((err) => {
                 enqueueSnackbar('Something went wrong while trying to upload SPF/DBF!', {variant:'error'})
                 console.log(err);
