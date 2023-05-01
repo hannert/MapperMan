@@ -22,12 +22,14 @@ export const transactions = createSlice({
             state.tps = new jsTPS();
         },
         doTransaction: (state, action) => {
+            console.log(state.tps.toString())
             if(state.tps.hasTransactionToRedo()){
                 console.log('Did transaction');
                 state.tps.doTransaction();
             }
         },
         undoTransaction: (state, action) => {
+            console.log(state.tps.toString())
             if(state.tps.hasTransactionToUndo()){
                 console.log('Undid transaction');
                 state.tps.undoTransaction();
