@@ -3,6 +3,7 @@ import { IconButton, Tooltip } from "@mui/material";
 import { Box, Container } from '@mui/system';
 import { useState } from "react";
 import { useSelector } from "react-redux";
+import CollaboratorGroup from "./CollaboratorGroup.js";
 import ExportMapButton from "./ExportMapButton.js";
 import ForkModal from "./ForkModal.js";
 
@@ -40,7 +41,7 @@ export default function ViewMapActions () {
                     </IconButton>
                 </Tooltip>
                 <ExportMapButton />
-                
+                <CollaboratorGroup />
             </Box>
 
             {forkDialog}

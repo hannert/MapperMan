@@ -5,7 +5,7 @@ import hash from 'object-hash';
 import React, { useEffect, useRef } from 'react';
 import { GeoJSON, MapContainer, TileLayer } from 'react-leaflet';
 import { useDispatch, useSelector } from 'react-redux';
-import { incrementFeatureIndex, setFeatureIndex, setMapRef, setProperties } from '../../app/store-actions/leafletEditing';
+import { setFeatureIndex, setMapRef, setProperties } from '../../app/store-actions/leafletEditing';
 
 export default function LeafletContainer(){
 
@@ -49,7 +49,7 @@ export default function LeafletContainer(){
 
                 polygon.featureIndex = idx;
                 // TODO prob a better way to do this
-                console.log(idx);
+                // console.log(idx);
                 properties.push(geoJSON.features[idx].properties);
                 idx += 1;
                 layerGroup.addLayer(polygon);

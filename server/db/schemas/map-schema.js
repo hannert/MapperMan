@@ -9,7 +9,7 @@ const ObjectId = Schema.Types.ObjectId
     mapData: Reference to GeoJSON schema that holds map data for leaflet
     published: Boolean for if a map was published
 
-    //TODO: Make comments a reference to comment schema
+    TODO: Make comments a reference to comment schema
     comments: Array of Comments to hold comments
     tags: Map of Strings that owner attached to the map, for searching purposes
 */
@@ -20,6 +20,7 @@ const mapSchema = new Schema(
         mapData: { type: Object, required: true },
         published: {type: Boolean, required: true},
         comments: {type: [String], ref: 'Comment', required: true },
+        sharedWith: {type: [String], required: true},
         tags: {type: Map, of: String, required: true},
     },
     { timestamps: true },

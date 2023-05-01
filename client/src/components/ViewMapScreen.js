@@ -5,11 +5,12 @@ import { GeoJSON, MapContainer, TileLayer } from "react-leaflet";
 import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from "react-router-dom";
 import { getMapByIdThunk, setActiveMap } from '../app/store-actions/editMapList';
-import CommentsList from "./CommentsList";
 
 
 function ViewMapScreen() {
     /*USE THIS ID TO GET FROM BACKEND:*/
+    let username = (Math.random() + 1).toString(36).substring(7);
+
     const { id } = useParams();
     const dispatch= useDispatch();
     const [mapFile, setMapFile] = useState({
@@ -44,18 +45,12 @@ function ViewMapScreen() {
     }, [id])
 
 
-
-
-
-    
-
     return(
         <Box sx={{height:"100%"}}>
             <Grid container direction='row'sx={{height:'100%'}}>
-
                 <Grid item xs={4}>
                     <Box display="flex" justifyContent="center" alignItems="center" height="100%">
-                        <CommentsList />
+                        {/* <CommentsList /> */}
                     </Box>
                 </Grid>
                 <Grid item bgcolor='#2B2B2B' component="main" direction="column" justify="flex-end" alignItems="center" xs={8}>

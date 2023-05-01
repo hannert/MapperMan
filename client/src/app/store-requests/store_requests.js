@@ -18,6 +18,7 @@ export const createMap = (owner, mapData) => {
         mapData: mapData,
         published: false,
         comments: [],
+        sharedWith: [],
         tags: []
     })
 }
@@ -37,6 +38,8 @@ export const getPublicMapsByName = (name) => {
 
 
 export const getMapsDataByAccount = (user) => api.post(`/maps`, user);
+export const getSharedMapsDataByAccount = (user) => api.post(`/sharedMaps`, user);
+
 
 
 export const saveMap = (owner, mapData, id) => {
@@ -116,7 +119,18 @@ export const deleteMapProperty = (id, index, property) =>{
         property: property
     })
 }
-
+export const updateMapCollaborator = (id, user, collaborators) =>{
+    return api.put(`/updateCollaborator`, {
+        id: id,
+        user: user,
+        collaborators: collaborators,
+    })
+}
+export const isValidEmail = (email) =>{
+    return api.put(`/isValidEmail/${email}`, {
+        email: email
+    })
+}
 
 const mapApis = {
     createMap,
@@ -126,12 +140,15 @@ const mapApis = {
     getPublicMaps,
     getPublicMapsByName,
     getMapsDataByAccount,
+    getSharedMapsDataByAccount,
     renameMap, 
     forkMap,
     publishMap,
     editMapProperty,
     saveMap,
-    deleteMapProperty
+    deleteMapProperty,
+    updateMapCollaborator,
+    isValidEmail,
 }
 
 export default mapApis
