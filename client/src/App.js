@@ -100,7 +100,7 @@ function App() {
             <Route path="/" element={<HomeWrapper />} />
             <Route path="/login" element={<LoginScreen />} />
             <Route path="/register" element={<RegisterScreen />} />
-            <Route path='/maps/edit' element={<EditScreen/>}/>
+            <Route path='/maps/edit/:id' element={<EditScreen/>}/>
             <Route path='/maps' element = {<MapsScreen/>}/>
             <Route path='/maps/view/:id' element = {<ViewMapScreen />} />
             <Route path='/forgotPassword' element ={<ForgotPasswordScreen/>}/>

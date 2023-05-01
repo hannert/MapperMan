@@ -84,9 +84,18 @@ io.on('connection', (socket) => {
   //   userID: socket.id,
   //   username: socket.username,
   // });
-  socket.on('join room', (roomName) => {
+  socket.on('join room', async (roomName) => {
       socket.join(roomName);
       console.log(socket.id, " joined room ", roomName)
+      const allConnectedUsers = await io.in(roomName).fetchSockets()
+      const connectedSockets = Object.keys(allConnectedUsers)
+      console.log(connectedSockets)
+      socket.emit('Successfully joined room',connectedSockets)
+      socket.to(roomName).emit('other user joined', connectedSockets)
+  })
+
+  socket.on('disconnect', (socket) => {
+    console.log(socket.id, ' disconnected')
   })
 
 

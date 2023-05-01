@@ -1,23 +1,20 @@
 import { Box } from '@mui/material';
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 
 export default function CollaboratorGroup(props){
-    const { open, toggleCollaboratorDialog } = props;
-    const dispatch = useDispatch();
+    const collaborators = useSelector((state)=>state.leafletEditing.collaborators);
 
     const [currentUsers, setCurrentUsers] = useState([])
 
+    useEffect(()=>{
+        setCurrentUsers(collaborators)
+    }, collaborators)
 
     return (
         <>
-            {currentUsers.map((user) => {
-                <Box sx={{backgroundColor:'red'}}>
-                    {user.username}
-                </Box>
-            })}
-            {currentUsers.length}
+            <Box>Hello</Box>
+            {collaborators?.length}
         </>
     )
 }

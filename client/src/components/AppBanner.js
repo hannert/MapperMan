@@ -1,5 +1,5 @@
 import { Face5 } from '@mui/icons-material';
-import { Alert, Snackbar, Tooltip } from '@mui/material';
+import { Tooltip } from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
@@ -8,7 +8,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { enqueueSnackbar } from 'notistack';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useContext } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import store from '../app/store';
@@ -16,14 +16,14 @@ import { logout, logoutThunk } from '../app/store-actions/accountAuth';
 import { clear } from '../app/store-actions/editMapList';
 import EditMapActions from './AppBanner/EditMapActions';
 import ViewMapActions from './AppBanner/ViewMapActions';
-
-// import PlaylisterToolbar from './PlaylisterToolbar';
+import { SocketContext } from '../socket';
 
 function AppBanner() {
 
     const mapName = useSelector((state) => state.editMapList.activeMapName);
     const loggedIn = useSelector((state) => state.accountAuth.loggedIn);
     const user = useSelector((state) => state.accountAuth.user);
+    const socket = useContext(SocketContext);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -44,6 +44,11 @@ function AppBanner() {
             setUserInitials(user.firstName.charAt(0) + user.lastName.charAt(0));
         }
     }, [loggedIn, user]);
+
+
+    const handleHomeClick = () => {
+        navigate('/');
+    }
 
     // Handle click for top right user icon in banner
     const handleProfileMenuOpen = (event) => {
@@ -150,7 +155,7 @@ function AppBanner() {
     let actionText='';
 
     // If we are on MapEditScreen
-    if(screen === '/maps/edit') {
+    if(screen.startsWith('/maps/edit')) {
         actionText = (
             <Typography sx={{fontFamily:'Roboto mono'}}>
                 Now Editing: {mapName}

@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { saveGeojsonThunk } from "../../app/store-actions/leafletEditing";
 import CollaboratorModal from "./CollaboratorModal";
+import CollaboratorGroup from "./CollaboratorGroup.js";
 import DeleteModal from "./DeleteModal";
 import EditModal from "./EditModal";
 import ExportMapButton from "./ExportMapButton";
@@ -90,6 +91,7 @@ export default function EditMapActions () {
     return (
         <Container>
             <Box>
+                <CollaboratorGroup />
                 <Tooltip title='Add collaborators'>
                     <IconButton>
                         <Groups onClick={toggleCollaboratorDialog}/>

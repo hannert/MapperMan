@@ -33,7 +33,7 @@ export default function MapCard(props) {
                 id: map.id,
                 name: map.name
             }));
-            navigate('/maps/edit');
+            navigate(`/maps/edit/${map.id}`);
         }
         else if(map.published){
             dispatch(setActiveMap({
