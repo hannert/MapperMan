@@ -108,6 +108,10 @@ export default function LeafletContainer(){
                 });
             });
 
+            mapRef.current.on('editable:disable', (e) => {
+                e.layer.off();
+            });
+
             console.log(geoJSON);
             let properties = [];
 
