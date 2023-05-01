@@ -21,9 +21,12 @@ export default function Toolbar(){
             {/* <RemoveVertexButton></RemoveVertexButton> */}
             <PolylineButton></PolylineButton>
             <PolygonButton></PolygonButton>
+
             {/* circle is cursed */}
             {/* <AddCircleButton></AddCircleButton> */}
-            <MarkerButton></MarkerButton>
+
+            {/* painful */}
+            {/* <MarkerButton></MarkerButton> */}
             {/* <AddSubregionButton></AddSubregionButton> */}
             <RemoveFeatureButton></RemoveFeatureButton>
             <MergeSubregionButton></MergeSubregionButton>

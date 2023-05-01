@@ -14,6 +14,7 @@ export default function MouseButton(){
     const layerClickedId = useSelector(state => state.leafletEditing.layerClickedId);
     const layerGroup = useSelector(state => state.leafletEditing.layerGroup);
 
+
     function handleButtonClick(){
         dispatch(unselectTool());
         console.log('Mouse Button Clicked');
@@ -41,8 +42,6 @@ export default function MouseButton(){
             console.log("feature: ", layerGroup.getLayer(layerClickedId).featureIndex);
             
             dispatch((setFeatureIndexClicked(featureIndex)))
-
-            dispatch(setLayerClickedEditor(layerGroup.getLayer(layerClickedId).editor));
             dispatch(setDraggable(layerClickedId))
         }
     }, [layerClickedId])
@@ -62,7 +61,7 @@ export default function MouseButton(){
                     <Mouse />
                 </Button>
             </Tooltip>
-            { !hidden && <CancelButton setHidden={setHidden} cancelFunction={unselectTool}/>}
+            { !hidden && <CancelButton setHidden={setHidden} cancelFunction={()=>{dispatch(unselectTool)}}/>}
         </Box>
 
     )

@@ -9,7 +9,6 @@ export default function AddVertexButton(){
     const [hidden, setHidden] = useState(true);
     const dispatch = useDispatch()
     const currentEditTool = useSelector(state => state.leafletEditing.editTool);
-    const layerClickedEditor = useSelector(state => state.leafletEditing.layerClickedEditor);
 
     function handleButtonClick(){
         console.log('Add Vertex Button Clicked');
