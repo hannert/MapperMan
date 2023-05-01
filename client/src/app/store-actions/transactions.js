@@ -4,6 +4,8 @@ import DeleteVertex_Transaction from "../jsTPS/Transactions/DeleteVertex_Transac
 import MoveVertex_Transaction from "../jsTPS/Transactions/MoveVertex_Transaction";
 import MoveFeature_Transaction from "../jsTPS/Transactions/MoveFeature_Transaction";
 import DeleteFeature_Transaction from "../jsTPS/Transactions/DeleteFeature_Transaction";
+import CreatePolygon_Transaction from "../jsTPS/Transactions/CreatePolygon_Transaction";
+import CreatePolyline_Transaction from "../jsTPS/Transactions/CreatePolyline_Transaction";
 
 const initialState = {
     tps: null,
@@ -36,7 +38,9 @@ export const transactions = createSlice({
             }
         },
         addDeleteVertexTransaction: (state, action) => {
-            let transaction = new DeleteVertex_Transaction(action.payload.layerGroup, action.payload.latlng, action.payload.featureIndex, state.vertexIndex);
+            let transaction = 
+            new DeleteVertex_Transaction(action.payload.layerGroup, action.payload.latlng, 
+                action.payload.featureIndex, state.vertexIndex, action.payload.shape);
             state.tps.addTransaction(transaction);
         },
         setVertexIndex(state, action){
@@ -57,8 +61,6 @@ export const transactions = createSlice({
         addMoveFeatureTransaction: (state, action) => {
             let offsetX = action.payload.endPos['lat'] - state.fStartPos['lat'];
             let offsetY = action.payload.endPos['lng'] - state.fStartPos['lng'];
-            
- 
 
             let transaction = new MoveFeature_Transaction(action.payload.layerGroup, action.payload.featureIndex, offsetX, offsetY);
             state.tps.addTransaction(transaction);
@@ -67,10 +69,19 @@ export const transactions = createSlice({
             console.log('delete transaction');
             let transaction = new DeleteFeature_Transaction(action.payload.layerGroup, action.payload.latlngs, action.payload.properties, action.payload.featureIndex);
             state.tps.addTransaction(transaction);
+        },
+        addCreatePolygonTransaction: (state, action) => {
+            let transaction = new CreatePolygon_Transaction(action.payload.layerGroup, action.payload.latlngs, action.payload.properties, action.payload.featureIndex);
+            state.tps.addTransaction(transaction);
+        },
+        addCreatePolylineTransaction: (state, action) => {
+            let transaction = new CreatePolyline_Transaction(action.payload.layerGroup, action.payload.latlngs, action.payload.properties, action.payload.featureIndex);
+            state.tps.addTransaction(transaction);
         }
     }
 })
 
 export const { initTps, doTransaction, undoTransaction, addDeleteVertexTransaction, setVertexIndex,
-    setvStartPos, addMoveVertexTransaction, setfStartPos, addMoveFeatureTransaction, addDeleteFeatureTransaction } = transactions.actions;
+    setvStartPos, addMoveVertexTransaction, setfStartPos, addMoveFeatureTransaction, addDeleteFeatureTransaction,
+    addCreatePolygonTransaction, addCreatePolylineTransaction } = transactions.actions;
 export default transactions.reducer;

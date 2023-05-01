@@ -1,7 +1,7 @@
 import { jsTPS_Transaction } from "../jsTPS";
 import * as L from 'leaflet';
 
-export default class DeleteFeature_Transaction extends jsTPS_Transaction {
+export default class CreatePolygon_Transaction extends jsTPS_Transaction {
 
     constructor(layerGroup, latlngs, properties, featureIndex) {
         super();
@@ -11,11 +11,24 @@ export default class DeleteFeature_Transaction extends jsTPS_Transaction {
         this.featureIndex = featureIndex;
         this.dontDo = true;
     }
-
+    /**
+     *  Add back feature with latlngs and properties
+     */
+    doTransaction() {
+        const polygon = L.polygon(this.latlngs, {draggable:true});
+        polygon.dragging.disable();
+        console.log(polygon);
+        polygon.featureIndex = this.featureIndex;
+        polygon.properties = this.properties;
+        //Don't add an extra transaction
+        polygon.inStack = true;
+        this.layerGroup.addLayer(polygon);
+    }
+    
     /**
      * Find and remove layer from layergroup
      */
-    doTransaction() {
+    undoTransaction() {
         for(let layer of this.layerGroup.getLayers()){
             if(layer.featureIndex === this.featureIndex){
                 //can't search through latlngs like this on everything :(
@@ -24,18 +37,4 @@ export default class DeleteFeature_Transaction extends jsTPS_Transaction {
         }
     }
 
-    /**
-     *  Add back feature with latlngs and properties
-     */
-    undoTransaction() {
-        const polygon = L.polygon(this.latlngs, {draggable:true});
-        polygon.dragging.disable();
-        console.log(polygon);
-        polygon.featureIndex = this.featureIndex;
-        polygon.properties = this.properties;
-        //Don't add an extra transaction
-        polygon.inStack = true;
-
-        this.layerGroup.addLayer(polygon);
-    }
 }

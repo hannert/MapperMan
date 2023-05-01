@@ -61,7 +61,7 @@ export default function MouseButton(){
                     <Mouse />
                 </Button>
             </Tooltip>
-            { !hidden && <CancelButton setHidden={setHidden} cancelFunction={unselectTool}/>}
+            { !hidden && <CancelButton setHidden={setHidden} cancelFunction={()=>{dispatch(unselectTool)}}/>}
         </Box>
 
     )

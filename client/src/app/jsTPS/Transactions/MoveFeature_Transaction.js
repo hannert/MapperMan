@@ -18,10 +18,10 @@ export default class MoveFeature_Transaction extends jsTPS_Transaction {
             if(layer.featureIndex === this.featureIndex){
                 console.log('found it');
                 //can't search through latlngs like this on everything :(
-                //TODO need to account for it going in different quadrants
                 for(let latlng of layer._latlngs[0]){
                     latlng['lat'] += this.offsetX;
                     latlng['lng'] += this.offsetY;
+                    console.log(latlng['lat'] + ' ' + latlng['lng']);
                 }
                 layer.redraw();
                 layer.disableEdit();
@@ -39,12 +39,12 @@ export default class MoveFeature_Transaction extends jsTPS_Transaction {
             if(layer.featureIndex === this.featureIndex){
                 console.log('found it');
                 //can't search through latlngs like this on everything :(
-                //TODO need to account for it going in different quadrants
                 for(let latlng of layer._latlngs[0]){
                     latlng['lat'] -= this.offsetX;
-                    latlng['lng'] -= this.offsetY;                
+                    latlng['lng'] -= this.offsetY;     
+                    console.log(latlng['lat'] + ' ' + latlng['lng']);           
                 }
-                
+
                 layer.redraw();
                 layer.disableEdit();
                 layer.enableEdit();

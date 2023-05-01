@@ -5,16 +5,17 @@ import hash from 'object-hash';
 import React, { useEffect, useRef } from 'react';
 import { GeoJSON, MapContainer, TileLayer } from 'react-leaflet';
 import { useDispatch, useSelector } from 'react-redux';
-import { setFeatureIndex, setMapRef, setProperties } from '../../app/store-actions/leafletEditing';
+import { setFeatureIndex, setMapRef, setProperties, shapes } from '../../app/store-actions/leafletEditing';
 import DeleteVertex_Transaction from '../../app/jsTPS/Transactions/DeleteVertex_Transaction';
-import { addDeleteFeatureTransaction, addDeleteVertexTransaction, addMoveFeatureTransaction, addMoveVertexTransaction, initTps, setVertexIndex, setfStartPos, setvStartPos } from '../../app/store-actions/transactions';
+import { addCreatePolygonTransaction, addCreatePolylineTransaction, addDeleteFeatureTransaction, addDeleteVertexTransaction, addMoveFeatureTransaction, addMoveVertexTransaction, initTps, setVertexIndex, setfStartPos, setvStartPos } from '../../app/store-actions/transactions';
 
 export default function LeafletContainer(){
 
 
     const geoJSON = useSelector((state) => state.leafletEditing.currentGeoJSON);
     const layerGroup = useSelector((state) => state.leafletEditing.layerGroup);
-    
+    const tps = useSelector((state) => state.transactions.tps);
+
     const mapRef = useRef(null);
     const dispatch = useDispatch();
     useEffect(() => {
@@ -40,12 +41,24 @@ export default function LeafletContainer(){
                 });
 
                 e.layer.on('editable:vertex:deleted', (e) => {
-                    console.log(e);
-                    dispatch(addDeleteVertexTransaction({
-                        layerGroup: layerGroup, 
-                        latlng: e.latlng, 
-                        featureIndex: e.sourceTarget.featureIndex
-                    }))
+                    if(e.layer.shape === shapes.polygon){
+                        console.log(e);
+                        dispatch(addDeleteVertexTransaction({
+                            layerGroup: layerGroup, 
+                            latlng: e.latlng, 
+                            featureIndex: e.sourceTarget.featureIndex,
+                            shape: shapes.polygon
+                        }))
+                    }
+                    if(e.layer.shape === shapes.polyline){
+                        console.log(e);
+                        dispatch(addDeleteVertexTransaction({
+                            layerGroup: layerGroup, 
+                            latlng: e.latlng, 
+                            featureIndex: e.sourceTarget.featureIndex,
+                            shape: shapes.polyline
+                        }))
+                    }
                 });
 
                 e.layer.on('editable:vertex:dragstart', (e) => {
@@ -62,6 +75,7 @@ export default function LeafletContainer(){
                         featureIndex: e.target.featureIndex,
                         endPos: latlng
                     }))
+                    
                 });
 
                 e.layer.on('dragstart', (e) => {
@@ -84,6 +98,13 @@ export default function LeafletContainer(){
                 });
 
                 e.layer.on('remove', (e) => {
+                    //If it was created through jstps ignore it
+                    console.log(e.target);
+
+                    if(Object.hasOwn(e.target, 'inStack')){
+                        return
+                    }
+
                     console.log('remove event')
                     let arr = []
                     for(let latlng of e.sourceTarget.getLatLngs()[0]){
@@ -112,6 +133,31 @@ export default function LeafletContainer(){
                 e.layer.off();
             });
 
+            mapRef.current.on('editable:drawing:end', (e) => {
+                console.log('Editable created');
+                console.log(e);
+                if(e.layer.shape === shapes.polygon){
+                    dispatch(addCreatePolygonTransaction({
+                        layerGroup: layerGroup,
+                        latlngs: e.layer._latlngs[0],
+                        properties: e.layer.properties,
+                        featureIndex: e.layer.featureIndex
+                    }))
+                }
+
+                if(e.layer.shape === shapes.polyline){
+                    console.log(e.layer);
+                    dispatch(addCreatePolylineTransaction({
+                        layerGroup: layerGroup,
+                        latlngs: e.layer._latlngs,
+                        properties: e.layer.properties,
+                        featureIndex: e.layer.featureIndex
+                    }))
+                }
+
+            });
+            
+
             console.log(geoJSON);
             let properties = [];
 
@@ -123,82 +169,9 @@ export default function LeafletContainer(){
                 // polygon._latlngs[0].push(L.latLng(0, 0));
                 polygon.featureIndex = idx;
                 polygon.properties = geoJSON.features[idx].properties
+                polygon.shape = shapes.polygon;
                 // console.log(polygon);
                 dispatch(initTps());
-                // polygon.on('editable:vertex:click', (e) => {
-                //     console.log(e.vertex.getIndex());
-                //     dispatch(setVertexIndex(e.vertex.getIndex()));
-                // });
-
-
-                // polygon.on('editable:vertex:deleted', (e) => {
-                //     console.log(e);
-                //     dispatch(addDeleteVertexTransaction({
-                //         layerGroup: layerGroup, 
-                //         latlng: e.latlng, 
-                //         featureIndex: e.sourceTarget.featureIndex
-                //     }))
-                // });
-
-                // polygon.on('editable:vertex:dragstart', (e) => {
-                //     //cursed format
-                //     let latlng = L.latLng(e.vertex.latlng['lat'], e.vertex.latlng['lng']);
-                //     dispatch(setvStartPos(latlng));
-
-                // });
-
-                // polygon.on('editable:vertex:dragend', (e) => {
-                //     let latlng = L.latLng(e.vertex.latlng['lat'], e.vertex.latlng['lng']);
-                //     dispatch(addMoveVertexTransaction({
-                //         layerGroup: layerGroup,
-                //         featureIndex: e.target.featureIndex,
-                //         endPos: latlng
-                //     }))
-                // });
-
-                // polygon.on('dragstart', (e) => {
-                //     console.log(e);
-                //     console.log(e.target._latlngs[0][0])
-                //     dispatch(setfStartPos(e.target._latlngs[0][0]));
-                // });
-                
-                // polygon.on('dragend', (e) => {
-                //     console.log(e);
-                //     console.log(e.target._latlngs[0][0])
-
-                //     // TODO need to account for it going in different directions, like quadrant 1, 2, 3 or 4 of a graph
-                    
-                //     dispatch(addMoveFeatureTransaction({
-                //         layerGroup: layerGroup,
-                //         featureIndex: e.target.featureIndex,
-                //         endPos: e.target._latlngs[0][0]
-                //     }))
-                // });
-
-                // polygon.on('remove', (e) => {
-                //     console.log('remove event')
-                //     let arr = []
-                //     for(let latlng of e.sourceTarget.getLatLngs()[0]){
-                        
-                //         let copy = L.latLng(
-                //             JSON.parse(JSON.stringify(latlng['lat'])), 
-                //             JSON.parse(JSON.stringify(latlng['lng'])))
-
-                //         arr.push(copy);
-                //     }
-                //     console.log(arr);
-
-                //     // TODO For some reason this causes an error
-
-                //     dispatch(addDeleteFeatureTransaction({
-                //         layerGroup: layerGroup,
-                //         latlngs: arr,
-                //         properties: e.sourceTarget.properties,
-                //         featureIndex: e.sourceTarget.featureIndex,
-                //         mapRef: mapRef.current
-                //     }))
-                    
-                // });
                 
                 // TODO prob a better way to do this
                 properties.push(geoJSON.features[idx].properties);
