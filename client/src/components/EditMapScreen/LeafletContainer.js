@@ -84,6 +84,9 @@ export default function LeafletContainer(){
                 polygon.on('dragend', (e) => {
                     console.log(e);
                     console.log(e.target._latlngs[0][0])
+
+                    // TODO need to account for it going in different directions, like quadrant 1, 2, 3 or 4 of a graph
+                    
                     dispatch(addMoveFeatureTransaction({
                         layerGroup: layerGroup,
                         featureIndex: e.target.featureIndex,

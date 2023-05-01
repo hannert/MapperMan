@@ -18,7 +18,7 @@ export default class MoveFeature_Transaction extends jsTPS_Transaction {
             if(layer.featureIndex === this.featureIndex){
                 console.log('found it');
                 //can't search through latlngs like this on everything :(
-                //TODO need to account for cardinal directions
+                //TODO need to account for it going in different quadrants
                 for(let latlng of layer._latlngs[0]){
                     latlng['lat'] += this.offsetX;
                     latlng['lng'] += this.offsetY;
@@ -39,7 +39,7 @@ export default class MoveFeature_Transaction extends jsTPS_Transaction {
             if(layer.featureIndex === this.featureIndex){
                 console.log('found it');
                 //can't search through latlngs like this on everything :(
-                //TODO need to account for cardinal directions
+                //TODO need to account for it going in different quadrants
                 for(let latlng of layer._latlngs[0]){
                     latlng['lat'] -= this.offsetX;
                     latlng['lng'] -= this.offsetY;                
