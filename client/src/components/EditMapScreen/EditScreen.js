@@ -70,6 +70,11 @@ export default function EditScreen(){
             enqueueSnackbar('Other user joined', {variant:'info', autoHideDuration:1000})
             dispatch(setCollaborators(users))
         })
+        socket.on('emit delta', (delta)=>{
+            console.log('!!!!!!!!!!!!!!!!!!!!!!!!');
+            console.log('received delta?!')
+            console.log(delta)
+        })
 
     }, [])
     

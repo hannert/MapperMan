@@ -5,10 +5,13 @@ import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { useDispatch, useSelector } from 'react-redux';
 import { setCurrentGeoJSON, setFeatureClicked, setPrevGeoJSON} from '../../app/store-actions/leafletEditing';
 import PropertyCard from './PropertyCard';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
 import { editMapPropertyThunk } from '../../app/store-actions/leafletEditing';
+import { SocketContext } from '../../socket';
+import { enqueueSnackbar } from 'notistack';
+
 
 
 
@@ -18,6 +21,8 @@ import { editMapPropertyThunk } from '../../app/store-actions/leafletEditing';
 export default function PropertyEditor(props){
     const {handleToggleProperty} = props;
     const dispatch = useDispatch();
+    const socket = useContext(SocketContext);
+
 
     /**
      * deprecated, not really any need for the featureClicked State
@@ -51,7 +56,6 @@ export default function PropertyEditor(props){
 
 
     for (var key in featureProperties){
-        console.log(featureProperties);
         rows.push(<PropertyCard propKey={key} propType={typeof(key)} propValue={featureProperties[key]} />)
     }
 
@@ -89,6 +93,13 @@ export default function PropertyEditor(props){
                 let geoJSONCopy = structuredClone(geoJSON);
                 geoJSONCopy.features[featureIndex] = featureCopy;
                 console.log("geoJSON copy: ", geoJSONCopy)
+
+                let jsondiffpatch = require('jsondiffpatch').create();
+                let delta = jsondiffpatch.diff(geoJSON, geoJSONCopy);
+                console.log(socket.emit('edit geoJSON', currMapId, delta))
+
+
+
                 console.log("setting the current geojson")
                 dispatch(setCurrentGeoJSON(geoJSONCopy));
                 resetFields();
