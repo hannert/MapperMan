@@ -32,6 +32,9 @@ export default class CreatePolygon_Transaction extends jsTPS_Transaction {
         for(let layer of this.layerGroup.getLayers()){
             if(layer.featureIndex === this.featureIndex){
                 //can't search through latlngs like this on everything :(
+                
+                // add a property like layer.ignore = true so remove event
+                // doesn't fire or sometihng like htat still need to think it through
                 this.layerGroup.removeLayer(layer);
             }
         }

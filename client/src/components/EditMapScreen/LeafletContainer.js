@@ -134,6 +134,7 @@ export default function LeafletContainer(){
             });
 
             mapRef.current.on('editable:drawing:end', (e) => {
+                
                 console.log('Editable created');
                 console.log(e);
                 if(e.layer.shape === shapes.polygon){
