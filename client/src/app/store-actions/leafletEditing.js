@@ -336,7 +336,7 @@ export const leafletEditing = createSlice({
         updateProperties: (state, action) => {
             state.properties.push(action.payload.properties);
         },
-        applyPropertyDelta: (state, action) =>{
+        applyDelta: (state, action) =>{
             let jsondiffpatch = require('jsondiffpatch').create();
             console.log("applying delta: ", action.payload);
             jsondiffpatch.patch(state.currentGeoJSON, action.payload);
@@ -360,7 +360,7 @@ startPolylineDraw, endPolylineDraw, unselectTool, setLayerGroup, setFeatureClick
  startMouseTracking, setLayerClickedId, setLayerClickedEditor, addVertex, stopMouseTracking,
 setDraggable, unsetDraggable, startPolygonDraw, endPolygonDraw, startMarker, endMarker, 
 startMouseTool, setMergeArray, mergeRegion, finishMergeRegion, startMergeTool, removeFeature, startRemoveTool, 
-setCollaborators, setSharedWith, setChosenForDeletion, startCircleDraw, endCircleDraw, incrementFeatureIndex, setProperties, setFeatureIndex, updateProperties, applyPropertyDelta} = leafletEditing.actions;
+setCollaborators, setSharedWith, setChosenForDeletion, startCircleDraw, endCircleDraw, incrementFeatureIndex, setProperties, setFeatureIndex, updateProperties, applyDelta} = leafletEditing.actions;
 export default leafletEditing.reducer;
 
 
