@@ -5,13 +5,14 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Box } from "@mui/system";
-import { useState } from 'react';
+import { useState, useContext  } from 'react';
 import TextField from '@mui/material/TextField';
 import { editMapPropertyThunk } from '../../app/store-actions/leafletEditing';
-import { setCurrentGeoJSON, setFeatureClicked, setPrevGeoJSON} from '../../app/store-actions/leafletEditing';
-import { useSelector, useDispatch } from 'react-redux';
+import { setCurrentGeoJSON, setFeatureClicked, setPrevGeoJSON, setProperties} from '../../app/store-actions/leafletEditing';
+import { useSelector, useDispatch} from 'react-redux';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { deleteMapPropertyThunk } from '../../app/store-actions/leafletEditing';
+import { SocketContext } from '../../socket';
 
 
 
@@ -24,6 +25,7 @@ export default function PropertyCard(props){
     const geoJSON = useSelector((state) => state.leafletEditing.currentGeoJSON);
     const featureIndex = useSelector((state)=>state.leafletEditing.featureClickedIndex);
     const currMapId = useSelector((state)=>state.editMapList.activeMapId);
+    const socket = useContext(SocketContext);
 
     const handleValueDoubleClick = (event) =>{
         console.log("clicked on property value");
@@ -35,6 +37,35 @@ export default function PropertyCard(props){
         if (event.code === "Enter") {
             dispatch(editMapPropertyThunk({id: currMapId, index: featureIndex, property: propKey, value: value, newProperty: {isNew: false, type: 'none'}})).unwrap().then((res)=>{
                 console.log(res);
+
+                let featureCopy = structuredClone(geoJSON.features[featureIndex]);
+                featureCopy.properties[propKey]=value;
+
+                console.log(featureCopy.properties)
+                let geoJSONCopy = structuredClone(geoJSON);
+                console.log(geoJSONCopy.features[0])
+                geoJSONCopy.features[featureIndex] = featureCopy;
+
+
+                let jsondiffpatch = require('jsondiffpatch').create();
+                let delta = jsondiffpatch.diff(geoJSON, geoJSONCopy);
+                console.log(socket.emit('edit geoJSON', currMapId, delta))
+
+
+
+                console.log("setting the current geojson")
+                dispatch(setCurrentGeoJSON(geoJSONCopy));
+                
+                let properties = [];
+                let index=0;
+                //**Im just gonna copy this from leaflet container for now, we should really abstract this or something */
+                for(let feature of geoJSONCopy.features){
+                    properties.push(geoJSONCopy.features[index].properties);
+                    index += 1;
+                }
+                dispatch(setProperties(properties))
+
+
             }).catch((err)=>{
                 console.log(err);
             });

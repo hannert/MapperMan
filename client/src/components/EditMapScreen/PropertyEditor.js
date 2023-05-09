@@ -3,12 +3,15 @@ import { Box } from "@mui/system";
 import { AddCircle, AddLocation, Circle, Merge, Mouse, Redo, RemoveCircle, Timeline, Undo, WrongLocation } from '@mui/icons-material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { useDispatch, useSelector } from 'react-redux';
-import { setCurrentGeoJSON, setFeatureClicked, setPrevGeoJSON} from '../../app/store-actions/leafletEditing';
+import { setCurrentGeoJSON, setFeatureClicked, setPrevGeoJSON, setProperties, updateProperties} from '../../app/store-actions/leafletEditing';
 import PropertyCard from './PropertyCard';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import TextField from '@mui/material/TextField';
 import Select from '@mui/material/Select';
 import { editMapPropertyThunk } from '../../app/store-actions/leafletEditing';
+import { SocketContext } from '../../socket';
+import { enqueueSnackbar } from 'notistack';
+
 
 
 
@@ -18,6 +21,8 @@ import { editMapPropertyThunk } from '../../app/store-actions/leafletEditing';
 export default function PropertyEditor(props){
     const {handleToggleProperty} = props;
     const dispatch = useDispatch();
+    const socket = useContext(SocketContext);
+
 
     /**
      * deprecated, not really any need for the featureClicked State
@@ -39,7 +44,6 @@ export default function PropertyEditor(props){
     const featureProperties = properties[featureIndex];
 
 
-
     /**
      * Puts the properties into the
      * rows that can be seen by the user
@@ -51,7 +55,6 @@ export default function PropertyEditor(props){
 
 
     for (var key in featureProperties){
-        console.log(featureProperties);
         rows.push(<PropertyCard propKey={key} propType={typeof(key)} propValue={featureProperties[key]} />)
     }
 
@@ -89,8 +92,25 @@ export default function PropertyEditor(props){
                 let geoJSONCopy = structuredClone(geoJSON);
                 geoJSONCopy.features[featureIndex] = featureCopy;
                 console.log("geoJSON copy: ", geoJSONCopy)
+
+                let jsondiffpatch = require('jsondiffpatch').create();
+                let delta = jsondiffpatch.diff(geoJSON, geoJSONCopy);
+                console.log(socket.emit('edit geoJSON', currMapId, delta))
+
+
+
                 console.log("setting the current geojson")
                 dispatch(setCurrentGeoJSON(geoJSONCopy));
+                
+                let properties = [];
+                let index=0;
+                //**Im just gonna copy this from leaflet container for now, we should really abstract this or something */
+                for(let feature of geoJSONCopy.features){
+                    properties.push(geoJSONCopy.features[index].properties);
+                    index += 1;
+                }
+                dispatch(setProperties(properties))
+
                 resetFields();
                 setAddNewPropertyMenuOpen(false);
 

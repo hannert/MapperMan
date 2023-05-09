@@ -98,6 +98,12 @@ io.on('connection', (socket) => {
     console.log(socket.id, ' disconnected')
   })
 
+  socket.on('edit geoJSON', async (roomName, delta)=>{
+    console.log("received edit geoJSON", roomName);
+    socket.in(roomName).emit('emit delta', delta);
+    console.log("emitted to ", roomName)
+  })
+
 
 
 })
