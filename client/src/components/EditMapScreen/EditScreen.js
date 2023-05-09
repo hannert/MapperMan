@@ -8,7 +8,7 @@ import { getMapByIdThunk } from '../../app/store-actions/editMapList';
 import 'leaflet-editable';
 
 import { enqueueSnackbar } from 'notistack';
-import { setCollaborators, setCurrentGeoJSON, setSharedWith } from '../../app/store-actions/leafletEditing';
+import { setCollaborators, setCurrentGeoJSON, setSharedWith, applyDelta } from '../../app/store-actions/leafletEditing';
 import { SocketContext } from '../../socket';
 import LeafletContainer from './LeafletContainer';
 import MergeStatus from './MergeStatus';
@@ -21,6 +21,7 @@ export default function EditScreen(){
     const [propertyOpen, setPropertyOpen] = useState(false)
     const mapId = useSelector((state) => state.editMapList.activeMapId);
     const featureIndex = useSelector((state)=>state.leafletEditing.featureClickedIndex);
+    // const geoJSON = useSelector((state) => state.leafletEditing.currentGeoJSON);
     const dispatch = useDispatch();
     const socket = useContext(SocketContext);
     const { id } = useParams();
@@ -72,8 +73,11 @@ export default function EditScreen(){
         })
         socket.on('emit delta', (delta)=>{
             console.log('!!!!!!!!!!!!!!!!!!!!!!!!');
-            console.log('received delta?!')
-            console.log(delta)
+            console.log('received delta?!');
+            console.log(delta);
+            dispatch(applyDelta(delta));
+
+
         })
 
     }, [])

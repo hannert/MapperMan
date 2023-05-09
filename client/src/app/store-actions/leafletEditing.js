@@ -335,6 +335,13 @@ export const leafletEditing = createSlice({
         },
         updateProperties: (state, action) => {
             state.properties.push(action.payload.properties);
+        },
+        applyDelta: (state, action) =>{
+            let jsondiffpatch = require('jsondiffpatch').create();
+            console.log("applying delta: ", action.payload);
+            jsondiffpatch.patch(state.currentGeoJSON, action.payload);
+            // state.properties=state.currentGeoJSON.features[state.featureIndex].properties
+            console.log(JSON.stringify(state.currentGeoJSON.features))
         }
     }
 });
@@ -344,7 +351,7 @@ startPolylineDraw, endPolylineDraw, unselectTool, setLayerGroup, setFeatureClick
  startMouseTracking, setLayerClickedId, setLayerClickedEditor, addVertex, stopMouseTracking,
 setDraggable, unsetDraggable, startPolygonDraw, endPolygonDraw, startMarker, endMarker, 
 startMouseTool, setMergeArray, mergeRegion, finishMergeRegion, startMergeTool, removeFeature, startRemoveTool, 
-setCollaborators, setSharedWith, setChosenForDeletion, startCircleDraw, endCircleDraw, incrementFeatureIndex, setProperties, setFeatureIndex, updateProperties} = leafletEditing.actions;
+setCollaborators, setSharedWith, setChosenForDeletion, startCircleDraw, endCircleDraw, incrementFeatureIndex, setProperties, setFeatureIndex, updateProperties, applyDelta} = leafletEditing.actions;
 export default leafletEditing.reducer;
 
 
