@@ -3,7 +3,7 @@ import { Box } from "@mui/system";
 import { AddCircle, AddLocation, Circle, Merge, Mouse, Redo, RemoveCircle, Timeline, Undo, WrongLocation } from '@mui/icons-material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { useDispatch, useSelector } from 'react-redux';
-import { setCurrentGeoJSON, setFeatureClicked, setPrevGeoJSON} from '../../app/store-actions/leafletEditing';
+import { setCurrentGeoJSON, setFeatureClicked, setPrevGeoJSON, setProperties, updateProperties} from '../../app/store-actions/leafletEditing';
 import PropertyCard from './PropertyCard';
 import { useState, useEffect, useContext } from 'react';
 import TextField from '@mui/material/TextField';
@@ -42,7 +42,6 @@ export default function PropertyEditor(props){
      * from the state
      */
     const featureProperties = properties[featureIndex];
-
 
 
     /**
@@ -102,6 +101,16 @@ export default function PropertyEditor(props){
 
                 console.log("setting the current geojson")
                 dispatch(setCurrentGeoJSON(geoJSONCopy));
+                
+                let properties = [];
+                let index=0;
+                //**Im just gonna copy this from leaflet container for now, we should really abstract this or something */
+                for(let feature of geoJSONCopy.features){
+                    properties.push(geoJSONCopy.features[index].properties);
+                    index += 1;
+                }
+                dispatch(setProperties(properties))
+
                 resetFields();
                 setAddNewPropertyMenuOpen(false);
 

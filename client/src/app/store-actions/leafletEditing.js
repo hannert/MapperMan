@@ -336,12 +336,21 @@ export const leafletEditing = createSlice({
         updateProperties: (state, action) => {
             state.properties.push(action.payload.properties);
         },
-        applyDelta: (state, action) =>{
+        applyPropertyDelta: (state, action) =>{
             let jsondiffpatch = require('jsondiffpatch').create();
             console.log("applying delta: ", action.payload);
             jsondiffpatch.patch(state.currentGeoJSON, action.payload);
             // state.properties=state.currentGeoJSON.features[state.featureIndex].properties
             console.log(JSON.stringify(state.currentGeoJSON.features))
+            let properties = [];
+            let index=0;
+            //**Im just gonna copy this from leaflet container for now: */
+            for(let feature of state.currentGeoJSON.features){
+                properties.push(state.currentGeoJSON.features[index].properties);
+                index += 1;
+            }
+            state.properties = properties;
+
         }
     }
 });
@@ -351,7 +360,7 @@ startPolylineDraw, endPolylineDraw, unselectTool, setLayerGroup, setFeatureClick
  startMouseTracking, setLayerClickedId, setLayerClickedEditor, addVertex, stopMouseTracking,
 setDraggable, unsetDraggable, startPolygonDraw, endPolygonDraw, startMarker, endMarker, 
 startMouseTool, setMergeArray, mergeRegion, finishMergeRegion, startMergeTool, removeFeature, startRemoveTool, 
-setCollaborators, setSharedWith, setChosenForDeletion, startCircleDraw, endCircleDraw, incrementFeatureIndex, setProperties, setFeatureIndex, updateProperties, applyDelta} = leafletEditing.actions;
+setCollaborators, setSharedWith, setChosenForDeletion, startCircleDraw, endCircleDraw, incrementFeatureIndex, setProperties, setFeatureIndex, updateProperties, applyPropertyDelta} = leafletEditing.actions;
 export default leafletEditing.reducer;
 
 

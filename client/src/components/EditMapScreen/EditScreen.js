@@ -8,7 +8,7 @@ import { getMapByIdThunk } from '../../app/store-actions/editMapList';
 import 'leaflet-editable';
 
 import { enqueueSnackbar } from 'notistack';
-import { setCollaborators, setCurrentGeoJSON, setSharedWith, applyDelta } from '../../app/store-actions/leafletEditing';
+import { setCollaborators, setCurrentGeoJSON, setSharedWith, applyPropertyDelta } from '../../app/store-actions/leafletEditing';
 import { SocketContext } from '../../socket';
 import LeafletContainer from './LeafletContainer';
 import MergeStatus from './MergeStatus';
@@ -75,7 +75,7 @@ export default function EditScreen(){
             console.log('!!!!!!!!!!!!!!!!!!!!!!!!');
             console.log('received delta?!');
             console.log(delta);
-            dispatch(applyDelta(delta));
+            dispatch(applyPropertyDelta(delta));
 
 
         })
