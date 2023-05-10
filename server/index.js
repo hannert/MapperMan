@@ -104,6 +104,34 @@ io.on('connection', (socket) => {
     console.log("emitted to ", roomName)
   })
 
+  socket.on('edit properties', async(roomName, featureIndex, key, value, type) =>{
+    console.log("received edit properties in ", roomName);
+    console.log("feature index: ", featureIndex);
+    console.log("key: ", key);
+    console.log("value: ", value)
+
+    if(type==='edit'){
+      //do something
+      console.log("received an edit message")
+      socket.in(roomName).emit('edited property', featureIndex, key, value);
+    }
+
+    else if(type==='delete'){
+      console.log("received a delete message")
+      socket.in(roomName).emit('deleted property', featureIndex, key);
+
+    }
+
+    else if(type==='add'){
+      console.log('received an add message')
+      socket.in(roomName).emit('added property', featureIndex, key, value);
+
+    }
+
+
+    // socket.in(roomName).emit('')
+  })
+
 
 
 })

@@ -454,7 +454,7 @@ deleteMapProperty = async(req,res) =>{
 
     Map.findOneAndUpdate(
         {_id:id},
-        {$unset: {[`mapData.features.${index}.properties`]: property}},
+        {$unset: {[`mapData.features.${index}.properties.${property}`]: ""}},
         {new: true}
     ).then((map)=>{
         return res.status(200).json({

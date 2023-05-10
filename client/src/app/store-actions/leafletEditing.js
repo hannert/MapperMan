@@ -333,6 +333,7 @@ export const leafletEditing = createSlice({
         setSharedWith: (state, action) => {
             state.sharedWith = action.payload;
         },
+        /**Adds a new feature to the geoJSON */
         updateProperties: (state, action) => {
             state.properties.push(action.payload.properties);
         },
@@ -350,8 +351,61 @@ export const leafletEditing = createSlice({
                 index += 1;
             }
             state.properties = properties;
+        },
+        emitPropertyChange: (state,action)=>{
+            let socket = action.payload.socket;
+            let room = action.payload.currMapId;
+            let featureIndex = state.featureClickedIndex;
+            let key = action.payload.key;
+            let value = action.payload.value;
+            let type = action.payload.type
+            console.log("emitting:")
+            console.log(socket.emit('edit properties', room, featureIndex, key, value, type));
+        },
+        editPropertyValue: (state, action) =>{
+            let key = action.payload.key;
+            let value = action.payload.value;
+            let featureIndex = action.payload.featureIndex;
+            state.currentGeoJSON.features[featureIndex].properties[key]=value;
+            // console.log(JSON.stringify(state.currentGeoJSON.features[featureIndex].properties))
+            let properties = [];
+            let index=0;
+            for(let feature of state.currentGeoJSON.features){
+                properties.push(state.currentGeoJSON.features[index].properties);
+                index += 1;
+            }
+            state.properties = properties;
+        },
+        deleteProperty: (state, action) =>{
+            let key = action.payload.key;
+            let featureIndex = action.payload.featureIndex;
+            delete state.currentGeoJSON.features[featureIndex].properties[key];
+            // console.log(JSON.stringify(state.currentGeoJSON.features[featureIndex].properties))
+            
+            let properties = [];
+            let index=0;
+            for(let feature of state.currentGeoJSON.features){
+                properties.push(state.currentGeoJSON.features[index].properties);
+                index += 1;
+            }
+            state.properties = properties;
+        },
+        addProperty: (state, action) =>{
+            let key = action.payload.key;
+            let value = action.payload.value;
+            let featureIndex = action.payload.featureIndex;
 
+            state.currentGeoJSON.features[featureIndex].properties[key]=value;
+
+            let properties = [];
+            let index=0;
+            for(let feature of state.currentGeoJSON.features){
+                properties.push(state.currentGeoJSON.features[index].properties);
+                index += 1;
+            }
+            state.properties = properties;
         }
+        
     }
 });
 
@@ -360,7 +414,8 @@ startPolylineDraw, endPolylineDraw, unselectTool, setLayerGroup, setFeatureClick
  startMouseTracking, setLayerClickedId, setLayerClickedEditor, addVertex, stopMouseTracking,
 setDraggable, unsetDraggable, startPolygonDraw, endPolygonDraw, startMarker, endMarker, 
 startMouseTool, setMergeArray, mergeRegion, finishMergeRegion, startMergeTool, removeFeature, startRemoveTool, 
-setCollaborators, setSharedWith, setChosenForDeletion, startCircleDraw, endCircleDraw, incrementFeatureIndex, setProperties, setFeatureIndex, updateProperties, applyDelta} = leafletEditing.actions;
+setCollaborators, setSharedWith, setChosenForDeletion, startCircleDraw, endCircleDraw, incrementFeatureIndex, setProperties, 
+setFeatureIndex, updateProperties, applyDelta, emitPropertyChange, editPropertyValue, deleteProperty, addProperty} = leafletEditing.actions;
 export default leafletEditing.reducer;
 
 

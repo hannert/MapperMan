@@ -8,7 +8,7 @@ import { Box } from "@mui/system";
 import { useState, useContext  } from 'react';
 import TextField from '@mui/material/TextField';
 import { editMapPropertyThunk } from '../../app/store-actions/leafletEditing';
-import { setCurrentGeoJSON, setFeatureClicked, setPrevGeoJSON, setProperties} from '../../app/store-actions/leafletEditing';
+import { setCurrentGeoJSON, setFeatureClicked, setPrevGeoJSON, setProperties, emitPropertyChange, editPropertyValue, deleteProperty} from '../../app/store-actions/leafletEditing';
 import { useSelector, useDispatch} from 'react-redux';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { deleteMapPropertyThunk } from '../../app/store-actions/leafletEditing';
@@ -38,32 +38,23 @@ export default function PropertyCard(props){
             dispatch(editMapPropertyThunk({id: currMapId, index: featureIndex, property: propKey, value: value, newProperty: {isNew: false, type: 'none'}})).unwrap().then((res)=>{
                 console.log(res);
 
-                let featureCopy = structuredClone(geoJSON.features[featureIndex]);
-                featureCopy.properties[propKey]=value;
-
-                console.log(featureCopy.properties)
-                let geoJSONCopy = structuredClone(geoJSON);
-                console.log(geoJSONCopy.features[0])
-                geoJSONCopy.features[featureIndex] = featureCopy;
-
-
-                let jsondiffpatch = require('jsondiffpatch').create();
-                let delta = jsondiffpatch.diff(geoJSON, geoJSONCopy);
-                console.log(socket.emit('edit geoJSON', currMapId, delta))
-
-
-
-                console.log("setting the current geojson")
-                dispatch(setCurrentGeoJSON(geoJSONCopy));
+                /**Emit the change, then do it on the client side */
                 
-                let properties = [];
-                let index=0;
-                //**Im just gonna copy this from leaflet container for now, we should really abstract this or something */
-                for(let feature of geoJSONCopy.features){
-                    properties.push(geoJSONCopy.features[index].properties);
-                    index += 1;
-                }
-                dispatch(setProperties(properties))
+                dispatch(emitPropertyChange({
+                    socket: socket,
+                    currMapId: currMapId,
+                    key: propKey,
+                    value: value,
+                    type: 'edit'
+                }))
+
+                
+
+                dispatch(editPropertyValue({
+                    key: propKey,
+                    value: value,
+                    featureIndex: featureIndex
+                }))
 
 
             }).catch((err)=>{
@@ -89,14 +80,29 @@ export default function PropertyCard(props){
     function handleDeletePropertyConfirm(){
         dispatch(deleteMapPropertyThunk({id: currMapId, index: featureIndex, property: propKey})).unwrap().then((res)=>{
             console.log(res);
-            let featureCopy = structuredClone(geoJSON.features[featureIndex]);
-            delete featureCopy.properties[propKey];
-            console.log(featureCopy.properties);
-            let geoJSONCopy = structuredClone(geoJSON);
-            geoJSONCopy.features[featureIndex] = featureCopy;
-            console.log("geoJSON copy: ", geoJSONCopy)
-            console.log("setting the current geojson")
-            dispatch(setCurrentGeoJSON(geoJSONCopy));
+
+            /**Basically, emits the edit and then makes the change on the client side
+             * 
+             * Need to figure out why there is weird behavior when the entry is removed
+             */
+
+            dispatch(emitPropertyChange({
+                socket: socket,
+                currMapId: currMapId,
+                key: propKey,
+                value: value,
+                type: 'delete'
+            }))
+
+
+
+            dispatch(deleteProperty({
+                key: propKey,
+                featureIndex: featureIndex
+            }))
+
+
+
             handleCloseDeletePropertyDialog();
 
         }).catch((err)=>{
