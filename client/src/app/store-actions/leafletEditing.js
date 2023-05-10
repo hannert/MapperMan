@@ -96,7 +96,7 @@ export const leafletEditing = createSlice({
             polyline.featureIndex = state.featureIndex;
             polyline.shape = shapes.polyline;
             // in stack with create polyline transaction
-            polyline.inStack = true;
+            // polyline.inStack = true;
             polyline.dragging.disable();
 
             state.layerGroup.addLayer(polyline);
@@ -130,11 +130,12 @@ export const leafletEditing = createSlice({
             polygon.featureIndex = state.featureIndex;
             polygon.shape = shapes.polygon;
             // in stack with create polygon transaction
-            polygon.inStack = true;
+            // polygon.inStack = true;
             polygon.dragging.disable();
 
             state.layerGroup.addLayer(polygon);
             state.activeDrawing = polygon;
+
         },
         /**
          * Deprecated
@@ -202,13 +203,36 @@ export const leafletEditing = createSlice({
             console.log(action.payload);
             console.log(state.layerClickedEditor);      
         },
-        startMouseTool: (state, action) =>{
+        mouseToolAction: (state, action) =>{
             console.log('Attaching onClick');
-            state.layerGroup.eachLayer(function(layer){
-                layer.on({
-                    'click': action.payload
-                });
-            });    
+            let feature = null;
+            for(let layer of state.layerGroup.getLayers()){
+                if(layer.featureIndex === state.featureClickedIndex){
+                    feature = layer;
+                }
+            }
+            console.log(feature);
+            console.log(state.editTool);
+            if(state.editTool === editTools.mouse){
+                console.log('Mouse tool action');
+                // console.log(feature.editor._enabled)
+                console.log(feature.editEnabled());
+
+                if(feature.editEnabled()){
+                    feature.setStyle({ color: "#3388ff" });
+                    feature.toggleEdit();
+                    state.layerGroup.getLayer(feature._leaflet_id).dragging.disable()
+                    console.log('Disabling edit');
+                    console.log(feature.editEnabled())
+                }else{
+                    feature.setStyle({ color: "black" });
+                    feature.toggleEdit();
+                    console.log('Enabling edit');
+                    console.log(feature.editEnabled())
+                    state.layerGroup.getLayer(feature._leaflet_id).dragging.enable()
+                }
+            }
+
         },
         setDraggable(state, action){
             state.layerGroup.getLayer(action.payload).dragging.enable()
@@ -262,18 +286,22 @@ export const leafletEditing = createSlice({
             });
         },
         unselectTool: (state, action) => {
-            state.layerGroup.eachLayer(function(layer){
-                layer.off(
-                    'click'
-                );
-                // Reset array colors if there was a merge selected
-                // Idk y this sometimes breaks 
-                // layer.setStyle({fillColor: '#3388FF'})
-            });     
+            console.log('Unselecting tool');
             
+            //TODO this def broke merge tool so need to look at it later, can uncomment this to fix it
+
+            // state.layerGroup.eachLayer(function(layer){
+            //     layer.off(
+            //         'click'
+            //     );
+            //     // Reset array colors if there was a merge selected
+            //     // Idk y this sometimes breaks 
+            //     // layer.setStyle({fillColor: '#3388FF'})
+            // });     
             state.editTool = null;
             state.layerClickedId = null;
             state.mergeArray = []; // Reset mergeArray when clicking out of merge
+            console.log('Tool unselected');
         },
         setLayerGroup(state, action){
             state.layerGroup = action.payload;
@@ -282,7 +310,13 @@ export const leafletEditing = createSlice({
             state.featureClicked = action.payload;
             console.log("feature in store: ", state.featureClicked);
         },
+        /**
+         * Index given in our app
+         * @param {*} state 
+         * @param {*} action 
+         */
         setFeatureIndexClicked: (state, action) =>{
+
             state.featureClickedIndex = action.payload;
             console.log("feature Index in store: ", state.featureClickedIndex);
         },
@@ -359,7 +393,7 @@ export const { setPrevGeoJSON, setCurrentGeoJSON, setInitialized, setEditTool, s
 startPolylineDraw, endPolylineDraw, unselectTool, setLayerGroup, setFeatureClicked, setFeatureIndexClicked,
  startMouseTracking, setLayerClickedId, setLayerClickedEditor, addVertex, stopMouseTracking,
 setDraggable, unsetDraggable, startPolygonDraw, endPolygonDraw, startMarker, endMarker, 
-startMouseTool, setMergeArray, mergeRegion, finishMergeRegion, startMergeTool, removeFeature, startRemoveTool, 
+mouseToolAction, setMergeArray, mergeRegion, finishMergeRegion, startMergeTool, removeFeature, startRemoveTool, 
 setCollaborators, setSharedWith, setChosenForDeletion, startCircleDraw, endCircleDraw, incrementFeatureIndex, setProperties, setFeatureIndex, updateProperties, applyDelta} = leafletEditing.actions;
 export default leafletEditing.reducer;
 

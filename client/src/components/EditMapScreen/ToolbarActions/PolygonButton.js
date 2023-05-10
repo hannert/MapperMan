@@ -2,7 +2,7 @@ import PentagonIcon from '@mui/icons-material/Pentagon';
 import { Box, Button, Tooltip } from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from 'react';
-import { editTools, incrementFeatureIndex, setEditTool, startPolygonDraw, updateProperties } from '../../../app/store-actions/leafletEditing';
+import { editTools, endPolygonDraw, incrementFeatureIndex, setEditTool, startPolygonDraw, unselectTool, updateProperties } from '../../../app/store-actions/leafletEditing';
 import CancelButton from './CancelButton';
 import * as L from 'leaflet';
 
@@ -17,6 +17,8 @@ export default function PolygonButton() {
     const properties = useSelector(state => state.leafletEditing.properties);
 
     function handleButtonClick(){
+        dispatch(unselectTool());
+
         console.log('Polygon Button Clicked');
         setHidden(false);
         dispatch(setEditTool(editTools.polygon))
@@ -25,12 +27,12 @@ export default function PolygonButton() {
         dispatch(startPolygonDraw())
     }
     
-    function endPolygonDraw(){
+    function endTool(){
         dispatch(updateProperties({
             properties: {name: 'New Polygon'}
         }))
+        // dispatch(endPolygonDraw())
         activeDrawing.disableEdit();
-        mapRef.editTools.commitDrawing();
     }
 
     //kind of redunant, but this is to make sure that the button is hidden 
@@ -38,6 +40,7 @@ export default function PolygonButton() {
     useEffect(()=>{
         if (currentEditTool !== editTools.polygon){
             setHidden(true);
+            
         }
     }, [currentEditTool])
 
@@ -48,7 +51,7 @@ export default function PolygonButton() {
                     <PentagonIcon />
                 </Button>
             </Tooltip>
-            { !hidden && <CancelButton setHidden={setHidden} cancelFunction={endPolygonDraw}/>}
+            { !hidden && <CancelButton setHidden={setHidden} cancelFunction={endTool}/>}
         </Box>
     );
 }

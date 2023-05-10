@@ -77,7 +77,6 @@ export default function EditScreen(){
             console.log(delta);
             dispatch(applyDelta(delta));
 
-
         })
 
     }, [])

@@ -5,7 +5,7 @@ import hash from 'object-hash';
 import React, { useEffect, useRef } from 'react';
 import { GeoJSON, MapContainer, TileLayer } from 'react-leaflet';
 import { useDispatch, useSelector } from 'react-redux';
-import { setFeatureIndex, setMapRef, setProperties, shapes } from '../../app/store-actions/leafletEditing';
+import { mouseToolAction, setFeatureIndex, setFeatureIndexClicked, setLayerClickedId, setMapRef, setProperties, shapes } from '../../app/store-actions/leafletEditing';
 import DeleteVertex_Transaction from '../../app/jsTPS/Transactions/DeleteVertex_Transaction';
 import { addCreatePolygonTransaction, addCreatePolylineTransaction, addDeleteFeatureTransaction, addDeleteVertexTransaction, addMoveFeatureTransaction, addMoveVertexTransaction, initTps, setVertexIndex, setfStartPos, setvStartPos } from '../../app/store-actions/transactions';
 
@@ -31,10 +31,12 @@ export default function LeafletContainer(){
             console.log("Layergroup: ",layerGroup);
             layerGroup.clearLayers()
             console.log('Layergroup after clear: ', layerGroup);
+            
 
             mapRef.current.on('editable:enable', (e) => {
                 console.log('Enable edit');
                 console.log(e);
+
                 e.layer.on('editable:vertex:click', (e) => {
                     console.log(e.vertex.getIndex());
                     dispatch(setVertexIndex(e.vertex.getIndex()));
@@ -100,10 +102,11 @@ export default function LeafletContainer(){
                 e.layer.on('remove', (e) => {
                     //If it was created through jstps ignore it
                     console.log(e.target);
-
-                    if(Object.hasOwn(e.target, 'inStack')){
-                        return
-                    }
+                    
+                    // if(e.target?.ignore === true){
+                    //     e.target.ignore = false;
+                    //     return
+                    // }
 
                     console.log('remove event')
                     let arr = []
@@ -129,8 +132,18 @@ export default function LeafletContainer(){
                 });
             });
 
+            // TODO disabling for testing purposes, merge won't work now
             mapRef.current.on('editable:disable', (e) => {
-                e.layer.off();
+                // console.log('disable edit')
+                // // console.log(e);
+                // console.log(e);
+                
+                e.layer.off()
+                e.layer.on('click', (e) => {
+                    console.log(e);
+                    dispatch(setFeatureIndexClicked(e.sourceTarget.featureIndex));
+                    dispatch(mouseToolAction())
+                });
             });
 
             mapRef.current.on('editable:drawing:end', (e) => {
@@ -173,9 +186,14 @@ export default function LeafletContainer(){
                 polygon.shape = shapes.polygon;
                 // console.log(polygon);
                 dispatch(initTps());
+
                 
+                polygon.on('click', (e) => {
+                    dispatch(setFeatureIndexClicked(e.sourceTarget.featureIndex));
+                    dispatch(mouseToolAction())
+                });
+
                 // TODO prob a better way to do this
-                // console.log(idx);
                 properties.push(geoJSON.features[idx].properties);
                 idx += 1;
                 layerGroup.addLayer(polygon);

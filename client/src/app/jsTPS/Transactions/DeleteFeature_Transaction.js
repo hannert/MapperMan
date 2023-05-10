@@ -34,7 +34,7 @@ export default class DeleteFeature_Transaction extends jsTPS_Transaction {
         polygon.featureIndex = this.featureIndex;
         polygon.properties = this.properties;
         //Don't add an extra transaction
-        polygon.inStack = true;
+        polygon.ignore = true;
 
         this.layerGroup.addLayer(polygon);
     }
