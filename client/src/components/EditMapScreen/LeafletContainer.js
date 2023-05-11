@@ -52,7 +52,7 @@ export default function LeafletContainer(){
                         /** HOW TO MAKE CHANGES SYNC:
                          * 
                          * 1. Edit the dispatch to also take the socket and mapID
-                         * 2. In the redux store, emit the change
+                         * 2. In the transaction redux slice, emit the change
                          * 3. Add it to our transaction stack using the transaction constructor, be 
                          * sure to pass the socket and mapID as well since it will be needed when undoing/redoing 
                          * 3. Create the respective listeners in the backend, and their responses
