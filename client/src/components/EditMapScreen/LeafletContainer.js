@@ -48,6 +48,23 @@ export default function LeafletContainer(){
                 e.layer.on('editable:vertex:deleted', (e) => {
                     if(e.layer.shape === shapes.polygon){
                         console.log(e);
+
+                        /** HOW TO MAKE CHANGES SYNC:
+                         * 
+                         * 1. Edit the dispatch to also take the socket and mapID
+                         * 2. In the redux store, emit the change
+                         * 3. Add it to our transaction stack using the transaction constructor, be 
+                         * sure to pass the socket and mapID as well since it will be needed when undoing/redoing 
+                         * 3. Create the respective listeners in the backend, and their responses
+                         * 4. Add emits of the changes to the transaction object, be sure to handle undo/redo accordingly
+                         * 5. Handle the responses from the backend in the area labeled below, you 
+                         * can basically copy paste the logic used in the transactions to reflect
+                         * the changes in the clientside, be sure to change all references to 
+                         * "this.variable"
+                         * 
+                         */
+
+
                         dispatch(addDeleteVertexTransaction({
                             layerGroup: layerGroup, 
                             latlng: e.latlng, 
@@ -197,6 +214,10 @@ export default function LeafletContainer(){
 
 
             /**Socket stuff, might have to move to its own useEffect */
+            /**HANDLE RECEIVING TRANSACTIONS HERE */
+
+
+
             socket.on('received transaction', (transaction)=>{
                 //Add transaction to the stack
                 if(transaction.type === "delete vertex"){
