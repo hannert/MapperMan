@@ -48,10 +48,8 @@ export const transactions = createSlice({
             /**Send the action to other clients */
             let socket = action.payload.socket;
             let room = action.payload.mapId;
-            console.log("emitting");
-            console.log(transaction)
-            console.log(socket.emit('create transaction', room, action.payload.latlng.lat, action.payload.latlng.lng, action.payload.featureIndex, action.payload.vertexIndex, action.payload.shape, "delete vertex" ))
-            console.log("heheh")
+            socket.emit('create delete transaction', room, action.payload.latlng.lat, action.payload.latlng.lng, action.payload.featureIndex, action.payload.vertexIndex, action.payload.shape, "delete vertex" );
+
 
         },
         setVertexIndex(state, action){
@@ -63,8 +61,17 @@ export const transactions = createSlice({
         addMoveVertexTransaction: (state, action) => {
             console.log(state.vStartPos);
             console.log(action.payload.endPos);
-            let transaction = new MoveVertex_Transaction(action.payload.layerGroup, action.payload.featureIndex, state.vStartPos, action.payload.endPos);
+            let transaction = new MoveVertex_Transaction(action.payload.layerGroup, action.payload.featureIndex, state.vStartPos, action.payload.endPos, action.payload.socket, action.payload.mapId);
             state.tps.addTransaction(transaction);
+
+
+
+            let socket = action.payload.socket;
+            let room = action.payload.mapId;
+            console.log("emitting");
+            console.log(transaction)
+            socket.emit('create move vertex transaction', room, action.payload.featureIndex, state.vStartPos.lat, state.vStartPos.lng, action.payload.endPos.lat, action.payload.endPos.lng, "move vertex" );
+            console.log("heheh")
         },
         setfStartPos(state, action){
             state.fStartPos = action.payload;

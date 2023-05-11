@@ -99,7 +99,9 @@ export default function LeafletContainer(){
                     dispatch(addMoveVertexTransaction({
                         layerGroup: layerGroup,
                         featureIndex: e.target.featureIndex,
-                        endPos: latlng
+                        endPos: latlng,
+                        mapId: mapId,
+                        socket: socket
                     }))
                     
                 });
@@ -218,7 +220,7 @@ export default function LeafletContainer(){
 
 
 
-            socket.on('received transaction', (transaction)=>{
+            socket.on('received delete vertex transaction', (transaction)=>{
                 //Add transaction to the stack
                 if(transaction.type === "delete vertex"){
 
@@ -297,9 +299,58 @@ export default function LeafletContainer(){
                         }
                     }
                 }
+            })
+
+            socket.on('received move vertex transaction', (transaction)=>{
+                if(transaction.type==="move vertex"){
+                    for(let layer of layerGroup.getLayers()){
+                        if(layer.featureIndex === transaction.featureIndex){
+
+                            let startPos = L.latLng(transaction.startLat, transaction.startLng);
+                            let endPos = L.latLng(transaction.endLat, transaction.endLng);
 
 
+                            //can't search through latlngs like this on everything :(
+                            for(let latlng of layer._latlngs[0]){
+                                if(latlng.equals(startPos, .1)){
+                                    let idx = layer._latlngs[0].indexOf(latlng);
+                                    layer._latlngs[0].splice(idx, 1);
+                                    layer._latlngs[0].splice(idx, 0, endPos);
+                                    console.log('moved')
+                                    //absolutely brutal on client side performance
+                                    layer.redraw();
+                                    layer.disableEdit();
+                                    layer.enableEdit();
+                                }
+                            }
+                        }
+                    }
+                }
 
+                else if(transaction.type==="undo move vertex"){
+                    for(let layer of layerGroup.getLayers()){
+                        if(layer.featureIndex === transaction.featureIndex){
+
+                            let startPos = L.latLng(transaction.startLat, transaction.startLng);
+                            let endPos = L.latLng(transaction.endLat, transaction.endLng);
+
+
+                            //can't search through latlngs like this on everything :(
+                            for(let latlng of layer._latlngs[0]){
+                                if(latlng.equals(endPos, .1)){
+                                    let idx = layer._latlngs[0].indexOf(latlng);
+                                    layer._latlngs[0].splice(idx, 1);
+                                    layer._latlngs[0].splice(idx, 0, startPos);
+                                    console.log('moved')
+                                    //absolutely brutal on client side performance
+                                    layer.redraw();
+                                    layer.disableEdit();
+                                    layer.enableEdit();
+                                }
+                            }
+                        }
+                    }
+                }
             })
 
             

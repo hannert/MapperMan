@@ -12,7 +12,7 @@ export default class DeleteVertex_Transaction extends jsTPS_Transaction {
         this.shape = shape;
         this.dontDo = true;
         this.socket = socket;
-        this.mapId = mapId
+        this.mapId = mapId;
     }
 
     doTransaction() {
@@ -22,7 +22,7 @@ export default class DeleteVertex_Transaction extends jsTPS_Transaction {
 
         let room = this.mapId;
         console.log("emitting");
-        console.log(this.socket.emit('create transaction', room, this.latlng.lat, this.latlng.lng, this.featureIndex, this.vertexIndex, this.shape, "delete vertex" ))
+        this.socket.emit('create delete transaction', room, this.latlng.lat, this.latlng.lng, this.featureIndex, this.vertexIndex, this.shape, "delete vertex" )
 
 
 
@@ -74,7 +74,7 @@ export default class DeleteVertex_Transaction extends jsTPS_Transaction {
 
         let room = this.mapId;
         console.log("emitting");
-        console.log(this.socket.emit('create transaction', room, this.latlng.lat, this.latlng.lng, this.featureIndex, this.vertexIndex, this.shape, "undo delete vertex" ))
+        this.socket.emit('create delete transaction', room, this.latlng.lat, this.latlng.lng, this.featureIndex, this.vertexIndex, this.shape, "undo delete vertex" );
 
 
         for(let layer of this.layerGroup.getLayers()){

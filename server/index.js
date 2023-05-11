@@ -130,9 +130,9 @@ io.on('connection', (socket) => {
     })
 
     socket.on('create transaction', async(roomName, lat, lng, featureIndex, vertexIndex, shape, type)=>{
-      console.log("create transaction from ", roomName)
+      console.log("create delete transaction from ", roomName)
       if(type==="delete vertex"){
-        socket.in(roomName).emit('received transaction', {
+        socket.in(roomName).emit('received delete vertex transaction', {
           lat: lat,
           lng: lng,
           featureIndex: featureIndex,
@@ -143,7 +143,7 @@ io.on('connection', (socket) => {
       }
 
       else if(type==="undo delete vertex"){
-        socket.in(roomName).emit('received transaction', {
+        socket.in(roomName).emit('received delete vertex transaction', {
           lat: lat,
           lng: lng,
           featureIndex: featureIndex,
@@ -152,11 +152,30 @@ io.on('connection', (socket) => {
           type: "undo delete vertex"
         })
       }
-
-
-
     })
 
+    socket.on('create move vertex transaction', async(roomName, featureIndex, startLat, startLng, endLat, endLng, type)=>{
+        if(type==="move vertex"){
+          socket.in(roomName).emit('received move vertex transaction', {
+            featureIndex: featureIndex,
+            startLat: startLat,
+            startLng: startLng,
+            endLat: endLat,
+            endLng: endLng,
+            type: "move vertex"
+          })
+        }
+        else if(type==="undo move vertex"){
+          socket.in(roomName).emit('received move vertex transaction',{
+            featureIndex: featureIndex,
+            startLat: startLat,
+            startLng: startLng,
+            endLat: endLat,
+            endLng: endLng,
+            type: "undo move vertex"
+          })
+        }
+    })
 
 
 })
