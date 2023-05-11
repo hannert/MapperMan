@@ -127,10 +127,21 @@ io.on('connection', (socket) => {
       socket.in(roomName).emit('added property', featureIndex, key, value);
 
     }
+    })
 
-
-    // socket.in(roomName).emit('')
-  })
+    socket.on('create transaction', async(roomName, lat, lng, featureIndex, vertexIndex, shape, type)=>{
+      console.log("create transaction from ", roomName)
+      if(type==="delete vertex"){
+        socket.in(roomName).emit('received transaction', {
+          lat: lat,
+          lng: lng,
+          featureIndex: featureIndex,
+          vertexIndex: vertexIndex,
+          shape: shape,
+          type: type
+        })
+      }
+    })
 
 
 

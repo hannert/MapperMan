@@ -2,19 +2,24 @@ import * as L from 'leaflet';
 import 'leaflet-editable';
 import 'leaflet-path-drag';
 import hash from 'object-hash';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useContext } from 'react';
 import { GeoJSON, MapContainer, TileLayer } from 'react-leaflet';
 import { useDispatch, useSelector } from 'react-redux';
 import { setFeatureIndex, setMapRef, setProperties, shapes } from '../../app/store-actions/leafletEditing';
 import DeleteVertex_Transaction from '../../app/jsTPS/Transactions/DeleteVertex_Transaction';
 import { addCreatePolygonTransaction, addCreatePolylineTransaction, addDeleteFeatureTransaction, addDeleteVertexTransaction, addMoveFeatureTransaction, addMoveVertexTransaction, initTps, setVertexIndex, setfStartPos, setvStartPos } from '../../app/store-actions/transactions';
+import { SocketContext } from '../../socket';
+
+
 
 export default function LeafletContainer(){
 
 
     const geoJSON = useSelector((state) => state.leafletEditing.currentGeoJSON);
     const layerGroup = useSelector((state) => state.leafletEditing.layerGroup);
+    const mapId = useSelector((state) => state.editMapList.activeMapId);
     const tps = useSelector((state) => state.transactions.tps);
+    const socket = useContext(SocketContext);
 
     const mapRef = useRef(null);
     const dispatch = useDispatch();
@@ -47,7 +52,9 @@ export default function LeafletContainer(){
                             layerGroup: layerGroup, 
                             latlng: e.latlng, 
                             featureIndex: e.sourceTarget.featureIndex,
-                            shape: shapes.polygon
+                            shape: shapes.polygon,
+                            mapId: mapId,
+                            socket: socket
                         }))
                     }
                     if(e.layer.shape === shapes.polyline){
@@ -56,7 +63,9 @@ export default function LeafletContainer(){
                             layerGroup: layerGroup, 
                             latlng: e.latlng, 
                             featureIndex: e.sourceTarget.featureIndex,
-                            shape: shapes.polyline
+                            shape: shapes.polyline,
+                            mapId: mapId,
+                            socket: socket
                         }))
                     }
                 });
@@ -183,10 +192,61 @@ export default function LeafletContainer(){
             // TODO prob a better way to do this
             dispatch(setProperties(properties));
             dispatch(setFeatureIndex(idx));
-            layerGroup.addTo(mapRef.current)
+            layerGroup.addTo(mapRef.current);
+
+
+
+            /**Socket stuff, might have to move to its own useEffect */
+            socket.on('received transaction', (transaction)=>{
+                //Add transaction to the stack
+                if(transaction.type === "delete vertex"){
+                    console.log("received a delete vertex transaction");
+                    let transactionLatLng = L.latLng(transaction.lat,transaction.lng);
+                    for(let layer of layerGroup.getLayers()){
+                        if(layer.featureIndex === transaction.featureIndex){
+                            //can't search through latlngs like this on everything :(
+                            if(transaction.shape === shapes.polygon){
+                                for(let latlng of layer._latlngs[0]){
+                                    if(latlng.equals(transactionLatLng)){
+                                        console.log('found it');
+                                        let idx = layer._latlngs[0].indexOf(latlng);
+                                        console.log(idx);
+                                        layer._latlngs[0].splice(idx, 1);
+                                        
+                                        console.log('deleted vertex')
+                                        //absolutely brutal on client side performance
+                                        layer.redraw();
+                                        layer.disableEdit();
+                                        layer.enableEdit();
+                                    }
+                                }
+                            }
+                            if(this.shape === shapes.polyline){
+                                for(let latlng of layer.getLatLngs()){
+                                    if(latlng.equals(transactionLatLng, .1)){
+                                        console.log('found it');
+                                        let idx = layer.getLatLngs().indexOf(latlng);
+                                        console.log(idx);
+                                        layer.getLatLngs().splice(idx, 1);
+                                        
+                                        console.log('deleted vertex')
+                                        //absolutely brutal on client side performance
+                                        layer.redraw();
+                                        layer.disableEdit();
+                                        layer.enableEdit();
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            })
+
             
         }
     }, [mapRef.current]);
+
+
 
     // Leaflet Map Container will only be used for initial map creation and that's it
     return (

@@ -42,6 +42,16 @@ export const transactions = createSlice({
             new DeleteVertex_Transaction(action.payload.layerGroup, action.payload.latlng, 
                 action.payload.featureIndex, state.vertexIndex, action.payload.shape);
             state.tps.addTransaction(transaction);
+
+            //**Include these args if you want to send to another client */
+            if(action.payload.socket && action.payload.mapId){
+                let socket = action.payload.socket;
+                let room = action.payload.mapId;
+                console.log("emitting");
+                console.log(transaction)
+                console.log(socket.emit('create transaction', room, action.payload.latlng.lat, action.payload.latlng.lng, action.payload.featureIndex, action.payload.vertexIndex, action.payload.shape, "delete vertex" ))
+                console.log("heheh")
+            }
         },
         setVertexIndex(state, action){
             state.vertexIndex = action.payload;
