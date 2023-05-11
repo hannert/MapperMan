@@ -200,6 +200,7 @@ export default function LeafletContainer(){
             socket.on('received transaction', (transaction)=>{
                 //Add transaction to the stack
                 if(transaction.type === "delete vertex"){
+
                     console.log("received a delete vertex transaction");
                     let transactionLatLng = L.latLng(transaction.lat,transaction.lng);
                     for(let layer of layerGroup.getLayers()){
@@ -221,7 +222,7 @@ export default function LeafletContainer(){
                                     }
                                 }
                             }
-                            if(this.shape === shapes.polyline){
+                            if(transaction.shape === shapes.polyline){
                                 for(let latlng of layer.getLatLngs()){
                                     if(latlng.equals(transactionLatLng, .1)){
                                         console.log('found it');
@@ -240,6 +241,44 @@ export default function LeafletContainer(){
                         }
                     }
                 }
+
+                else if(transaction.type === "undo delete vertex"){
+                    
+                    console.log("received an undo from the other client")
+
+                    let transactionLatLng = L.latLng(transaction.lat,transaction.lng);
+                    for(let layer of layerGroup.getLayers()){
+            
+                        if(layer.featureIndex === transaction.featureIndex){
+                            if(transaction.shape === shapes.polygon){
+                                console.log('found it');
+                                console.log('Inserting latlng');
+                                console.log(transactionLatLng);
+                                console.log(transaction.vertexIndex)
+                                layer._latlngs[0].splice(transaction.vertexIndex, 0, transactionLatLng);
+                
+                                console.log('added vertex')
+                                //absolutely brutal on client side performance
+                                layer.redraw();
+                                layer.disableEdit();
+                                layer.enableEdit();
+                            }
+                            if(transaction.shape === shapes.polyline){
+                                console.log('found it');
+                                layer._latlngs.splice(transaction.vertexIndex, 0, transactionLatLng);
+                                
+                                console.log('added vertex')
+                                //absolutely brutal on client side performance
+                                layer.redraw();
+                                layer.disableEdit();
+                                layer.enableEdit();
+                            }
+                        }
+                    }
+                }
+
+
+
             })
 
             

@@ -3,7 +3,7 @@ import { jsTPS_Transaction } from "../jsTPS";
 
 export default class DeleteVertex_Transaction extends jsTPS_Transaction {
 
-    constructor(layerGroup, latlng, featureIndex, vertexIndex, shape) {
+    constructor(layerGroup, latlng, featureIndex, vertexIndex, shape, socket, mapId) {
         super();
         this.layerGroup = layerGroup;
         this.latlng = latlng;
@@ -11,9 +11,22 @@ export default class DeleteVertex_Transaction extends jsTPS_Transaction {
         this.vertexIndex = vertexIndex;
         this.shape = shape;
         this.dontDo = true;
+        this.socket = socket;
+        this.mapId = mapId
     }
 
     doTransaction() {
+
+
+        /**SEND TO OTHER CLIENTS: */
+
+        let room = this.mapId;
+        console.log("emitting");
+        console.log(this.socket.emit('create transaction', room, this.latlng.lat, this.latlng.lng, this.featureIndex, this.vertexIndex, this.shape, "delete vertex" ))
+
+
+
+
         for(let layer of this.layerGroup.getLayers()){
             if(layer.featureIndex === this.featureIndex){
                 //can't search through latlngs like this on everything :(
@@ -58,6 +71,12 @@ export default class DeleteVertex_Transaction extends jsTPS_Transaction {
      *  Need to add the vertex to whatever shape had it
      */
     undoTransaction() {
+
+        let room = this.mapId;
+        console.log("emitting");
+        console.log(this.socket.emit('create transaction', room, this.latlng.lat, this.latlng.lng, this.featureIndex, this.vertexIndex, this.shape, "undo delete vertex" ))
+
+
         for(let layer of this.layerGroup.getLayers()){
             
             if(layer.featureIndex === this.featureIndex){

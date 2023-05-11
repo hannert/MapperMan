@@ -138,9 +138,23 @@ io.on('connection', (socket) => {
           featureIndex: featureIndex,
           vertexIndex: vertexIndex,
           shape: shape,
-          type: type
+          type: "delete vertex"
         })
       }
+
+      else if(type==="undo delete vertex"){
+        socket.in(roomName).emit('received transaction', {
+          lat: lat,
+          lng: lng,
+          featureIndex: featureIndex,
+          vertexIndex: vertexIndex,
+          shape: shape,
+          type: "undo delete vertex"
+        })
+      }
+
+
+
     })
 
 
