@@ -80,8 +80,15 @@ export const transactions = createSlice({
             let offsetX = action.payload.endPos['lat'] - state.fStartPos['lat'];
             let offsetY = action.payload.endPos['lng'] - state.fStartPos['lng'];
 
-            let transaction = new MoveFeature_Transaction(action.payload.layerGroup, action.payload.featureIndex, offsetX, offsetY);
+            let transaction = new MoveFeature_Transaction(action.payload.layerGroup, action.payload.featureIndex, offsetX, offsetY, action.payload.socket, action.payload.mapId);
             state.tps.addTransaction(transaction);
+
+            let socket = action.payload.socket;
+            let room = action.payload.mapId;
+            console.log("emitting");
+            console.log(transaction)
+            socket.emit('create move feature transaction', room, action.payload.featureIndex, offsetX, offsetY, "move feature" );
+            console.log("heheh")
         },
         addDeleteFeatureTransaction: (state, action) => {
             console.log('delete transaction');

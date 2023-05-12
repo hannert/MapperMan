@@ -121,7 +121,9 @@ export default function LeafletContainer(){
                     dispatch(addMoveFeatureTransaction({
                         layerGroup: layerGroup,
                         featureIndex: e.target.featureIndex,
-                        endPos: e.target._latlngs[0][0]
+                        endPos: e.target._latlngs[0][0],
+                        mapId: mapId,
+                        socket: socket
                     }))
                 });
 
@@ -221,6 +223,7 @@ export default function LeafletContainer(){
 
 
             socket.on('received delete vertex transaction', (transaction)=>{
+                console.log("delete transaction")
                 //Add transaction to the stack
                 if(transaction.type === "delete vertex"){
 
@@ -240,8 +243,7 @@ export default function LeafletContainer(){
                                         console.log('deleted vertex')
                                         //absolutely brutal on client side performance
                                         layer.redraw();
-                                        layer.disableEdit();
-                                        layer.enableEdit();
+                                        // layer.disableEdit();
                                     }
                                 }
                             }
@@ -256,8 +258,7 @@ export default function LeafletContainer(){
                                         console.log('deleted vertex')
                                         //absolutely brutal on client side performance
                                         layer.redraw();
-                                        layer.disableEdit();
-                                        layer.enableEdit();
+                                        // layer.disableEdit();
                                     }
                                 }
                             }
@@ -283,8 +284,7 @@ export default function LeafletContainer(){
                                 console.log('added vertex')
                                 //absolutely brutal on client side performance
                                 layer.redraw();
-                                layer.disableEdit();
-                                layer.enableEdit();
+                                // layer.disableEdit();
                             }
                             if(transaction.shape === shapes.polyline){
                                 console.log('found it');
@@ -293,8 +293,7 @@ export default function LeafletContainer(){
                                 console.log('added vertex')
                                 //absolutely brutal on client side performance
                                 layer.redraw();
-                                layer.disableEdit();
-                                layer.enableEdit();
+                                // layer.disableEdit();
                             }
                         }
                     }
@@ -320,7 +319,6 @@ export default function LeafletContainer(){
                                     //absolutely brutal on client side performance
                                     layer.redraw();
                                     layer.disableEdit();
-                                    layer.enableEdit();
                                 }
                             }
                         }
@@ -345,9 +343,41 @@ export default function LeafletContainer(){
                                     //absolutely brutal on client side performance
                                     layer.redraw();
                                     layer.disableEdit();
-                                    layer.enableEdit();
                                 }
                             }
+                        }
+                    }
+                }
+            })
+
+            socket.on('received move feature transaction', (transaction)=>{
+                if(transaction.type ==='move feature'){
+                    for(let layer of layerGroup.getLayers()){
+                        if(layer.featureIndex === transaction.featureIndex){
+                            console.log('found it');
+                            //can't search through latlngs like this on everything :(
+                            for(let latlng of layer._latlngs[0]){
+                                latlng['lat'] += transaction.offsetX;
+                                latlng['lng'] += transaction.offsetY;
+                                console.log(latlng['lat'] + ' ' + latlng['lng']);
+                            }
+                            layer.redraw();
+                            layer.disableEdit();
+                        }
+                    }
+                }
+                else if(transaction.type === 'undo move feature'){
+                    for(let layer of layerGroup.getLayers()){
+                        if(layer.featureIndex === transaction.featureIndex){
+                            console.log('found it');
+                            //can't search through latlngs like this on everything :(
+                            for(let latlng of layer._latlngs[0]){
+                                latlng['lat'] -= transaction.offsetX;
+                                latlng['lng'] -= transaction.offsetY;
+                                console.log(latlng['lat'] + ' ' + latlng['lng']);
+                            }
+                            layer.redraw();
+                            layer.disableEdit();
                         }
                     }
                 }

@@ -129,7 +129,7 @@ io.on('connection', (socket) => {
     }
     })
 
-    socket.on('create transaction', async(roomName, lat, lng, featureIndex, vertexIndex, shape, type)=>{
+    socket.on('create delete transaction', async(roomName, lat, lng, featureIndex, vertexIndex, shape, type)=>{
       console.log("create delete transaction from ", roomName)
       if(type==="delete vertex"){
         socket.in(roomName).emit('received delete vertex transaction', {
@@ -175,6 +175,25 @@ io.on('connection', (socket) => {
             type: "undo move vertex"
           })
         }
+    })
+
+    socket.on('create move feature transaction', async(roomName, featureIndex, offsetX, offsetY, type)=>{
+      if(type == "move feature"){
+        socket.in(roomName).emit('received move feature transaction',{
+          featureIndex: featureIndex,
+          offsetX: offsetX,
+          offsetY: offsetY,
+          type: 'move feature'
+        })
+      }
+      else if(type === "undo move feature"){
+        socket.in(roomName).emit("received move feature transaction",{
+          featureIndex: featureIndex,
+          offsetX: offsetX,
+          offsetY: offsetY,
+          type: 'undo move feature'
+        })
+      }
     })
 
 
