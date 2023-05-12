@@ -153,7 +153,9 @@ export default function LeafletContainer(){
                         layerGroup: layerGroup,
                         latlngs: arr,
                         properties: e.sourceTarget.properties,
-                        featureIndex: e.sourceTarget.featureIndex
+                        featureIndex: e.sourceTarget.featureIndex,
+                        socket: socket,
+                        mapId: mapId
                     }))
                     
                 });
@@ -380,6 +382,30 @@ export default function LeafletContainer(){
                             layer.disableEdit();
                         }
                     }
+                }
+            })
+
+            socket.on('received delete feature transaction', (transaction)=>{
+                if(transaction.type ==='delete feature'){
+                    for(let layer of layerGroup.getLayers()){
+                        if(layer.featureIndex === transaction.featureIndex){
+                            //can't search through latlngs like this on everything :(
+                            layerGroup.removeLayer(layer);
+                        }
+                    }
+                }
+                else if(transaction.type === 'undo delete feature'){
+                    // let transactionLatLng = L.latLng(transaction.lat,transaction.lng);
+
+                    const polygon = L.polygon(transaction.latlngs, {draggable:true});
+                    polygon.dragging.disable();
+                    console.log(polygon);
+                    polygon.featureIndex = transaction.featureIndex;
+                    polygon.properties = transaction.properties;
+                    //Don't add an extra transaction
+                    polygon.inStack = true;
+
+                    layerGroup.addLayer(polygon);
                 }
             })
 

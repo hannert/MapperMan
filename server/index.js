@@ -196,6 +196,25 @@ io.on('connection', (socket) => {
       }
     })
 
+    socket.on('create delete feature transaction', async(roomName, featureIndex, latlngs, properties, type)=>{
+      if(type == "delete feature"){
+        socket.in(roomName).emit('received delete feature transaction',{
+          featureIndex: featureIndex,
+          latlngs: latlngs,
+          properties: properties,
+          type: 'delete feature'
+        })
+      }
+      else if(type === "undo delete feature"){
+        socket.in(roomName).emit("received delete feature transaction",{
+          featureIndex: featureIndex,
+          latlngs: latlngs,
+          properties: properties,
+          type: 'undo delete feature'
+        })
+      }
+    })
+
 
 })
 

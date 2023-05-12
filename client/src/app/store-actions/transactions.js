@@ -92,8 +92,15 @@ export const transactions = createSlice({
         },
         addDeleteFeatureTransaction: (state, action) => {
             console.log('delete transaction');
-            let transaction = new DeleteFeature_Transaction(action.payload.layerGroup, action.payload.latlngs, action.payload.properties, action.payload.featureIndex);
+            let transaction = new DeleteFeature_Transaction(action.payload.layerGroup, action.payload.latlngs, action.payload.properties, action.payload.featureIndex, action.payload.socket, action.payload.mapId);
             state.tps.addTransaction(transaction);
+
+            let socket = action.payload.socket;
+            let room = action.payload.mapId;
+            console.log("emitting");
+            console.log(transaction)
+            socket.emit('create delete feature transaction', room, action.payload.featureIndex, action.payload.latlngs, action.payload.properties, "delete feature" );
+            console.log("heheh")
         },
         addCreatePolygonTransaction: (state, action) => {
             let transaction = new CreatePolygon_Transaction(action.payload.layerGroup, action.payload.latlngs, action.payload.properties, action.payload.featureIndex);
