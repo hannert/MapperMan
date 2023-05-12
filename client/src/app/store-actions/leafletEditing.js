@@ -294,6 +294,11 @@ export const leafletEditing = createSlice({
             let geometryFirst = state.layerGroup.getLayer(state.mergeArray[0]).toGeoJSON();
             let geometrySecond = state.layerGroup.getLayer(state.mergeArray[1]).toGeoJSON();
             
+            /**Set these to true so the listener in the container doesnt pick it up */
+            state.layerGroup.getLayer(state.mergeArray[0]).inStack = true;
+            state.layerGroup.getLayer(state.mergeArray[1]).inStack = true;
+
+
             state.layerGroup.removeLayer(state.mergeArray[0])
             state.layerGroup.removeLayer(state.mergeArray[1])
             console.log("Removed old region")
