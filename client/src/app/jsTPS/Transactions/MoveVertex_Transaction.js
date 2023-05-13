@@ -3,10 +3,11 @@ import { jsTPS_Transaction } from "../jsTPS";
 
 export default class MoveVertex_Transaction extends jsTPS_Transaction {
 
-    constructor(layerGroup, featureIndex, startPos, endPos, socket, mapId) {
+    constructor(layerGroup, featureIndex, subPolyIndex, startPos, endPos, socket, mapId) {
         super();
         this.layerGroup = layerGroup;
         this.featureIndex = featureIndex;
+        this.subPolyIndex = subPolyIndex;
         this.startPos = startPos;
         this.endPos = endPos;
         this.dontDo = true;
@@ -87,7 +88,7 @@ export default class MoveVertex_Transaction extends jsTPS_Transaction {
         console.log("emitting")
         this.socket.emit('create move vertex transaction', room, this.featureIndex, this.startPos.lat, this.startPos.lng, this.endPos.lat, this.endPos.lng, "undo move vertex" );
 
-
+        console.log("SubPolyIndex is ", this.subPolyIndex)
 
 
 
@@ -100,6 +101,7 @@ export default class MoveVertex_Transaction extends jsTPS_Transaction {
                     // If any child of initial depth is array, there is a GROUPED POLYGON subregion
                     let groupedPolygon = Array.isArray(estrangedPolygon[0])
                     if(groupedPolygon === true){
+                        
                         for(let [j, lattie] of estrangedPolygon.entries()){
                             for(let [k, latlng] of lattie.entries()){
                                 if(latlng.equals(this.endPos, .000001)){

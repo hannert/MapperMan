@@ -6,7 +6,7 @@ import React, { useContext, useEffect, useRef } from 'react';
 import { GeoJSON, MapContainer, TileLayer } from 'react-leaflet';
 import { useDispatch, useSelector } from 'react-redux';
 import { setFeatureIndex, setMapRef, setProperties, shapes } from '../../app/store-actions/leafletEditing';
-import { addCreatePolygonTransaction, addCreatePolylineTransaction, addDeleteFeatureTransaction, addDeleteVertexTransaction, addMoveFeatureTransaction, addMoveVertexTransaction, initTps, setVertexIndex, setfStartPos, setvStartPos } from '../../app/store-actions/transactions';
+import { addCreatePolygonTransaction, addCreatePolylineTransaction, addDeleteFeatureTransaction, addDeleteVertexTransaction, addMoveFeatureTransaction, addMoveVertexTransaction, initTps, setDeleteParams, setfStartPos, setvStartPos } from '../../app/store-actions/transactions';
 import { SocketContext } from '../../socket';
 
 
@@ -40,14 +40,50 @@ export default function LeafletContainer(){
             mapRef.current.on('editable:enable', (e) => {
                 console.log('Enable edit');
                 console.log(e);
+
                 e.layer.on('editable:vertex:click', (e) => {
-                    console.log(e.vertex.getIndex());
-                    dispatch(setVertexIndex(e.vertex.getIndex()));
+                    // We need to find the index of the subpolygon, if it is nested 
+                    // before it is removed from the polygon 
+                    e.cancel();
+                    let indexOfVertex = e.vertex.getIndex();
+                    let vertex = e.vertex.latlng
+                    let tempSubPolyIndex = 0;
+
+                    for(let [i, polygon] of e.layer._latlngs.entries()){
+                        if(Array.isArray(polygon[0])){
+                            // One level down is where we will find the latlngs
+                            if(polygon[0][indexOfVertex]?.lat === vertex.lat && polygon[0][indexOfVertex]?.lng === vertex.lng){
+                                console.log('polygon ', i, ' contains the vertex!')
+                                tempSubPolyIndex = i;
+                                dispatch(setDeleteParams({'subPolyIndex': tempSubPolyIndex, 'vertexIndex': indexOfVertex}))
+                            }
+                        } else {
+                            if(polygon[indexOfVertex]?.lat === vertex.lat && polygon[indexOfVertex]?.lng === vertex.lng){
+                                console.log('polygon ', i, ' contains the vertex!')
+                                tempSubPolyIndex = i;
+                                dispatch(setDeleteParams({'subPolyIndex': tempSubPolyIndex, 'vertexIndex': indexOfVertex}))
+                            }
+                        }
+                    }
+
+
+
+                    e.vertex.delete();
                 });
 
+                // e.layer.on('editable:vertex:click', (e) => {
+                //     // We need to find the index of the subpolygon, if it is nested
+                //     console.log('Editable vertex clicked with index of:', e.vertex.getIndex());
+                //     console.log(e)
+                //     console.log(e.vertex)
+                //     dispatch(setVertexIndex(e.vertex.getIndex()));
+                //     e.vertex.delete();
+                // });
+
                 e.layer.on('editable:vertex:deleted', (e) => {
+                    
                     if(e.layer.shape === shapes.polygon){
-                        console.log(e);
+                        console.log('Delete vertex', e);
 
                         /** HOW TO MAKE CHANGES SYNC:
                          * 
@@ -80,6 +116,7 @@ export default function LeafletContainer(){
                             layerGroup: layerGroup, 
                             latlng: e.latlng, 
                             featureIndex: e.sourceTarget.featureIndex,
+                            
                             shape: shapes.polyline,
                             mapId: mapId,
                             socket: socket
@@ -96,9 +133,35 @@ export default function LeafletContainer(){
 
                 e.layer.on('editable:vertex:dragend', (e) => {
                     let latlng = L.latLng(e.vertex.latlng['lat'], e.vertex.latlng['lng']);
+                    console.log('dragend vertex index', e.vertex.getIndex())
+                    let indexOfVertex = e.vertex.getIndex();
+                    let vertex = e.vertex.latlng
+                    let subPolyIndex = 0;
+                    // Get subpoly
+                    // console.log("e.layer in dragend", e.layer)
+                    // console.log(vertex)
+                    // console.log(indexOfVertex)
+                    for(let [i, polygon] of e.layer._latlngs.entries()){
+                        console.log(polygon)
+                        console.log(polygon[indexOfVertex])
+                        if(Array.isArray(polygon[0])){
+                            // One level down is where we will find the latlngs
+                            if(polygon[0][indexOfVertex]?.lat === vertex.lat && polygon[0][indexOfVertex]?.lng === vertex.lng){
+                                console.log('polygon ', i, ' contains the vertex!')
+                                subPolyIndex = i;
+                            }
+                        } else {
+                            if(polygon[indexOfVertex]?.lat === vertex.lat && polygon[indexOfVertex]?.lng === vertex.lng){
+                                console.log('polygon ', i, ' contains the vertex!')
+                                subPolyIndex = i;
+                            }
+                        }
+                        
+                    }
                     dispatch(addMoveVertexTransaction({
                         layerGroup: layerGroup,
                         featureIndex: e.target.featureIndex,
+                        subPolyIndex: subPolyIndex,
                         endPos: latlng,
                         mapId: mapId,
                         socket: socket

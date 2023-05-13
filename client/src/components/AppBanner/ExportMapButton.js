@@ -26,8 +26,8 @@ export default function ExportMapButton (props) {
 
     return (
         <Tooltip title='Download map'>
-            <IconButton>
-                <FileDownloadIcon onClick={handleClick}/>
+            <IconButton onClick={handleClick}>
+                <FileDownloadIcon />
             </IconButton>
         </Tooltip>
         

@@ -95,30 +95,30 @@ export default function EditMapActions () {
                 <CollaboratorGroup />
                     
                 <Tooltip title='Add collaborators'>
-                    <IconButton>
-                        <Groups onClick={toggleCollaboratorDialog}/>
+                    <IconButton onClick={toggleCollaboratorDialog}>
+                        <Groups />
                     </IconButton>
                 </Tooltip>
                 
                 
                 <Tooltip title='Edit map name'>
-                    <IconButton>
-                        <Edit onClick={toggleEditDialog} />
+                    <IconButton onClick={toggleEditDialog}>
+                        <Edit  />
                     </IconButton>
                 </Tooltip>
                 <Tooltip title='Delete map'>
-                    <IconButton >
-                        <Delete onClick={toggleDeleteDialog} />
+                    <IconButton onClick={toggleDeleteDialog}>
+                        <Delete  />
                     </IconButton>
                 </Tooltip>    
                 <Tooltip title='Publish map'>
-                    <IconButton>
-                        <Publish onClick={togglePublishDialog} />
+                    <IconButton onClick={togglePublishDialog}>
+                        <Publish  />
                     </IconButton>
                 </Tooltip>    
                 <Tooltip title='Save map'>
-                    <IconButton>
-                        <Save onClick={handleSave} />
+                    <IconButton onClick={handleSave}>
+                        <Save  />
                     </IconButton>
                 </Tooltip>
                 <ExportMapButton />
