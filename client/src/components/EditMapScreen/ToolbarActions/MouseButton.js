@@ -11,16 +11,17 @@ export default function MouseButton(){
     const [hidden, setHidden] = useState(true);
     const dispatch = useDispatch()
     const currentEditTool = useSelector(state => state.leafletEditing.editTool);
-    const layerClickedId = useSelector(state => state.leafletEditing.layerClickedId);
+    // const layerClickedId = useSelector(state => state.leafletEditing.layerClickedId);
     const layerGroup = useSelector(state => state.leafletEditing.layerGroup);
-
+    const featureIndex = useSelector(state => state.leafletEditing.featureClickedIndex);
 
     function handleButtonClick(){
         dispatch(unselectTool());
         console.log('Mouse Button Clicked');
         setHidden(false);
         dispatch(setEditTool(editTools.mouse));
-        dispatch(startMouseTool(handleMouseClick));
+
+        // dispatch(startMouseTool(handleMouseClick));
     }
     
     const handleMouseClick = (e) => {
@@ -34,17 +35,6 @@ export default function MouseButton(){
             dispatch(setLayerClickedId(e.target._leaflet_id));
         }
     }
-
-    useEffect(()=>{
-        if (layerClickedId !== null){
-            console.log(layerGroup.getLayer(layerClickedId));
-            let featureIndex = layerGroup.getLayer(layerClickedId).featureIndex
-            console.log("feature: ", layerGroup.getLayer(layerClickedId).featureIndex);
-            
-            dispatch((setFeatureIndexClicked(featureIndex)))
-            dispatch(setDraggable(layerClickedId))
-        }
-    }, [layerClickedId])
 
     //kind of redunant, but this is to make sure that the button is hidden 
     //when the user switches to a different tool

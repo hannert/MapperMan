@@ -30,8 +30,6 @@ export default class CreatePolyline_Transaction extends jsTPS_Transaction {
         console.log(polyline);
         polyline.featureIndex = this.featureIndex;
         polyline.properties = this.properties;
-        //Don't add an extra transaction
-        polyline.inStack = true;
         this.layerGroup.addLayer(polyline);
     }
     

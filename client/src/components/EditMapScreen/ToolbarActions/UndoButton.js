@@ -8,7 +8,7 @@ export default function UndoButton() {
     const dispatch = useDispatch();
 
     function handleClick(){
-        dispatch(unselectTool())
+        // dispatch(unselectTool())
         dispatch(undoTransaction());
     }
 

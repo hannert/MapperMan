@@ -31,6 +31,7 @@ export default function EditScreen(){
         if (mapId) {
             console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!id')
             dispatch(getMapByIdThunk({id: mapId})).unwrap().then(async(response) => {
+                console.log(response.map.mapData)
                 dispatch(setCurrentGeoJSON(response.map.mapData));
                 dispatch(setSharedWith(response.map.sharedWith))
             }).catch((error) => {
@@ -79,6 +80,7 @@ export default function EditScreen(){
             dispatch(applyDelta(delta));
         })
 
+
         socket.on('edited property', (featureIndex, key, value)=>{
             console.log('!!!!!!!!!!!!!!!!!!!!!!!!');
             console.log('received edit prop');
@@ -106,6 +108,7 @@ export default function EditScreen(){
                 value: value,
                 featureIndex: featureIndex
             }))
+
         })
 
     }, [])
