@@ -215,6 +215,26 @@ io.on('connection', (socket) => {
       }
     })
 
+    socket.on('create add polygon transaction', async(roomName, featureIndex, latlngs, properties, type)=>{
+      if(type == "add polygon"){
+        socket.in(roomName).emit('received add polygon transaction',{
+          featureIndex: featureIndex,
+          latlngs: latlngs,
+          properties: properties,
+          type: 'add polygon'
+        })
+      }
+      else if(type === "undo add polygon"){
+        socket.in(roomName).emit("received add polygon transaction",{
+          featureIndex: featureIndex,
+          latlngs: latlngs,
+          properties: properties,
+          type: 'undo add polygon'
+        })
+      }
+    })
+
+
 
 })
 

@@ -169,11 +169,14 @@ export default function LeafletContainer(){
                 console.log('Editable created');
                 console.log(e);
                 if(e.layer.shape === shapes.polygon){
+                    console.log(e.layer._latlngs[0])
                     dispatch(addCreatePolygonTransaction({
                         layerGroup: layerGroup,
                         latlngs: e.layer._latlngs[0],
                         properties: e.layer.properties,
-                        featureIndex: e.layer.featureIndex
+                        featureIndex: e.layer.featureIndex,
+                        socket: socket,
+                        mapId: mapId
                     }))
                 }
 
@@ -183,7 +186,9 @@ export default function LeafletContainer(){
                         layerGroup: layerGroup,
                         latlngs: e.layer._latlngs,
                         properties: e.layer.properties,
-                        featureIndex: e.layer.featureIndex
+                        featureIndex: e.layer.featureIndex,
+                        socket: socket,
+                        mapId: mapId
                     }))
                 }
 
@@ -387,6 +392,9 @@ export default function LeafletContainer(){
 
             socket.on('received delete feature transaction', (transaction)=>{
                 if(transaction.type ==='delete feature'){
+                    console.log("*****************")
+                    console.log(layerGroup)
+                    console.log("received delete feature for", transaction.featureIndex)
                     for(let layer of layerGroup.getLayers()){
                         if(layer.featureIndex === transaction.featureIndex){
                             //can't search through latlngs like this on everything :(
@@ -406,6 +414,38 @@ export default function LeafletContainer(){
                     polygon.inStack = true;
 
                     layerGroup.addLayer(polygon);
+                }
+            })
+
+            socket.on('received add polygon transaction', (transaction)=>{
+                if(transaction.type ==='add polygon'){
+
+                    /**Convert the latlng pairs array from transaction to an array of latlngs */
+                    let arr = [];
+                    for(let i=0; i<transaction.latlngs.length; i++){
+                        let latlng = L.latLng(transaction.latlngs[i].lat,transaction.latlngs[i].lng)
+                        arr.push(latlng)
+                    }
+
+
+
+                    const polygon = L.polygon(arr, {draggable:true});
+                    polygon.dragging.disable();
+                    console.log(polygon);
+                    polygon.featureIndex = transaction.featureIndex;
+                    polygon.properties = transaction.properties;
+                    //Don't add an extra transaction
+                    polygon.inStack = true;
+                    layerGroup.addLayer(polygon);
+                    console.log(layerGroup)
+                }
+                else if(transaction.type === 'undo add polygon'){
+                    for(let layer of layerGroup.getLayers()){
+                        if(layer.featureIndex === transaction.featureIndex){
+                            //can't search through latlngs like this on everything :(
+                            layerGroup.removeLayer(layer);
+                        }
+                    }
                 }
             })
 
