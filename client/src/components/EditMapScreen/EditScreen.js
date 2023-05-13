@@ -123,7 +123,7 @@ export default function EditScreen(){
 
 
     function handleToggleProperty () {
-        if(featureIndex){
+        if(featureIndex!=null){
             setPropertyOpen(!propertyOpen);
         }
     }
@@ -137,7 +137,7 @@ export default function EditScreen(){
 
     return (
         <Box sx ={{width:'100%', height:'100%'}}>
-            <Button onClick={handleToggleProperty} sx={{position:'absolute', right:0, zIndex: 999}}>
+            <Button variant='contained' onClick={handleToggleProperty} sx={{position:'absolute', right:0, zIndex: 999}}>
                 Open Property
             </Button>
             <Box sx={{height:'100%', display:'flex', position:'relative'}}>
