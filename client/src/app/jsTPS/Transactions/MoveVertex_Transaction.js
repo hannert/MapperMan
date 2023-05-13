@@ -34,10 +34,10 @@ export default class MoveVertex_Transaction extends jsTPS_Transaction {
     
                         if(groupedPolygon === true){
                             for(let [j, lattie] of estrangedPolygon.entries()){
-                                for(let latlng of lattie){
-                                    if(latlng.equals(this.startPos, .1)){
+                                for(let [k, latlng] of lattie.entries()){
+                                    if(latlng.equals(this.startPos, .000001)){
                                         console.log('moved')
-                                        let idx = layer._latlngs[i][j].indexOf(latlng);
+                                        let idx = k;
                                         layer._latlngs[i][j].splice(idx, 1);
                                         layer._latlngs[i][j].splice(idx, 0, this.endPos);
     
@@ -45,16 +45,16 @@ export default class MoveVertex_Transaction extends jsTPS_Transaction {
                                         layer.redraw();
                                         layer.disableEdit();
                                         layer.enableEdit();
-                                        break;
+                                        return;
                                     }
                                 }
                             }
                         }
                         if(groupedPolygon === false){
-                            for(let latlng of estrangedPolygon){
-                                if(latlng.equals(this.startPos, .1)){
+                            for(let [k, latlng] of estrangedPolygon.entries()){
+                                if(latlng.equals(this.startPos, .000001)){
                                     console.log('moved')
-                                    let idx = layer._latlngs[i].indexOf(latlng);
+                                    let idx = k;
                                     layer._latlngs[i].splice(idx, 1);
                                     layer._latlngs[i].splice(idx, 0, this.endPos);
     
@@ -62,7 +62,7 @@ export default class MoveVertex_Transaction extends jsTPS_Transaction {
                                     layer.redraw();
                                     layer.disableEdit();
                                     layer.enableEdit();
-                                    break;
+                                    return;
                                 }
                             }
                         }     
@@ -101,10 +101,10 @@ export default class MoveVertex_Transaction extends jsTPS_Transaction {
                     let groupedPolygon = Array.isArray(estrangedPolygon[0])
                     if(groupedPolygon === true){
                         for(let [j, lattie] of estrangedPolygon.entries()){
-                            for(let latlng of lattie){
-                                if(latlng.equals(this.endPos, .1)){
+                            for(let [k, latlng] of lattie.entries()){
+                                if(latlng.equals(this.endPos, .000001)){
                                     console.log('moved')
-                                    let idx = layer._latlngs[i][j].indexOf(latlng);
+                                    let idx = k;
                                     layer._latlngs[i][j].splice(idx, 1);
                                     layer._latlngs[i][j].splice(idx, 0, this.startPos);
 
@@ -112,16 +112,16 @@ export default class MoveVertex_Transaction extends jsTPS_Transaction {
                                     layer.redraw();
                                     layer.disableEdit();
                                     layer.enableEdit();
-                                    break;
+                                    return;
                                 }
                             }
                         }
                     }
                     if(groupedPolygon === false){
-                        for(let latlng of estrangedPolygon){
-                            if(latlng.equals(this.endPos, .1)){
+                        for(let [k, latlng] of estrangedPolygon.entries()){
+                            if(latlng.equals(this.endPos, .000001)){
                                 console.log('moved')
-                                let idx = layer._latlngs[i].indexOf(latlng);
+                                let idx = k;
                                 layer._latlngs[i].splice(idx, 1);
                                 layer._latlngs[i].splice(idx, 0, this.startPos);
 
@@ -129,7 +129,7 @@ export default class MoveVertex_Transaction extends jsTPS_Transaction {
                                 layer.redraw();
                                 layer.disableEdit();
                                 layer.enableEdit();
-                                break;
+                                return;
                             }
                         }
                     }     

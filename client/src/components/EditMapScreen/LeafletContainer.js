@@ -331,7 +331,7 @@ export default function LeafletContainer(){
                                     for(let [j, lattie] of estrangedPolygon.entries()){
                                         for(let [index, latlng] of lattie.entries()){
                                             console.log("HI!!!")
-                                            if(latlng.equals(startPos, .1)){
+                                            if(latlng.equals(startPos, .000001)){
                                                 console.log('moved')
                                                 layer._latlngs[i][j].splice(index, 1);
                                                 layer._latlngs[i][j].splice(index, 0, endPos);
@@ -346,7 +346,7 @@ export default function LeafletContainer(){
                                 }
                                 if(groupedPolygon === false){
                                     for(let latlng of estrangedPolygon){
-                                        if(latlng.equals(startPos, .1)){
+                                        if(latlng.equals(startPos, .000001)){
                                             console.log('moved')
                                             let idx = layer._latlngs[i].indexOf(latlng);
                                             layer._latlngs[i].splice(idx, 1);
@@ -378,7 +378,7 @@ export default function LeafletContainer(){
                                     for(let [j, lattie] of estrangedPolygon.entries()){
                                         for(let [index, latlng] of lattie.entries()){
                                             console.log("HI!!!")
-                                            if(latlng.equals(endPos, .1)){ // Start from endPos
+                                            if(latlng.equals(endPos, .000001)){ // Start from endPos
                                                 console.log('moved')
                                                 layer._latlngs[i][j].splice(index, 1);
                                                 layer._latlngs[i][j].splice(index, 0, startPos); // To StartPos
@@ -393,7 +393,7 @@ export default function LeafletContainer(){
                                 }
                                 if(groupedPolygon === false){
                                     for(let latlng of estrangedPolygon){
-                                        if(latlng.equals(endPos, .1)){ // Start from endPos
+                                        if(latlng.equals(endPos, .000001)){ // Start from endPos
                                             console.log('moved')
                                             let idx = layer._latlngs[i].indexOf(latlng);
                                             layer._latlngs[i].splice(idx, 1);
