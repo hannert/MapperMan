@@ -94,9 +94,8 @@ export const leafletEditing = createSlice({
             let polyline = state.mapRef.editTools.startPolyline(undefined, {draggable: true});
             state.featureIndex += 1;
             polyline.featureIndex = state.featureIndex;
-            polyline.shape = shapes.polyline;
+            // polyline.shape = shapes.polyline;
             // in stack with create polyline transaction
-            // polyline.inStack = true;
             polyline.dragging.disable();
 
             state.layerGroup.addLayer(polyline);
@@ -106,6 +105,7 @@ export const leafletEditing = createSlice({
          * Deprecated
          */
         endPolylineDraw: (state, action) => {
+
             // console.log(state.activeDrawing);
             // // Work around is to make a copy of the polyline with draggable after it's done
             // // and remove the old one. Setting it with draggable true initially glitches out
@@ -125,12 +125,15 @@ export const leafletEditing = createSlice({
         },
         startPolygonDraw: (state, action) => {
             state.editTool = editTools.polygon;
-            let polygon = state.mapRef.editTools.startPolygon(undefined, {draggable: 'true'});
+            let polygon = state.mapRef.editTools.startPolygon(undefined, {draggable: true});
             state.featureIndex += 1;
             polygon.featureIndex = state.featureIndex;
-            polygon.shape = shapes.polygon;
+            
+            // somehow giving it a shape property makes code break honestly idk y
+            // polygon.shape = shapes.polygon;
+            // polygon.shape = 'polygon'
             // in stack with create polygon transaction
-            // polygon.inStack = true;
+
             polygon.dragging.disable();
 
             state.layerGroup.addLayer(polygon);

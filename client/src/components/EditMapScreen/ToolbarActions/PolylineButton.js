@@ -5,6 +5,7 @@ import CancelButton from "./CancelButton";
 
 import { useDispatch, useSelector } from "react-redux";
 import { editTools, endPolylineDraw, incrementFeatureIndex, setEditTool, startMouseTracking, startPolylineDraw, unselectTool, updateProperties } from "../../../app/store-actions/leafletEditing";
+import CommitButton from "./CommitButton";
 
 export default function PolylineButton(){
 
@@ -17,7 +18,6 @@ export default function PolylineButton(){
     function handleButtonClick(){
 
         dispatch(unselectTool());
-
         console.log('Polyline Button Clicked');
         setHidden(false);
         dispatch(setEditTool(editTools.polyline));
@@ -30,8 +30,8 @@ export default function PolylineButton(){
         dispatch(updateProperties({
             properties: {name: 'New Polyline'}
         }))
-        // dispatch(endPolylineDraw())
         activeDrawing.disableEdit();
+        dispatch(unselectTool());
     }
     
     //kind of redunant, but this is to make sure that the button is hidden 
@@ -49,6 +49,7 @@ export default function PolylineButton(){
                     <Timeline />
                 </Button>
             </Tooltip>
+            { !hidden && <CommitButton setHidden={setHidden} cancelFunction={endTool}/>}
             { !hidden && <CancelButton setHidden={setHidden} cancelFunction={endTool} />}
         </Box>
     )

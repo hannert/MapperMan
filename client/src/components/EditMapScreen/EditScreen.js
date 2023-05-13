@@ -31,6 +31,7 @@ export default function EditScreen(){
         if (mapId) {
             console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!id')
             dispatch(getMapByIdThunk({id: mapId})).unwrap().then(async(response) => {
+                console.log(response.map.mapData)
                 dispatch(setCurrentGeoJSON(response.map.mapData));
                 dispatch(setSharedWith(response.map.sharedWith))
             }).catch((error) => {

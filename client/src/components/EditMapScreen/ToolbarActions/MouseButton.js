@@ -36,12 +36,6 @@ export default function MouseButton(){
         }
     }
 
-    // useEffect(()=>{
-    //     if (featureIndex !== null){
-    //         console.log("stuff");
-    //     }
-    // }, [featureIndex])
-
     //kind of redunant, but this is to make sure that the button is hidden 
     //when the user switches to a different tool
     useEffect(()=>{
