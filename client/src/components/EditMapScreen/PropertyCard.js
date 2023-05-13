@@ -154,7 +154,7 @@ export default function PropertyCard(props){
 
         <TableRow>
             <TableCell >{propKey}</TableCell>
-            <TableCell >{propType}</TableCell>
+            {/* <TableCell >{propType}</TableCell> */}
             {propertyValue}
             {deleteButton}
             {deleteDialog}
