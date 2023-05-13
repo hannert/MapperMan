@@ -5,7 +5,6 @@ const MapController = require('../controllers/map-controller')
 router.post('/newmap', MapController.createMap)
 router.get('/map/:id', MapController.getMapById)
 router.get('/publicmaps', MapController.getPublicMaps)
-router.get('/publicmapsByName/:name', MapController.getPublicMapsByName)
 router.post('/maps', MapController.getMapsDataByAccount)
 router.post('/sharedMaps', MapController.getSharedMapsDataByAccount)
 

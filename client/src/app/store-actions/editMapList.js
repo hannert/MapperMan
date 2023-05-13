@@ -10,6 +10,8 @@ const initialState = {
     mapMarkedForDeletion: null,
     mapCardClickedId: null,
     mapCardClickedName: null,
+    repo: '',
+    filteredList: []
 }
 
 export const editMapList = createSlice({
@@ -27,6 +29,7 @@ export const editMapList = createSlice({
         },
         setMapList: (state, action) => {
             state.mapList = action.payload;
+            state.filteredList = [];
         },
         renameMap: (state, action) =>{
             state.activeMapId = action.payload.id;
@@ -38,12 +41,17 @@ export const editMapList = createSlice({
         setPublicRepo: (state, action) =>{
             state.publicRepo = action.payload;
         },
-
+        changeRepoType: (state, action) => {
+            state.repo = action.payload;
+        },
         setMapCardClicked: (state,action) =>{
             state.mapCardClickedId = action.payload.id;
             state.mapCardClickedName = action.payload.name;
         },
-
+        setFilteredList: (state, action) => {
+            console.log("Setting filtered list in store to ", action.payload)
+            state.filteredList = action.payload;
+        },
         clear: (state, action) => {
             state.loggedIn = false;
             state.activeMapId = null;
@@ -53,11 +61,13 @@ export const editMapList = createSlice({
             state.mapMarkedForDeletion = null;
             state.mapCardClickedId = null;
             state.mapCardClickedName = null;
+            state.repo = '';
+            state.filteredList = [];
         }
     }
 })
 
-export const { createNewMap, setMapList, renameMap, deleteMap, setPublicRepo,setActiveMap, setMapCardClicked, clear } = editMapList.actions
+export const { changeRepoType, setFilteredList, createNewMap, setMapList, renameMap, deleteMap, setPublicRepo,setActiveMap, setMapCardClicked, clear } = editMapList.actions
 export default editMapList.reducer
 
 export const createMapThunk = createAsyncThunk('/newmap', async (payload) => {
@@ -111,16 +121,6 @@ export const getUserSharedMapsThunk = createAsyncThunk('/sharedMaps', async (pay
 export const getPublicMapsThunk = createAsyncThunk('/publicMaps/', async (_, {rejectWithValue}) => {
     try {
         const response = await mapApis.getPublicMaps();
-        return response.data;
-    } catch(err){
-        return rejectWithValue(err.response.data.errorMessage);
-    }
-});
-
-export const getPublicMapsByNameThunk = createAsyncThunk('/publicMapsByName/', async (payload, {rejectWithValue}) => {
-    try {
-        console.log(payload.name)
-        const response = await mapApis.getPublicMapsByName(payload.name);
         return response.data;
     } catch(err){
         return rejectWithValue(err.response.data.errorMessage);

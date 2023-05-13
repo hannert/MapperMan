@@ -92,7 +92,8 @@ loginUser = async (req, res) => {
                 firstName: existingUser.firstName,
                 lastName: existingUser.lastName,  
                 mapsOwned: existingUser.mapsOwned,
-                mapAccess: existingUser.mapAccess
+                mapAccess: existingUser.mapAccess,
+                id: existingUser._id
             }
         })
 

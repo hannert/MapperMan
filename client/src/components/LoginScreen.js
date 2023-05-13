@@ -11,7 +11,7 @@ import * as React from 'react';
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import AuthErrorModal from './Modals/AuthErrorModal';
-
+import { changeRepoType } from "../app/store-actions/editMapList";
 import { loginThunk, loginUser, setErrorMessage, setModalActive } from '../app/store-actions/accountAuth';
 
 export default function LoginScreen() {
@@ -31,6 +31,7 @@ export default function LoginScreen() {
             console.log(response);
             dispatch(loginUser(response.user));
             navigate('/maps');
+            dispatch(changeRepoType("owned"))
         }).catch((error) => {
             console.log(error);
             dispatch(setErrorMessage(error));
