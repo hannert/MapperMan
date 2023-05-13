@@ -234,6 +234,25 @@ io.on('connection', (socket) => {
       }
     })
 
+    socket.on('create add polyline transaction', async(roomName, featureIndex, latlngs, properties, type)=>{
+      if(type == "add polyline"){
+        socket.in(roomName).emit('received add polyline transaction',{
+          featureIndex: featureIndex,
+          latlngs: latlngs,
+          properties: properties,
+          type: 'add polyline'
+        })
+      }
+      else if(type === "undo add polyline"){
+        socket.in(roomName).emit("received add polyline transaction",{
+          featureIndex: featureIndex,
+          latlngs: latlngs,
+          properties: properties,
+          type: 'undo add polyline'
+        })
+      }
+    })
+
 
 
 })

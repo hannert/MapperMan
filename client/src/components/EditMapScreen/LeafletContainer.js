@@ -449,6 +449,36 @@ export default function LeafletContainer(){
                 }
             })
 
+            socket.on('received add polyline transaction', (transaction)=>{
+                if(transaction.type ==='add polyline'){
+
+                    /**Convert the latlng pairs array from transaction to an array of latlngs */
+                    let arr = [];
+                    for(let i=0; i<transaction.latlngs.length; i++){
+                        let latlng = L.latLng(transaction.latlngs[i].lat,transaction.latlngs[i].lng)
+                        arr.push(latlng)
+                    }
+
+                    console.log('Making polyline');
+                    console.log(arr);
+                    const polyline = L.polyline(arr, {draggable:true});
+                    polyline.dragging.disable();
+                    console.log(polyline);
+                    polyline.featureIndex = transaction.featureIndex;
+                    polyline.properties = transaction.properties;
+                    //Don't add an extra transaction
+                    polyline.inStack = true;
+                    layerGroup.addLayer(polyline);
+                }
+                else if(transaction.type === 'undo add polyline'){
+                    for(let layer of layerGroup.getLayers()){
+                        if(layer.featureIndex === transaction.featureIndex){
+                            layerGroup.removeLayer(layer);
+                        }
+                    }
+                }
+            })
+
             
         }
     }, [mapRef.current]);

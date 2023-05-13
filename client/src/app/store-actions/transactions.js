@@ -127,8 +127,31 @@ export const transactions = createSlice({
             console.log("heheh")
         },
         addCreatePolylineTransaction: (state, action) => {
-            let transaction = new CreatePolyline_Transaction(action.payload.layerGroup, action.payload.latlngs, action.payload.properties, action.payload.featureIndex);
+            /**put lat lng pairs in an array so it can be sent thru sockets  */
+            console.log(action.payload.latlngs)
+            
+            let latlngArr = [];
+            for(let pair=0; pair<action.payload.latlngs.length; pair++){
+                latlngArr.push({
+                    lat: action.payload.latlngs[pair].lat,
+                    lng: action.payload.latlngs[pair].lng
+                })
+            }
+            console.log(latlngArr)
+
+
+
+            let transaction = new CreatePolyline_Transaction(action.payload.layerGroup, action.payload.latlngs, action.payload.properties, action.payload.featureIndex, action.payload.socket, action.payload.mapId, latlngArr);
             state.tps.addTransaction(transaction);
+
+
+
+            let socket = action.payload.socket;
+            let room = action.payload.mapId;
+            console.log("emitting");
+            console.log(transaction)
+            socket.emit('create add polyline transaction', room, action.payload.featureIndex, latlngArr, action.payload.properties, "add polyline" );
+            console.log("heheh")
         }
     }
 })
