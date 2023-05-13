@@ -2,11 +2,10 @@ import * as L from 'leaflet';
 import 'leaflet-editable';
 import 'leaflet-path-drag';
 import hash from 'object-hash';
-import React, { useEffect, useRef, useContext } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import { GeoJSON, MapContainer, TileLayer } from 'react-leaflet';
 import { useDispatch, useSelector } from 'react-redux';
 import { setFeatureIndex, setMapRef, setProperties, shapes } from '../../app/store-actions/leafletEditing';
-import DeleteVertex_Transaction from '../../app/jsTPS/Transactions/DeleteVertex_Transaction';
 import { addCreatePolygonTransaction, addCreatePolylineTransaction, addDeleteFeatureTransaction, addDeleteVertexTransaction, addMoveFeatureTransaction, addMoveVertexTransaction, initTps, setVertexIndex, setfStartPos, setvStartPos } from '../../app/store-actions/transactions';
 import { SocketContext } from '../../socket';
 
@@ -20,6 +19,7 @@ export default function LeafletContainer(){
     const mapId = useSelector((state) => state.editMapList.activeMapId);
     const tps = useSelector((state) => state.transactions.tps);
     const socket = useContext(SocketContext);
+    const user = useSelector((state) => state.accountAuth.user);
 
     const mapRef = useRef(null);
     const dispatch = useDispatch();
@@ -103,6 +103,16 @@ export default function LeafletContainer(){
                         mapId: mapId,
                         socket: socket
                     }))
+                    
+                    // let geoJSON = layerGroup.toGeoJSON();
+                    // dispatch(saveGeojsonThunk(
+                    //     {owner: user, 
+                    //     mapData: geoJSON, 
+                    //     id: mapId}
+                    // ))
+
+
+                    
                     
                 });
 
@@ -315,18 +325,41 @@ export default function LeafletContainer(){
                             let startPos = L.latLng(transaction.startLat, transaction.startLng);
                             let endPos = L.latLng(transaction.endLat, transaction.endLng);
 
-
-                            //can't search through latlngs like this on everything :(
-                            for(let latlng of layer._latlngs[0]){
-                                if(latlng.equals(startPos, .1)){
-                                    let idx = layer._latlngs[0].indexOf(latlng);
-                                    layer._latlngs[0].splice(idx, 1);
-                                    layer._latlngs[0].splice(idx, 0, endPos);
-                                    console.log('moved')
-                                    //absolutely brutal on client side performance
-                                    layer.redraw();
-                                    layer.disableEdit();
+                            for(let [i, estrangedPolygon] of layer._latlngs.entries()){
+                                let groupedPolygon = Array.isArray(estrangedPolygon[0])
+                                if(groupedPolygon === true){
+                                    for(let [j, lattie] of estrangedPolygon.entries()){
+                                        for(let [index, latlng] of lattie.entries()){
+                                            console.log("HI!!!")
+                                            if(latlng.equals(startPos, .1)){
+                                                console.log('moved')
+                                                layer._latlngs[i][j].splice(index, 1);
+                                                layer._latlngs[i][j].splice(index, 0, endPos);
+            
+                                                //absolutely brutal on client side performance
+                                                layer.redraw();
+                                                layer.disableEdit();
+                                                break;
+                                            }
+                                        }
+                                    }
                                 }
+                                if(groupedPolygon === false){
+                                    for(let latlng of estrangedPolygon){
+                                        if(latlng.equals(startPos, .1)){
+                                            console.log('moved')
+                                            let idx = layer._latlngs[i].indexOf(latlng);
+                                            layer._latlngs[i].splice(idx, 1);
+                                            layer._latlngs[i].splice(idx, 0, endPos);
+            
+                                            //absolutely brutal on client side performance
+                                            layer.redraw();
+                                            layer.disableEdit();
+                                            break;
+                                        }
+                                    }
+                                }
+
                             }
                         }
                     }
@@ -339,19 +372,43 @@ export default function LeafletContainer(){
                             let startPos = L.latLng(transaction.startLat, transaction.startLng);
                             let endPos = L.latLng(transaction.endLat, transaction.endLng);
 
-
-                            //can't search through latlngs like this on everything :(
-                            for(let latlng of layer._latlngs[0]){
-                                if(latlng.equals(endPos, .1)){
-                                    let idx = layer._latlngs[0].indexOf(latlng);
-                                    layer._latlngs[0].splice(idx, 1);
-                                    layer._latlngs[0].splice(idx, 0, startPos);
-                                    console.log('moved')
-                                    //absolutely brutal on client side performance
-                                    layer.redraw();
-                                    layer.disableEdit();
+                            for(let [i, estrangedPolygon] of layer._latlngs.entries()){
+                                let groupedPolygon = Array.isArray(estrangedPolygon[0])
+                                if(groupedPolygon === true){
+                                    for(let [j, lattie] of estrangedPolygon.entries()){
+                                        for(let [index, latlng] of lattie.entries()){
+                                            console.log("HI!!!")
+                                            if(latlng.equals(endPos, .1)){ // Start from endPos
+                                                console.log('moved')
+                                                layer._latlngs[i][j].splice(index, 1);
+                                                layer._latlngs[i][j].splice(index, 0, startPos); // To StartPos
+            
+                                                //absolutely brutal on client side performance
+                                                layer.redraw();
+                                                layer.disableEdit();
+                                                break;
+                                            }
+                                        }
+                                    }
                                 }
+                                if(groupedPolygon === false){
+                                    for(let latlng of estrangedPolygon){
+                                        if(latlng.equals(endPos, .1)){ // Start from endPos
+                                            console.log('moved')
+                                            let idx = layer._latlngs[i].indexOf(latlng);
+                                            layer._latlngs[i].splice(idx, 1);
+                                            layer._latlngs[i].splice(idx, 0, startPos); // To StartPos
+            
+                                            //absolutely brutal on client side performance
+                                            layer.redraw();
+                                            layer.disableEdit();
+                                            break;
+                                        }
+                                    }
+                                }
+
                             }
+
                         }
                     }
                 }
