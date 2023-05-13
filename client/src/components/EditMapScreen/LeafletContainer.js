@@ -303,7 +303,7 @@ export default function LeafletContainer(){
 
 
             socket.on('received delete vertex transaction', (transaction)=>{
-                console.log("delete transaction")
+                console.log("delete transaction", transaction)
                 //Add transaction to the stack
                 if(transaction.type === "delete vertex"){
 
@@ -311,21 +311,21 @@ export default function LeafletContainer(){
                     let transactionLatLng = L.latLng(transaction.lat,transaction.lng);
                     for(let layer of layerGroup.getLayers()){
                         if(layer.featureIndex === transaction.featureIndex){
-                            //can't search through latlngs like this on everything :(
+                            console.log("Found Layer")
                             if(transaction.shape === shapes.polygon){
-                                for(let latlng of layer._latlngs[0]){
-                                    if(latlng.equals(transactionLatLng)){
-                                        console.log('found it');
-                                        let idx = layer._latlngs[0].indexOf(latlng);
-                                        console.log(idx);
-                                        layer._latlngs[0].splice(idx, 1);
-                                        
-                                        console.log('deleted vertex')
-                                        //absolutely brutal on client side performance
-                                        layer.redraw();
-                                        // layer.disableEdit();
-                                    }
+                                console.log("Is polygon!")
+                                let groupedPolygon = Array.isArray(layer._latlngs[0])
+                                if(layer._latlngs.length > 1 && groupedPolygon === true){
+                                    console.log("Grouped polygon delete socket", layer._latlngs[transaction.subPolyIndex])
+                                    layer._latlngs[transaction.subPolyIndex][0].splice(transaction.vertexIndex, 1);
+                                } else {
+                                    console.log("Singular polygon splice", layer._latlngs, transaction.subPolyIndex)
+                                    layer._latlngs[transaction.subPolyIndex].splice(transaction.vertexIndex, 1);
                                 }
+                                console.log('deleted vertex from polygon from socket')
+                                
+                                layer.redraw();
+
                             }
                             if(transaction.shape === shapes.polyline){
                                 for(let latlng of layer.getLatLngs()){
@@ -355,16 +355,17 @@ export default function LeafletContainer(){
             
                         if(layer.featureIndex === transaction.featureIndex){
                             if(transaction.shape === shapes.polygon){
-                                console.log('found it');
-                                console.log('Inserting latlng');
-                                console.log(transactionLatLng);
-                                console.log(transaction.vertexIndex)
-                                layer._latlngs[0].splice(transaction.vertexIndex, 0, transactionLatLng);
-                
-                                console.log('added vertex')
-                                //absolutely brutal on client side performance
+                                console.log("Is polygon!")
+                                let groupedPolygon = Array.isArray(layer._latlngs[0])
+                                if(layer._latlngs.length > 1 && groupedPolygon === true){
+                                    layer._latlngs[transaction.subPolyIndex][0].splice(transaction.vertexIndex, 0, transactionLatLng);
+                                } else {
+                                    layer._latlngs[transaction.subPolyIndex].splice(transaction.vertexIndex, 0, transactionLatLng);
+                                }
+                                console.log('Undid vertex from polygon from socket')
+                                
                                 layer.redraw();
-                                // layer.disableEdit();
+
                             }
                             if(transaction.shape === shapes.polyline){
                                 console.log('found it');
