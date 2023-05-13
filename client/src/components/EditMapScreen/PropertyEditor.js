@@ -3,7 +3,7 @@ import { Box } from "@mui/system";
 import { AddCircle, AddLocation, Circle, Merge, Mouse, Redo, RemoveCircle, Timeline, Undo, WrongLocation } from '@mui/icons-material';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { useDispatch, useSelector } from 'react-redux';
-import { setCurrentGeoJSON, setFeatureClicked, setPrevGeoJSON, setProperties, updateProperties} from '../../app/store-actions/leafletEditing';
+import { setCurrentGeoJSON, setFeatureClicked, setPrevGeoJSON, setProperties, updateProperties, addProperty, emitPropertyChange} from '../../app/store-actions/leafletEditing';
 import PropertyCard from './PropertyCard';
 import { useState, useEffect, useContext } from 'react';
 import TextField from '@mui/material/TextField';
@@ -33,7 +33,7 @@ export default function PropertyEditor(props){
     const geoJSON = useSelector((state) => state.leafletEditing.currentGeoJSON);
     const [addNewPropertyMenuOpen, setAddNewPropertyMenuOpen] = useState(false);
     const [newNameText, setNewNameText] = useState("");
-    const [newType, setNewType] = useState('string');
+    // const [newType, setNewType] = useState('string');
     const [newValue, setNewValue] = useState("");
 
     const properties = useSelector((state)=>state.leafletEditing.properties);
@@ -66,10 +66,10 @@ export default function PropertyEditor(props){
         setNewNameText(event.target.value);
     }
 
-    const handleUpdateType = (event) =>{
-        setNewType(event.target.value);
+    // const handleUpdateType = (event) =>{
+    //     setNewType(event.target.value);
         
-    }
+    // }
 
     const handleUpdateValueText = (event) =>{
         setNewValue(event.target.value) 
@@ -78,38 +78,30 @@ export default function PropertyEditor(props){
     const resetFields = () =>{
         setNewValue('');
         setNewNameText('');
-        setNewType('string');
+        // setNewType('string');
     }
 
     function handleConfirm(event) {
         console.log("confirm");
         if(newNameText!=='' && newValue!==''){
-            dispatch(editMapPropertyThunk({id: currMapId, index: featureIndex, property: newNameText, value: newValue, newProperty: {isNew: true, type: newType}})).unwrap().then((res)=>{
+            dispatch(editMapPropertyThunk({id: currMapId, index: featureIndex, property: newNameText, value: newValue, newProperty: {isNew: true, type: 'string'}})).unwrap().then((res)=>{
                 console.log(res);
-                let featureCopy = structuredClone(geoJSON.features[featureIndex]);
-                featureCopy.properties[newNameText]=newValue
-                console.log(featureCopy.properties);
-                let geoJSONCopy = structuredClone(geoJSON);
-                geoJSONCopy.features[featureIndex] = featureCopy;
-                console.log("geoJSON copy: ", geoJSONCopy)
-
-                let jsondiffpatch = require('jsondiffpatch').create();
-                let delta = jsondiffpatch.diff(geoJSON, geoJSONCopy);
-                console.log(socket.emit('edit geoJSON', currMapId, delta))
 
 
+                dispatch(emitPropertyChange({
+                    socket: socket,
+                    currMapId: currMapId,
+                    key: newNameText,
+                    value: newValue,
+                    type: 'add'
+                }))
 
-                console.log("setting the current geojson")
-                dispatch(setCurrentGeoJSON(geoJSONCopy));
-                
-                let properties = [];
-                let index=0;
-                //**Im just gonna copy this from leaflet container for now, we should really abstract this or something */
-                for(let feature of geoJSONCopy.features){
-                    properties.push(geoJSONCopy.features[index].properties);
-                    index += 1;
-                }
-                dispatch(setProperties(properties))
+                dispatch(addProperty({
+                    key: newNameText,
+                    value: newValue,
+                    featureIndex: featureIndex
+                }))
+
 
                 resetFields();
                 setAddNewPropertyMenuOpen(false);
@@ -147,7 +139,7 @@ export default function PropertyEditor(props){
                 />
             </TableCell>
                 
-            <TableCell>
+            {/* <TableCell>
                 <FormControl>
                 <Select
                     id="prop-type-select"
@@ -167,7 +159,7 @@ export default function PropertyEditor(props){
                 
                 </Select>
                 </FormControl>
-            </TableCell>
+            </TableCell> */}
                 
             <TableCell>
                 <TextField
@@ -215,11 +207,6 @@ export default function PropertyEditor(props){
                             <TableCell>
                                 <Typography variant='h6' sx={{fontFamily:'koulen'}}>
                                     Name
-                                </Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography variant='h6' sx={{fontFamily:'koulen'}}>
-                                    Type
                                 </Typography>
                             </TableCell>
                             <TableCell>
