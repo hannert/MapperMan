@@ -16,6 +16,8 @@ const PORT = process.env.PORT || 4000;
 
 
 // SETUP THE MIDDLEWARE
+app.use(cookieParser())
+
 
 app.use(express.urlencoded({limit: '2000kb', extended: true, parameterLimit:50000}));
 app.use((req, res, next) => {
@@ -53,7 +55,7 @@ app.use(cors(corsOptions));
 //   credentials: true
 // }))
 
-app.use(cookieParser())
+
 app.use(session({
   name: 'token',
   keys: [process.env.JWT_SECRET],
