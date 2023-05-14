@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import { getMapByIdThunk } from '../../app/store-actions/editMapList';
 
 import 'leaflet-editable';
-
+import { setTags } from '../../app/store-actions/editMapList'
 import { enqueueSnackbar } from 'notistack';
 import { setCollaborators, setCurrentGeoJSON, setSharedWith, applyDelta, editPropertyValue, deleteProperty, addProperty } from '../../app/store-actions/leafletEditing';
 import { SocketContext } from '../../socket';
@@ -34,6 +34,7 @@ export default function EditScreen(){
                 console.log(response.map.mapData)
                 dispatch(setCurrentGeoJSON(response.map.mapData));
                 dispatch(setSharedWith(response.map.sharedWith))
+                dispatch(setTags(response.map.tags))
             }).catch((error) => {
                 console.log(error);
             });
@@ -49,6 +50,7 @@ export default function EditScreen(){
             console.log('----------------------------------------- id')
             dispatch(getMapByIdThunk({id: id})).unwrap().then(async(response) => {
                 dispatch(setCurrentGeoJSON(response.map.mapData));
+                dispatch(setTags(response.map.tags))
             }).catch((error) => {
                 console.log(error);
             });

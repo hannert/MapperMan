@@ -122,6 +122,12 @@ export const addComment = (id, comment, username) => {
     })
 }
 
+export const updateTags = (id, tags) => {
+    return api.put(`/map/${id}/updateTags`, {
+        id: id,
+        tags: tags
+    })
+}
 export const updateMapCollaborator = (id, user, collaborators) =>{
     return api.put(`/updateCollaborator`, {
         id: id,
@@ -167,6 +173,7 @@ const mapApis = {
     saveMap,
     deleteMapProperty,
     addComment,
+    updateTags,
     updateMapCollaborator,
     isValidEmail,
     convertGeoJSON
