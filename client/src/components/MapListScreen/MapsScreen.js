@@ -2,7 +2,9 @@ import { Box, Grid } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { allowGuest, getLoggedInThunk, loginUser } from '../../app/store-actions/accountAuth';
 import { getMapsDataByAccountThunk, getPublicMapsThunk, setMapList } from '../../app/store-actions/editMapList';
+import GuestModal from '../Modals/GuestModal';
 import DeleteDialog from './MapCardComponents/DeleteDialog';
 import ForkDialog from './MapCardComponents/ForkDialog';
 import MapCard from './MapCardComponents/MapCard';
@@ -10,9 +12,6 @@ import PublishDialog from './MapCardComponents/PublishDialog';
 import AddMapButton from './MapUploadComponents/AddMapButton';
 import FilterMaps from './SearchComponents/FilterMaps';
 import Pages from './SearchComponents/Pages';
-import GuestModal from '../Modals/GuestModal';
-import { getLoggedInThunk } from '../../app/store-actions/accountAuth';
-import { loginUser } from '../../app/store-actions/accountAuth';
 
 export default function MapsScreen(){
     const [currentList, setCurrentList] = useState([])
@@ -64,7 +63,14 @@ export default function MapsScreen(){
     useEffect(() => {
         dispatch(getLoggedInThunk()).unwrap().then((response) => {
             console.log(response);
-            dispatch(loginUser(response.user));
+
+            // Got back loggedIN false, user is NULL at this point, we can make the user a guest
+            if(response.loggedIn === false){
+                dispatch(allowGuest())
+            } else if (response.loggedIn === true){
+                dispatch(loginUser(response.user));
+            }
+            
         })
     }, [])
 

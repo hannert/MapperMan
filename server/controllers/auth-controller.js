@@ -20,7 +20,7 @@ getLoggedIn = async (req, res) => {
         console.log("getLoggedIn");
         console.log(req.cookies);
         let userId = auth.verifyUser(req);
-
+        console.log(userId)
         if (!userId) {
             return res.status(200).json({
                 loggedIn: false,
@@ -86,7 +86,7 @@ loginUser = async (req, res) => {
             // :)
             httpOnly: false,
             secure: false,
-            sameSite: false,
+            sameSite: 'None',
             domain: process.env.FRONTEND_DOMAIN
             
         }).status(200).json({
