@@ -2,7 +2,7 @@ import { Box, Grid } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { allowGuest, getLoggedInThunk, loginUser } from '../../app/store-actions/accountAuth';
+import { getLoggedInThunk, loginUser } from '../../app/store-actions/accountAuth';
 import { getMapsDataByAccountThunk, getPublicMapsThunk, setMapList } from '../../app/store-actions/editMapList';
 import GuestModal from '../Modals/GuestModal';
 import DeleteDialog from './MapCardComponents/DeleteDialog';
@@ -66,7 +66,7 @@ export default function MapsScreen(){
 
             // Got back loggedIN false, user is NULL at this point, we can make the user a guest
             if(response.loggedIn === false){
-                dispatch(allowGuest())
+                // dispatch(allowGuest())
             } else if (response.loggedIn === true){
                 dispatch(loginUser(response.user));
             }
