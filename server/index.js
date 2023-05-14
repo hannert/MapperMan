@@ -7,8 +7,6 @@ const app = express()
 const cors = require('cors')
 const dotenv = require('dotenv')
 const cookieParser = require('cookie-parser')
-const session = require('cookie-session')
-
 
 // Retreive our env variables
 dotenv.config()
@@ -27,6 +25,9 @@ app.use((req, res, next) => {
     "Access-Control-Allow-Methods",
     "GET, POST, PATCH, PUT, DELETE, OPTIONS"
   );
+  res.setHeader(
+    "Access-Control-Allow-Credentials", true
+  )
   next()
 });
 
@@ -51,16 +52,6 @@ app.use(cors(corsOptions));
 // }))
 
 app.use(cookieParser())
-
-app.use(session({
-  name: 'token',
-  keys: [process.env.JWT_SECRET],
-  cookie: {
-    secure: false,
-    httpOnly: false,
-    domain: process.env.FRONTEND_URL,
-  }
-}))
 
 app.use(express.json({limit:'50mb'}))
 
