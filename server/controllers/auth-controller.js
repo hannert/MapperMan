@@ -17,7 +17,10 @@ signToken = (userId) => {
 
 getLoggedIn = async (req, res) => {
     try {
+        console.log("getLoggedIn");
+        console.log(req.cookies);
         let userId = auth.verifyUser(req);
+
         if (!userId) {
             return res.status(200).json({
                 loggedIn: false,
@@ -77,6 +80,7 @@ loginUser = async (req, res) => {
 
         // LOGIN THE USER
         const token = signToken(existingUser._id);
+        console.log('Token here');
         console.log(token);
 
         res.cookie("token", token, {

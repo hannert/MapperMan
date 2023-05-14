@@ -31,6 +31,7 @@ export default function EditScreen(){
         if (mapId) {
             console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!id')
             dispatch(getMapByIdThunk({id: mapId})).unwrap().then(async(response) => {
+                console.log(response.map.mapData)
                 dispatch(setCurrentGeoJSON(response.map.mapData));
                 dispatch(setSharedWith(response.map.sharedWith))
             }).catch((error) => {
@@ -79,6 +80,7 @@ export default function EditScreen(){
             dispatch(applyDelta(delta));
         })
 
+
         socket.on('edited property', (featureIndex, key, value)=>{
             console.log('!!!!!!!!!!!!!!!!!!!!!!!!');
             console.log('received edit prop');
@@ -106,6 +108,7 @@ export default function EditScreen(){
                 value: value,
                 featureIndex: featureIndex
             }))
+
         })
 
     }, [])
@@ -123,7 +126,7 @@ export default function EditScreen(){
 
 
     function handleToggleProperty () {
-        if(featureIndex){
+        if(featureIndex!=null){
             setPropertyOpen(!propertyOpen);
         }
     }
@@ -137,7 +140,7 @@ export default function EditScreen(){
 
     return (
         <Box sx ={{width:'100%', height:'100%'}}>
-            <Button onClick={handleToggleProperty} sx={{position:'absolute', right:0, zIndex: 999}}>
+            <Button variant='contained' onClick={handleToggleProperty} sx={{position:'absolute', right:0, zIndex: 999}}>
                 Open Property
             </Button>
             <Box sx={{height:'100%', display:'flex', position:'relative'}}>

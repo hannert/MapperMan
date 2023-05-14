@@ -11,6 +11,8 @@ import AddMapButton from './MapUploadComponents/AddMapButton';
 import FilterMaps from './SearchComponents/FilterMaps';
 import Pages from './SearchComponents/Pages';
 import GuestModal from '../Modals/GuestModal';
+import { getLoggedInThunk } from '../../app/store-actions/accountAuth';
+import { loginUser } from '../../app/store-actions/accountAuth';
 
 export default function MapsScreen(){
     const [currentList, setCurrentList] = useState([])
@@ -59,11 +61,12 @@ export default function MapsScreen(){
 
 
     
-    // useEffect(() => {
-    //     dispatch(getLoggedInThunk()).unwrap().then((response) => {
-    //         dispatch(loginUser(response.user));
-    //     })
-    // }, [])
+    useEffect(() => {
+        dispatch(getLoggedInThunk()).unwrap().then((response) => {
+            console.log(response);
+            dispatch(loginUser(response.user));
+        })
+    }, [])
 
     useEffect(() => {
         if (user) {
@@ -88,6 +91,7 @@ export default function MapsScreen(){
             });
         }   
     }, [guest])
+  
     useEffect(() => {
         if(maps){
             setCurrentList(maps);
