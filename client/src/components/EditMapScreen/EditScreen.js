@@ -8,7 +8,7 @@ import { getMapByIdThunk } from '../../app/store-actions/editMapList';
 import 'leaflet-editable';
 
 import { enqueueSnackbar } from 'notistack';
-import { setCollaborators, setCurrentGeoJSON, setSharedWith, applyDelta } from '../../app/store-actions/leafletEditing';
+import { setCollaborators, setCurrentGeoJSON, setSharedWith, applyDelta, editPropertyValue, deleteProperty, addProperty } from '../../app/store-actions/leafletEditing';
 import { SocketContext } from '../../socket';
 import LeafletContainer from './LeafletContainer';
 import MergeStatus from './MergeStatus';
@@ -72,11 +72,42 @@ export default function EditScreen(){
             enqueueSnackbar('Other user joined', {variant:'info', autoHideDuration:1000})
             dispatch(setCollaborators(users))
         })
+        /**deprecated for now */
         socket.on('emit delta', (delta)=>{
             console.log('!!!!!!!!!!!!!!!!!!!!!!!!');
             console.log('received delta?!');
             console.log(delta);
             dispatch(applyDelta(delta));
+        })
+
+
+        socket.on('edited property', (featureIndex, key, value)=>{
+            console.log('!!!!!!!!!!!!!!!!!!!!!!!!');
+            console.log('received edit prop');
+            dispatch(editPropertyValue({
+                key: key,
+                value: value,
+                featureIndex: featureIndex
+            }))
+        })
+
+        socket.on('deleted property', (featureIndex, key)=>{
+            console.log('!!!!!!!!!!!!!!!!!!!!!!!!');
+            console.log('received delete prop');
+            dispatch(deleteProperty({
+                key: key,
+                featureIndex: featureIndex
+            }))
+        })
+
+        socket.on('added property', (featureIndex, key, value)=>{
+            console.log('!!!!!!!!!!!!!!!!!!!!!!!!');
+            console.log('received add prop');
+            dispatch(addProperty({
+                key: key,
+                value: value,
+                featureIndex: featureIndex
+            }))
 
         })
 
@@ -95,7 +126,7 @@ export default function EditScreen(){
 
 
     function handleToggleProperty () {
-        if(featureIndex){
+        if(featureIndex!=null){
             setPropertyOpen(!propertyOpen);
         }
     }
@@ -109,7 +140,7 @@ export default function EditScreen(){
 
     return (
         <Box sx ={{width:'100%', height:'100%'}}>
-            <Button onClick={handleToggleProperty} sx={{position:'absolute', right:0, zIndex: 999}}>
+            <Button variant='contained' onClick={handleToggleProperty} sx={{position:'absolute', right:0, zIndex: 999}}>
                 Open Property
             </Button>
             <Box sx={{height:'100%', display:'flex', position:'relative'}}>

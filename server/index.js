@@ -116,6 +116,155 @@ io.on('connection', (socket) => {
     console.log("emitted to ", roomName)
   })
 
+  socket.on('edit properties', async(roomName, featureIndex, key, value, type) =>{
+    console.log("received edit properties in ", roomName);
+    console.log("feature index: ", featureIndex);
+    console.log("key: ", key);
+    console.log("value: ", value)
+
+    if(type==='edit'){
+      //do something
+      console.log("received an edit message")
+      socket.in(roomName).emit('edited property', featureIndex, key, value);
+    }
+
+    else if(type==='delete'){
+      console.log("received a delete message")
+      socket.in(roomName).emit('deleted property', featureIndex, key);
+
+    }
+
+    else if(type==='add'){
+      console.log('received an add message')
+      socket.in(roomName).emit('added property', featureIndex, key, value);
+
+    }
+    })
+
+    socket.on('create delete transaction', async(roomName, lat, lng, featureIndex, vertexIndex, shape, type)=>{
+      console.log("create delete transaction from ", roomName)
+      if(type==="delete vertex"){
+        socket.in(roomName).emit('received delete vertex transaction', {
+          lat: lat,
+          lng: lng,
+          featureIndex: featureIndex,
+          vertexIndex: vertexIndex,
+          shape: shape,
+          type: "delete vertex"
+        })
+      }
+
+      else if(type==="undo delete vertex"){
+        socket.in(roomName).emit('received delete vertex transaction', {
+          lat: lat,
+          lng: lng,
+          featureIndex: featureIndex,
+          vertexIndex: vertexIndex,
+          shape: shape,
+          type: "undo delete vertex"
+        })
+      }
+    })
+
+    socket.on('create move vertex transaction', async(roomName, featureIndex, startLat, startLng, endLat, endLng, type)=>{
+        if(type==="move vertex"){
+          socket.in(roomName).emit('received move vertex transaction', {
+            featureIndex: featureIndex,
+            startLat: startLat,
+            startLng: startLng,
+            endLat: endLat,
+            endLng: endLng,
+            type: "move vertex"
+          })
+        }
+        else if(type==="undo move vertex"){
+          socket.in(roomName).emit('received move vertex transaction',{
+            featureIndex: featureIndex,
+            startLat: startLat,
+            startLng: startLng,
+            endLat: endLat,
+            endLng: endLng,
+            type: "undo move vertex"
+          })
+        }
+    })
+
+    socket.on('create move feature transaction', async(roomName, featureIndex, offsetX, offsetY, type)=>{
+      if(type == "move feature"){
+        socket.in(roomName).emit('received move feature transaction',{
+          featureIndex: featureIndex,
+          offsetX: offsetX,
+          offsetY: offsetY,
+          type: 'move feature'
+        })
+      }
+      else if(type === "undo move feature"){
+        socket.in(roomName).emit("received move feature transaction",{
+          featureIndex: featureIndex,
+          offsetX: offsetX,
+          offsetY: offsetY,
+          type: 'undo move feature'
+        })
+      }
+    })
+
+    socket.on('create delete feature transaction', async(roomName, featureIndex, latlngs, properties, type)=>{
+      if(type == "delete feature"){
+        socket.in(roomName).emit('received delete feature transaction',{
+          featureIndex: featureIndex,
+          latlngs: latlngs,
+          properties: properties,
+          type: 'delete feature'
+        })
+      }
+      else if(type === "undo delete feature"){
+        socket.in(roomName).emit("received delete feature transaction",{
+          featureIndex: featureIndex,
+          latlngs: latlngs,
+          properties: properties,
+          type: 'undo delete feature'
+        })
+      }
+    })
+
+    socket.on('create add polygon transaction', async(roomName, featureIndex, latlngs, properties, type)=>{
+      if(type == "add polygon"){
+        socket.in(roomName).emit('received add polygon transaction',{
+          featureIndex: featureIndex,
+          latlngs: latlngs,
+          properties: properties,
+          type: 'add polygon'
+        })
+      }
+      else if(type === "undo add polygon"){
+        socket.in(roomName).emit("received add polygon transaction",{
+          featureIndex: featureIndex,
+          latlngs: latlngs,
+          properties: properties,
+          type: 'undo add polygon'
+        })
+      }
+    })
+
+    socket.on('create add polyline transaction', async(roomName, featureIndex, latlngs, properties, type)=>{
+      if(type == "add polyline"){
+        socket.in(roomName).emit('received add polyline transaction',{
+          featureIndex: featureIndex,
+          latlngs: latlngs,
+          properties: properties,
+          type: 'add polyline'
+        })
+      }
+      else if(type === "undo add polyline"){
+        socket.in(roomName).emit("received add polyline transaction",{
+          featureIndex: featureIndex,
+          latlngs: latlngs,
+          properties: properties,
+          type: 'undo add polyline'
+        })
+      }
+    })
+
 
 
 })
