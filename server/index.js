@@ -16,6 +16,17 @@ const PORT = process.env.PORT || 4000;
 
 
 // SETUP THE MIDDLEWARE
+app.use(cookieParser())
+app.use(session({
+  name: 'token',
+  keys: [process.env.JWT_SECRET],
+  cookie: {
+    sameSite: 'none',
+    secure: true,
+    httpOnly: true,
+    domain: process.env.FRONTEND_DOMAIN
+  }
+}))
 
 app.use(express.urlencoded({limit: '2000kb', extended: true, parameterLimit:50000}));
 app.use((req, res, next) => {
@@ -33,7 +44,7 @@ app.use((req, res, next) => {
   next()
 });
 
-const whitelist = [process.env.FRONTEND_URL, process.env.BACKEND_URL];
+const whitelist = [process.env.FRONTEND_URL, process.env.BACKEND_URL, 'http://ogre.adc4gis.com'];
 
 var corsOptions = {
   origin: function (origin, callback) {
@@ -53,16 +64,8 @@ app.use(cors(corsOptions));
 //   credentials: true
 // }))
 
-app.use(cookieParser())
-app.use(session({
-  name: 'token',
-  keys: [process.env.JWT_SECRET],
-  cookie: {
-    secure: false,
-    httpOnly: false,
-    domain: process.env.FRONTEND_DOMAIN
-  }
-}))
+
+
 app.use(express.json({limit:'50mb'}))
 
 // SETUP OUR OWN ROUTERS AS MIDDLEWARE
@@ -142,7 +145,7 @@ io.on('connection', (socket) => {
     }
     })
 
-    socket.on('create delete transaction', async(roomName, lat, lng, featureIndex, vertexIndex, shape, type)=>{
+    socket.on('create delete transaction', async(roomName, lat, lng, featureIndex, vertexIndex, subPolyIndex, shape, type)=>{
       console.log("create delete transaction from ", roomName)
       if(type==="delete vertex"){
         socket.in(roomName).emit('received delete vertex transaction', {
@@ -150,6 +153,7 @@ io.on('connection', (socket) => {
           lng: lng,
           featureIndex: featureIndex,
           vertexIndex: vertexIndex,
+          subPolyIndex: subPolyIndex,
           shape: shape,
           type: "delete vertex"
         })
@@ -161,6 +165,7 @@ io.on('connection', (socket) => {
           lng: lng,
           featureIndex: featureIndex,
           vertexIndex: vertexIndex,
+          subPolyIndex: subPolyIndex,
           shape: shape,
           type: "undo delete vertex"
         })

@@ -2,12 +2,12 @@ import * as L from 'leaflet';
 import 'leaflet-editable';
 import 'leaflet-path-drag';
 import hash from 'object-hash';
-import React, { useEffect, useRef, useContext } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 import { GeoJSON, MapContainer, TileLayer } from 'react-leaflet';
 import { useDispatch, useSelector } from 'react-redux';
 import { mouseToolAction, removeToolAction, setEditTool, setFeatureIndex, setFeatureIndexClicked, setLayerClickedId, setMapRef, setProperties, shapes } from '../../app/store-actions/leafletEditing';
 import DeleteVertex_Transaction from '../../app/jsTPS/Transactions/DeleteVertex_Transaction';
-import { addCreatePolygonTransaction, addCreatePolylineTransaction, addDeleteFeatureTransaction, addDeleteVertexTransaction, addMoveFeatureTransaction, addMoveVertexTransaction, initTps, setRemoved, setVertexIndex, setfStartPos, setvStartPos } from '../../app/store-actions/transactions';
+import { addCreatePolygonTransaction, addCreatePolylineTransaction, addDeleteFeatureTransaction, addDeleteVertexTransaction, addMoveFeatureTransaction, addMoveVertexTransaction, initTps, setDeleteParams, setRemoved, setVertexIndex, setfStartPos, setvStartPos } from '../../app/store-actions/transactions';
 import { SocketContext } from '../../socket';
 
 
@@ -45,11 +45,46 @@ export default function LeafletContainer(){
                 console.log(e);
 
                 e.layer.on('editable:vertex:click', (e) => {
-                    console.log(e.vertex.getIndex());
-                    dispatch(setVertexIndex(e.vertex.getIndex()));
+                    // We need to find the index of the subpolygon, if it is nested 
+                    // before it is removed from the polygon 
+                    e.cancel();
+                    let indexOfVertex = e.vertex.getIndex();
+                    let vertex = e.vertex.latlng
+                    let tempSubPolyIndex = 0;
+
+                    for(let [i, polygon] of e.layer._latlngs.entries()){
+                        if(Array.isArray(polygon[0])){
+                            // One level down is where we will find the latlngs
+                            if(polygon[0][indexOfVertex]?.lat === vertex.lat && polygon[0][indexOfVertex]?.lng === vertex.lng){
+                                console.log('polygon ', i, ' contains the vertex!')
+                                tempSubPolyIndex = i;
+                                dispatch(setDeleteParams({'subPolyIndex': tempSubPolyIndex, 'vertexIndex': indexOfVertex}))
+                            }
+                        } else {
+                            if(polygon[indexOfVertex]?.lat === vertex.lat && polygon[indexOfVertex]?.lng === vertex.lng){
+                                console.log('polygon ', i, ' contains the vertex!')
+                                tempSubPolyIndex = i;
+                                dispatch(setDeleteParams({'subPolyIndex': tempSubPolyIndex, 'vertexIndex': indexOfVertex}))
+                            }
+                        }
+                    }
+
+
+
+                    e.vertex.delete();
                 });
 
+                // e.layer.on('editable:vertex:click', (e) => {
+                //     // We need to find the index of the subpolygon, if it is nested
+                //     console.log('Editable vertex clicked with index of:', e.vertex.getIndex());
+                //     console.log(e)
+                //     console.log(e.vertex)
+                //     dispatch(setVertexIndex(e.vertex.getIndex()));
+                //     e.vertex.delete();
+                // });
+
                 e.layer.on('editable:vertex:deleted', (e) => {
+
                   
                     if(e.layer instanceof L.Polygon){
                         console.log(e);
@@ -80,6 +115,7 @@ export default function LeafletContainer(){
                             layerGroup: layerGroup, 
                             latlng: e.latlng, 
                             featureIndex: e.sourceTarget.featureIndex,
+                            
                             shape: shapes.polyline,
                             mapId: mapId,
                             socket: socket
@@ -96,13 +132,49 @@ export default function LeafletContainer(){
 
                 e.layer.on('editable:vertex:dragend', (e) => {
                     let latlng = L.latLng(e.vertex.latlng['lat'], e.vertex.latlng['lng']);
+                    console.log('dragend vertex index', e.vertex.getIndex())
+                    let indexOfVertex = e.vertex.getIndex();
+                    let vertex = e.vertex.latlng
+                    let subPolyIndex = 0;
+                    // Get subpoly
+                    // console.log("e.layer in dragend", e.layer)
+                    // console.log(vertex)
+                    // console.log(indexOfVertex)
+                    for(let [i, polygon] of e.layer._latlngs.entries()){
+                        console.log(polygon)
+                        console.log(polygon[indexOfVertex])
+                        if(Array.isArray(polygon[0])){
+                            // One level down is where we will find the latlngs
+                            if(polygon[0][indexOfVertex]?.lat === vertex.lat && polygon[0][indexOfVertex]?.lng === vertex.lng){
+                                console.log('polygon ', i, ' contains the vertex!')
+                                subPolyIndex = i;
+                            }
+                        } else {
+                            if(polygon[indexOfVertex]?.lat === vertex.lat && polygon[indexOfVertex]?.lng === vertex.lng){
+                                console.log('polygon ', i, ' contains the vertex!')
+                                subPolyIndex = i;
+                            }
+                        }
+                        
+                    }
                     dispatch(addMoveVertexTransaction({
                         layerGroup: layerGroup,
                         featureIndex: e.target.featureIndex,
+                        subPolyIndex: subPolyIndex,
                         endPos: latlng,
                         mapId: mapId,
                         socket: socket
                     }))
+                    
+                    // let geoJSON = layerGroup.toGeoJSON();
+                    // dispatch(saveGeojsonThunk(
+                    //     {owner: user, 
+                    //     mapData: geoJSON, 
+                    //     id: mapId}
+                    // ))
+
+
+                    
                     
                 });
 
@@ -260,7 +332,7 @@ export default function LeafletContainer(){
 
 
             socket.on('received delete vertex transaction', (transaction)=>{
-                console.log("delete transaction")
+                console.log("delete transaction", transaction)
                 //Add transaction to the stack
                 if(transaction.type === "delete vertex"){
 
@@ -268,21 +340,21 @@ export default function LeafletContainer(){
                     let transactionLatLng = L.latLng(transaction.lat,transaction.lng);
                     for(let layer of layerGroup.getLayers()){
                         if(layer.featureIndex === transaction.featureIndex){
-                            //can't search through latlngs like this on everything :(
+                            console.log("Found Layer")
                             if(transaction.shape === shapes.polygon){
-                                for(let latlng of layer._latlngs[0]){
-                                    if(latlng.equals(transactionLatLng)){
-                                        console.log('found it');
-                                        let idx = layer._latlngs[0].indexOf(latlng);
-                                        console.log(idx);
-                                        layer._latlngs[0].splice(idx, 1);
-                                        
-                                        console.log('deleted vertex')
-                                        //absolutely brutal on client side performance
-                                        layer.redraw();
-                                        // layer.disableEdit();
-                                    }
+                                console.log("Is polygon!")
+                                let groupedPolygon = Array.isArray(layer._latlngs[0])
+                                if(layer._latlngs.length > 1 && groupedPolygon === true){
+                                    console.log("Grouped polygon delete socket", layer._latlngs[transaction.subPolyIndex])
+                                    layer._latlngs[transaction.subPolyIndex][0].splice(transaction.vertexIndex, 1);
+                                } else {
+                                    console.log("Singular polygon splice", layer._latlngs, transaction.subPolyIndex)
+                                    layer._latlngs[transaction.subPolyIndex].splice(transaction.vertexIndex, 1);
                                 }
+                                console.log('deleted vertex from polygon from socket')
+                                
+                                layer.redraw();
+
                             }
                             if(transaction.shape === shapes.polyline){
                                 for(let latlng of layer.getLatLngs()){
@@ -312,16 +384,17 @@ export default function LeafletContainer(){
             
                         if(layer.featureIndex === transaction.featureIndex){
                             if(transaction.shape === shapes.polygon){
-                                console.log('found it');
-                                console.log('Inserting latlng');
-                                console.log(transactionLatLng);
-                                console.log(transaction.vertexIndex)
-                                layer._latlngs[0].splice(transaction.vertexIndex, 0, transactionLatLng);
-                
-                                console.log('added vertex')
-                                //absolutely brutal on client side performance
+                                console.log("Is polygon!")
+                                let groupedPolygon = Array.isArray(layer._latlngs[0])
+                                if(layer._latlngs.length > 1 && groupedPolygon === true){
+                                    layer._latlngs[transaction.subPolyIndex][0].splice(transaction.vertexIndex, 0, transactionLatLng);
+                                } else {
+                                    layer._latlngs[transaction.subPolyIndex].splice(transaction.vertexIndex, 0, transactionLatLng);
+                                }
+                                console.log('Undid vertex from polygon from socket')
+                                
                                 layer.redraw();
-                                // layer.disableEdit();
+
                             }
                             if(transaction.shape === shapes.polyline){
                                 console.log('found it');
@@ -345,18 +418,41 @@ export default function LeafletContainer(){
                             let startPos = L.latLng(transaction.startLat, transaction.startLng);
                             let endPos = L.latLng(transaction.endLat, transaction.endLng);
 
-
-                            //can't search through latlngs like this on everything :(
-                            for(let latlng of layer._latlngs[0]){
-                                if(latlng.equals(startPos, .1)){
-                                    let idx = layer._latlngs[0].indexOf(latlng);
-                                    layer._latlngs[0].splice(idx, 1);
-                                    layer._latlngs[0].splice(idx, 0, endPos);
-                                    console.log('moved')
-                                    //absolutely brutal on client side performance
-                                    layer.redraw();
-                                    layer.disableEdit();
+                            for(let [i, estrangedPolygon] of layer._latlngs.entries()){
+                                let groupedPolygon = Array.isArray(estrangedPolygon[0])
+                                if(groupedPolygon === true){
+                                    for(let [j, lattie] of estrangedPolygon.entries()){
+                                        for(let [index, latlng] of lattie.entries()){
+                                            console.log("HI!!!")
+                                            if(latlng.equals(startPos, .000001)){
+                                                console.log('moved')
+                                                layer._latlngs[i][j].splice(index, 1);
+                                                layer._latlngs[i][j].splice(index, 0, endPos);
+            
+                                                //absolutely brutal on client side performance
+                                                layer.redraw();
+                                                layer.disableEdit();
+                                                break;
+                                            }
+                                        }
+                                    }
                                 }
+                                if(groupedPolygon === false){
+                                    for(let latlng of estrangedPolygon){
+                                        if(latlng.equals(startPos, .000001)){
+                                            console.log('moved')
+                                            let idx = layer._latlngs[i].indexOf(latlng);
+                                            layer._latlngs[i].splice(idx, 1);
+                                            layer._latlngs[i].splice(idx, 0, endPos);
+            
+                                            //absolutely brutal on client side performance
+                                            layer.redraw();
+                                            layer.disableEdit();
+                                            break;
+                                        }
+                                    }
+                                }
+
                             }
                         }
                     }
@@ -369,19 +465,43 @@ export default function LeafletContainer(){
                             let startPos = L.latLng(transaction.startLat, transaction.startLng);
                             let endPos = L.latLng(transaction.endLat, transaction.endLng);
 
-
-                            //can't search through latlngs like this on everything :(
-                            for(let latlng of layer._latlngs[0]){
-                                if(latlng.equals(endPos, .1)){
-                                    let idx = layer._latlngs[0].indexOf(latlng);
-                                    layer._latlngs[0].splice(idx, 1);
-                                    layer._latlngs[0].splice(idx, 0, startPos);
-                                    console.log('moved')
-                                    //absolutely brutal on client side performance
-                                    layer.redraw();
-                                    layer.disableEdit();
+                            for(let [i, estrangedPolygon] of layer._latlngs.entries()){
+                                let groupedPolygon = Array.isArray(estrangedPolygon[0])
+                                if(groupedPolygon === true){
+                                    for(let [j, lattie] of estrangedPolygon.entries()){
+                                        for(let [index, latlng] of lattie.entries()){
+                                            console.log("HI!!!")
+                                            if(latlng.equals(endPos, .000001)){ // Start from endPos
+                                                console.log('moved')
+                                                layer._latlngs[i][j].splice(index, 1);
+                                                layer._latlngs[i][j].splice(index, 0, startPos); // To StartPos
+            
+                                                //absolutely brutal on client side performance
+                                                layer.redraw();
+                                                layer.disableEdit();
+                                                break;
+                                            }
+                                        }
+                                    }
                                 }
+                                if(groupedPolygon === false){
+                                    for(let latlng of estrangedPolygon){
+                                        if(latlng.equals(endPos, .000001)){ // Start from endPos
+                                            console.log('moved')
+                                            let idx = layer._latlngs[i].indexOf(latlng);
+                                            layer._latlngs[i].splice(idx, 1);
+                                            layer._latlngs[i].splice(idx, 0, startPos); // To StartPos
+            
+                                            //absolutely brutal on client side performance
+                                            layer.redraw();
+                                            layer.disableEdit();
+                                            break;
+                                        }
+                                    }
+                                }
+
                             }
+
                         }
                     }
                 }

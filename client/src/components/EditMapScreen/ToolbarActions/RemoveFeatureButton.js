@@ -28,11 +28,6 @@ export default function RemoveFeatureButton() {
         setHidden(false);
         setDisabled(true);
         dispatch(setEditTool(editTools.removeFeature));
-<<<<<<< HEAD
-=======
-        // startMouseTracking((e)=>{dispatch(removeFeature(e.latlng))})
-        // dispatch(startRemoveTool(RemoveFeature));
->>>>>>> 3256f142df40241e9e210e3fab87f0e08826d16b
     }
     
     const RemoveFeature = (e) => {

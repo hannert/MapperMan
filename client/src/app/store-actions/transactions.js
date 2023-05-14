@@ -1,15 +1,16 @@
 import { createSlice } from "@reduxjs/toolkit";
-import jsTPS from "../jsTPS/jsTPS";
-import DeleteVertex_Transaction from "../jsTPS/Transactions/DeleteVertex_Transaction";
-import MoveVertex_Transaction from "../jsTPS/Transactions/MoveVertex_Transaction";
-import MoveFeature_Transaction from "../jsTPS/Transactions/MoveFeature_Transaction";
-import DeleteFeature_Transaction from "../jsTPS/Transactions/DeleteFeature_Transaction";
 import CreatePolygon_Transaction from "../jsTPS/Transactions/CreatePolygon_Transaction";
 import CreatePolyline_Transaction from "../jsTPS/Transactions/CreatePolyline_Transaction";
+import DeleteFeature_Transaction from "../jsTPS/Transactions/DeleteFeature_Transaction";
+import DeleteVertex_Transaction from "../jsTPS/Transactions/DeleteVertex_Transaction";
+import MoveFeature_Transaction from "../jsTPS/Transactions/MoveFeature_Transaction";
+import MoveVertex_Transaction from "../jsTPS/Transactions/MoveVertex_Transaction";
+import jsTPS from "../jsTPS/jsTPS";
 
 const initialState = {
     tps: null,
     vertexIndex: null,
+    subPolyIndex: 0,
     render: false,
     vStartPos: null,
     fStartPos: null,
@@ -46,20 +47,31 @@ export const transactions = createSlice({
 
             let transaction = 
             new DeleteVertex_Transaction(action.payload.layerGroup, action.payload.latlng, 
-                action.payload.featureIndex, state.vertexIndex, action.payload.shape, 
-                action.payload.socket, action.payload.mapId);
+                action.payload.featureIndex, state.vertexIndex, state.subPolyIndex,
+                action.payload.shape, action.payload.socket, action.payload.mapId);
             state.tps.addTransaction(transaction);
 
             
             /**Send the action to other clients */
             let socket = action.payload.socket;
             let room = action.payload.mapId;
-            socket.emit('create delete transaction', room, action.payload.latlng.lat, action.payload.latlng.lng, action.payload.featureIndex, action.payload.vertexIndex, action.payload.shape, "delete vertex" );
+            socket.emit('create delete transaction', room, 
+                action.payload.latlng.lat, action.payload.latlng.lng, 
+                action.payload.featureIndex, state.vertexIndex, state.subPolyIndex, 
+                action.payload.shape, "delete vertex" );
 
 
         },
         setVertexIndex(state, action){
             state.vertexIndex = action.payload;
+        },
+        setSubPolyIndex(state, action){
+            state.subPolyIndex = action.payload;
+        },
+        setDeleteParams(state, action){
+            state.vertexIndex = action.payload.vertexIndex;
+            state.subPolyIndex = action.payload.subPolyIndex;
+
         },
         setvStartPos(state, action){
             state.vStartPos = action.payload;
@@ -69,7 +81,7 @@ export const transactions = createSlice({
 
             console.log(state.vStartPos);
             console.log(action.payload.endPos);
-            let transaction = new MoveVertex_Transaction(action.payload.layerGroup, action.payload.featureIndex, state.vStartPos, action.payload.endPos, action.payload.socket, action.payload.mapId);
+            let transaction = new MoveVertex_Transaction(action.payload.layerGroup, action.payload.featureIndex, action.payload.subPolyIndex, state.vStartPos, action.payload.endPos, action.payload.socket, action.payload.mapId);
             state.tps.addTransaction(transaction);
 
 
@@ -175,7 +187,7 @@ export const transactions = createSlice({
     }
 })
 
-export const { initTps, doTransaction, undoTransaction, addDeleteVertexTransaction, setVertexIndex,
+export const { initTps, doTransaction, undoTransaction, addDeleteVertexTransaction, setVertexIndex, setSubPolyIndex, setDeleteParams,
     setvStartPos, addMoveVertexTransaction, setfStartPos, addMoveFeatureTransaction, addDeleteFeatureTransaction,
     addCreatePolygonTransaction, addCreatePolylineTransaction, setRemoved } = transactions.actions;
 export default transactions.reducer;

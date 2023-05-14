@@ -4,6 +4,10 @@ const api = axios.create({
     baseURL:process.env.REACT_APP_API_URL, //our server we are deploying on
 })
 
+const conversionAPI = axios.create({
+    baseURL: 'https://ogre.adc4gis.com'
+})
+
 //         name: { type: String, required: true },
 //         owner: { type: ObjectId, ref: 'Account', required: true },
 //         mapData: { type: Object, required: true },
@@ -118,6 +122,12 @@ export const addComment = (id, comment, username) => {
     })
 }
 
+export const updateTags = (id, tags) => {
+    return api.put(`/map/${id}/updateTags`, {
+        id: id,
+        tags: tags
+    })
+}
 export const updateMapCollaborator = (id, user, collaborators) =>{
     return api.put(`/updateCollaborator`, {
         id: id,
@@ -130,6 +140,23 @@ export const isValidEmail = (email) =>{
         email: email
 
     })
+}
+
+export const convertGeoJSON = (geoJSON) =>{
+
+    return conversionAPI.post('/convertJson',{
+        json: geoJSON,
+        jsonUrl: "",
+        format:	"",
+        outputName:	"",
+        convert: "",
+    }, {
+        responseType: 'arraybuffer',
+        withCredentials: false,
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      })
 }
 
 const mapApis = {
@@ -147,8 +174,10 @@ const mapApis = {
     saveMap,
     deleteMapProperty,
     addComment,
+    updateTags,
     updateMapCollaborator,
-    isValidEmail
+    isValidEmail,
+    convertGeoJSON
 }
 
 export default mapApis
