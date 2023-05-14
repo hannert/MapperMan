@@ -21,8 +21,7 @@ app.use(session({
   name: 'token',
   keys: [process.env.JWT_SECRET],
   cookie: {
-    secure: false,
-    httpOnly: false,
+
     domain: process.env.FRONTEND_DOMAIN
   }
 }))
