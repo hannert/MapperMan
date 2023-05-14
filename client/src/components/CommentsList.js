@@ -62,7 +62,7 @@ export default function CommentsList(){
                             ))
                         }
                     </Grid>
-                    {!guest && <TextField
+                    {user && <TextField
                     fullWidth
                     label="Add Comment"
                     margin="normal"

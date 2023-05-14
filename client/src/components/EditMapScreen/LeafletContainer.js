@@ -5,8 +5,10 @@ import hash from 'object-hash';
 import React, { useContext, useEffect, useRef } from 'react';
 import { GeoJSON, MapContainer, TileLayer } from 'react-leaflet';
 import { useDispatch, useSelector } from 'react-redux';
-import { setFeatureIndex, setMapRef, setProperties, shapes } from '../../app/store-actions/leafletEditing';
-import { addCreatePolygonTransaction, addCreatePolylineTransaction, addDeleteFeatureTransaction, addDeleteVertexTransaction, addMoveFeatureTransaction, addMoveVertexTransaction, initTps, setDeleteParams, setfStartPos, setvStartPos } from '../../app/store-actions/transactions';
+
+import { mouseToolAction, setEditTool, setFeatureIndex, setFeatureIndexClicked, setLayerClickedId, setMapRef, setProperties, shapes } from '../../app/store-actions/leafletEditing';
+import DeleteVertex_Transaction from '../../app/jsTPS/Transactions/DeleteVertex_Transaction';
+import { addCreatePolygonTransaction, addCreatePolylineTransaction, addDeleteFeatureTransaction, addDeleteVertexTransaction, addMoveFeatureTransaction, addMoveVertexTransaction, initTps, setDeleteParams, setVertexIndex, setfStartPos, setvStartPos } from '../../app/store-actions/transactions';
 import { SocketContext } from '../../socket';
 
 
@@ -25,6 +27,8 @@ export default function LeafletContainer(){
     const dispatch = useDispatch();
     useEffect(() => {
         if(mapRef.current !== null){
+
+            dispatch(setEditTool(null));
             console.log('Leaflet render')
             // this sets a property called edit tools options to true
             console.log(mapRef);
@@ -36,6 +40,7 @@ export default function LeafletContainer(){
             console.log("Layergroup: ",layerGroup);
             layerGroup.clearLayers()
             console.log('Layergroup after clear: ', layerGroup);
+            
 
             mapRef.current.on('editable:enable', (e) => {
                 console.log('Enable edit');
@@ -81,10 +86,10 @@ export default function LeafletContainer(){
                 // });
 
                 e.layer.on('editable:vertex:deleted', (e) => {
-                    
-                    if(e.layer.shape === shapes.polygon){
-                        console.log('Delete vertex', e);
 
+                  
+                    if(e.layer instanceof L.Polygon){
+                        console.log(e);
                         /** HOW TO MAKE CHANGES SYNC:
                          * 
                          * 1. Edit the dispatch to also take the socket and mapID
@@ -99,8 +104,6 @@ export default function LeafletContainer(){
                          * "this.variable"
                          * 
                          */
-
-
                         dispatch(addDeleteVertexTransaction({
                             layerGroup: layerGroup, 
                             latlng: e.latlng, 
@@ -109,9 +112,7 @@ export default function LeafletContainer(){
                             mapId: mapId,
                             socket: socket
                         }))
-                    }
-                    if(e.layer.shape === shapes.polyline){
-                        console.log(e);
+                    }else if(e.layer instanceof L.Polyline){
                         dispatch(addDeleteVertexTransaction({
                             layerGroup: layerGroup, 
                             latlng: e.latlng, 
@@ -188,8 +189,6 @@ export default function LeafletContainer(){
                 e.layer.on('dragend', (e) => {
                     console.log(e);
                     console.log(e.target._latlngs[0][0])
-
-                    // TODO need to account for it going in different directions, like quadrant 1, 2, 3 or 4 of a graph
                     
                     dispatch(addMoveFeatureTransaction({
                         layerGroup: layerGroup,
@@ -203,10 +202,11 @@ export default function LeafletContainer(){
                 e.layer.on('remove', (e) => {
                     //If it was created through jstps ignore it
                     console.log(e.target);
-
-                    if(Object.hasOwn(e.target, 'inStack')){
-                        return
-                    }
+                    
+                    // if(e.target?.ignore === true){
+                    //     e.target.ignore = false;
+                    //     return
+                    // }
 
                     console.log('remove event')
                     let arr = []
@@ -215,7 +215,6 @@ export default function LeafletContainer(){
                         let copy = L.latLng(
                             JSON.parse(JSON.stringify(latlng['lat'])), 
                             JSON.parse(JSON.stringify(latlng['lng'])))
-
                         arr.push(copy);
                     }
                     console.log(arr);
@@ -234,15 +233,36 @@ export default function LeafletContainer(){
                 });
             });
 
+            // TODO disabling for testing purposes, merge won't work now
             mapRef.current.on('editable:disable', (e) => {
-                e.layer.off();
+                // console.log('disable edit')
+                // // console.log(e);
+                // console.log(e);
+                
+                e.layer.off()
+                e.layer.on('click', (e) => {
+                    console.log(e);
+                    dispatch(setFeatureIndexClicked(e.sourceTarget.featureIndex));
+                    dispatch(mouseToolAction())
+                });
             });
 
             mapRef.current.on('editable:drawing:end', (e) => {
+                
                 console.log('Editable created');
                 console.log(e);
-                if(e.layer.shape === shapes.polygon){
-                    console.log(e.layer._latlngs[0])
+                /**
+                 * TODO currently this fires a lot since every time a polyline or polygon is clicked
+                 * it will immediately get added to the layergroup, need to find a way to only add it
+                 * purposefully
+                 * 
+                 * Shapes have inheritance, need to have else ifs
+                 */
+                console.log(e.sourceTarget instanceof L.Polygon);
+                console.log(e.layer instanceof L.Polygon);
+                console.log(e.layer instanceof L.Polyline);
+                
+                if(e.layer instanceof L.Polygon){
                     dispatch(addCreatePolygonTransaction({
                         layerGroup: layerGroup,
                         latlngs: e.layer._latlngs[0],
@@ -251,9 +271,7 @@ export default function LeafletContainer(){
                         socket: socket,
                         mapId: mapId
                     }))
-                }
-
-                if(e.layer.shape === shapes.polyline){
+                }else if(e.layer instanceof L.Polyline){
                     console.log(e.layer);
                     dispatch(addCreatePolylineTransaction({
                         layerGroup: layerGroup,
@@ -273,18 +291,29 @@ export default function LeafletContainer(){
 
             let idx = 0;
             for(let feature of geoJSON.features){
+                console.log(feature);
                 // Have to add draggable here first then disable/enable it when wanted
+                // console.log(L.GeoJSON.geometryToLayer(feature));
+                
                 const polygon = L.polygon(L.GeoJSON.geometryToLayer(feature)._latlngs, {draggable:true});
+
+                console.log(polygon);
+                console.log(feature.geometry.coordinates);
+                // console.log(L.GeoJSON.coordsToLatLngs(feature.geometry.coordinates))
+                console.log(L.GeoJSON.geometryToLayer(feature)._latlngs);
                 polygon.dragging.disable();
                 // polygon._latlngs[0].push(L.latLng(0, 0));
                 polygon.featureIndex = idx;
                 polygon.properties = geoJSON.features[idx].properties
-                polygon.shape = shapes.polygon;
                 // console.log(polygon);
                 dispatch(initTps());
                 
+                polygon.on('click', (e) => {
+                    dispatch(setFeatureIndexClicked(e.sourceTarget.featureIndex));
+                    dispatch(mouseToolAction())
+                });
+
                 // TODO prob a better way to do this
-                // console.log(idx);
                 properties.push(geoJSON.features[idx].properties);
                 idx += 1;
                 layerGroup.addLayer(polygon);

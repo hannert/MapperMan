@@ -6,7 +6,8 @@ const app = express()
 
 const cors = require('cors')
 const dotenv = require('dotenv')
-// const cookieParser = require('cookie-parser')
+const cookieParser = require('cookie-parser')
+const session = require('cookie-session')
 
 
 // Retreive our env variables
@@ -15,6 +16,17 @@ const PORT = process.env.PORT || 4000;
 
 
 // SETUP THE MIDDLEWARE
+app.use(cookieParser())
+app.use(session({
+  name: 'token',
+  keys: [process.env.JWT_SECRET],
+  cookie: {
+    sameSite: 'none',
+    secure: true,
+    httpOnly: true,
+    domain: process.env.FRONTEND_DOMAIN
+  }
+}))
 
 app.use(express.urlencoded({limit: '2000kb', extended: true, parameterLimit:50000}));
 app.use((req, res, next) => {
@@ -26,31 +38,35 @@ app.use((req, res, next) => {
     "Access-Control-Allow-Methods",
     "GET, POST, PATCH, PUT, DELETE, OPTIONS"
   );
+  res.setHeader(
+    "Access-Control-Allow-Credentials", true
+  )
   next()
 });
 
-// const whitelist = [process.env.FRONTEND_URL, process.env.BACKEND_URL];
+const whitelist = [process.env.FRONTEND_URL, process.env.BACKEND_URL, 'http://ogre.adc4gis.com'];
 
-// var corsOptions = {
-//   origin: function (origin, callback) {
-//     if (whitelist.indexOf(origin) !== -1 || !origin) {
-//       callback(null, true)
-//     } else {
-//       callback(new Error('Not allowed by CORS'))
-//     }
-//   },
+var corsOptions = {
+  origin: function (origin, callback) {
+    if (whitelist.indexOf(origin) !== -1 || !origin) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  },
+  credentials: true
+}
+
+app.use(cors(corsOptions));
+
+// app.use(cors({
+//   origin: '*',
 //   credentials: true
-// }
+// }))
 
-// app.use(cors(corsOptions));
-app.use(cors({
-  origin: '*',
-
-}))
 
 
 app.use(express.json({limit:'50mb'}))
-// app.use(cookieParser())
 
 // SETUP OUR OWN ROUTERS AS MIDDLEWARE
 const mapsRouter = require('./routes/maps-router')

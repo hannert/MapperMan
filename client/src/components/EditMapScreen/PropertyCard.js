@@ -115,7 +115,7 @@ export default function PropertyCard(props){
         <Dialog open={deleteDialogOpen} onClose={handleCloseDeletePropertyDialog} fullWidth maxWidth='sm'>
             <DialogTitle>Delete property?</DialogTitle>
             <DialogActions>
-                <Button  onClick={handleCloseDeletePropertyDialog}>Cancel</Button>
+                <Button  variant = 'contained' onClick={handleCloseDeletePropertyDialog}>Cancel</Button>
                 <Button  variant='contained'onClick={handleDeletePropertyConfirm}>Confirm</Button>
             </DialogActions>
         </Dialog>
@@ -154,7 +154,7 @@ export default function PropertyCard(props){
 
         <TableRow>
             <TableCell >{propKey}</TableCell>
-            <TableCell >{propType}</TableCell>
+            {/* <TableCell >{propType}</TableCell> */}
             {propertyValue}
             {deleteButton}
             {deleteDialog}

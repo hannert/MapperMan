@@ -2,7 +2,9 @@ import { Box, Grid } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { getLoggedInThunk, loginUser } from '../../app/store-actions/accountAuth';
 import { getMapsDataByAccountThunk, getPublicMapsThunk, setMapList } from '../../app/store-actions/editMapList';
+import GuestModal from '../Modals/GuestModal';
 import DeleteDialog from './MapCardComponents/DeleteDialog';
 import ForkDialog from './MapCardComponents/ForkDialog';
 import MapCard from './MapCardComponents/MapCard';
@@ -10,7 +12,6 @@ import PublishDialog from './MapCardComponents/PublishDialog';
 import AddMapButton from './MapUploadComponents/AddMapButton';
 import FilterMaps from './SearchComponents/FilterMaps';
 import Pages from './SearchComponents/Pages';
-import GuestModal from '../Modals/GuestModal';
 
 export default function MapsScreen(){
     const [currentList, setCurrentList] = useState([])
@@ -27,6 +28,7 @@ export default function MapsScreen(){
     const user = useSelector((state) => state.accountAuth.user);
     const guest = useSelector((state) => state.accountAuth.guest);
     const maps = useSelector((state) => state.editMapList.mapList);
+    const filteredMaps = useSelector((state) => state.editMapList.filteredList)
 
     const togglePublishDialog = () => {
         if(guest){
@@ -58,11 +60,19 @@ export default function MapsScreen(){
 
 
     
-    // useEffect(() => {
-    //     dispatch(getLoggedInThunk()).unwrap().then((response) => {
-    //         dispatch(loginUser(response.user));
-    //     })
-    // }, [])
+    useEffect(() => {
+        dispatch(getLoggedInThunk()).unwrap().then((response) => {
+            console.log(response);
+
+            // Got back loggedIN false, user is NULL at this point, we can make the user a guest
+            if(response.loggedIn === false){
+                // dispatch(allowGuest())
+            } else if (response.loggedIn === true){
+                dispatch(loginUser(response.user));
+            }
+            
+        })
+    }, [])
 
     useEffect(() => {
         if (user) {
@@ -87,7 +97,7 @@ export default function MapsScreen(){
             });
         }   
     }, [guest])
-
+  
     useEffect(() => {
         if(maps){
             setCurrentList(maps);
@@ -130,12 +140,29 @@ export default function MapsScreen(){
                 <AddMapButton></AddMapButton>
             </Grid>
             <Grid container sx={{ alignItems:"center", justifyContent:"center"}}>
-                <FilterMaps></FilterMaps>
+                <FilterMaps currentList={currentList}></FilterMaps>
             </Grid>
 
             <Box sx={{width: '70%', backgroundColor: '#2B2B2B', marginTop: '20px'}}>
                 <Grid container rowSpacing={6} columnSpacing={6}>
-                    {      
+                    {console.log("Filtered maps", filteredMaps)}
+                    {console.log("CurrentList", currentList)}
+                    {console.log(filteredMaps.length !== 0)}
+                    {
+                        (filteredMaps.length !== 0)? 
+                        filteredMaps.map((filteredmap)=>(
+                            <Grid key={filteredmap.id} item xs = {6} sx={{align: 'center'}} >
+                                <MapCard 
+                                    key={filteredmap.id} 
+                                    sx = {{height: '400px', backgroundColor: '#282c34'}} 
+                                    map={filteredmap} 
+                                    togglePublishDialog={togglePublishDialog} 
+                                    toggleDeleteDialog={toggleDeleteDialog} 
+                                    toggleForkDialog={toggleForkDialog}
+                                />
+                            </Grid>
+                        ))
+                        :
                         currentList.map((map)=>(
                             <Grid key={map.id} item xs = {6} sx={{align: 'center'}} >
                                 <MapCard 
@@ -149,6 +176,7 @@ export default function MapsScreen(){
                             </Grid>
                         ))
                     }
+
                 </Grid>
             </Box>
             <Grid container sx={{ alignItems:"center", justifyContent:"center", margin:'10px'}}>

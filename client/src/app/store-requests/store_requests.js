@@ -1,7 +1,11 @@
 import axios from 'axios';
-axios.defaults.withCredentials = false;
+axios.defaults.withCredentials = true;
 const api = axios.create({
     baseURL:process.env.REACT_APP_API_URL, //our server we are deploying on
+})
+
+const conversionAPI = axios.create({
+    baseURL: 'http://ogre.adc4gis.com'
 })
 
 //         name: { type: String, required: true },
@@ -26,17 +30,6 @@ export const deleteMapById = (id) => api.delete(`/map/${id}`);
 export const getMapById = (id) => api.get(`/map/${id}`);
 export const getUserMaps = (id) => api.get(`/userMaps/${id}`);
 export const getPublicMaps = () => api.get(`/publicMaps/`);
-export const getPublicMapsByName = (name) => {
-    return api.get(`/publicMapsByName/${name}`,
-    {
-        params:{
-            name: name
-        }
-        
-    });
-}
-
-
 export const getMapsDataByAccount = (user) => api.post(`/maps`, user);
 export const getSharedMapsDataByAccount = (user) => api.post(`/sharedMaps`, user);
 
@@ -129,6 +122,12 @@ export const addComment = (id, comment, username) => {
     })
 }
 
+export const updateTags = (id, tags) => {
+    return api.put(`/map/${id}/updateTags`, {
+        id: id,
+        tags: tags
+    })
+}
 export const updateMapCollaborator = (id, user, collaborators) =>{
     return api.put(`/updateCollaborator`, {
         id: id,
@@ -143,13 +142,28 @@ export const isValidEmail = (email) =>{
     })
 }
 
+export const convertGeoJSON = (geoJSON) =>{
+
+    return conversionAPI.post('/convertJson',{
+        json: geoJSON,
+        jsonUrl: "",
+        format:	"",
+        outputName:	"",
+        convert: "",
+    }, {
+        responseType: 'arraybuffer',
+        headers: {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      })
+}
+
 const mapApis = {
     createMap,
     deleteMapById,
     deleteMap,
     getMapById,
     getPublicMaps,
-    getPublicMapsByName,
     getMapsDataByAccount,
     getSharedMapsDataByAccount,
     renameMap, 
@@ -159,8 +173,10 @@ const mapApis = {
     saveMap,
     deleteMapProperty,
     addComment,
+    updateTags,
     updateMapCollaborator,
-    isValidEmail
+    isValidEmail,
+    convertGeoJSON
 }
 
 export default mapApis

@@ -111,10 +111,14 @@ export default function MapCard(props) {
                             {'By: ' + map.owner}
                         </Typography>
                     </Grid>
-                    
                     <Grid item xs = {6} sx={{textAlign:'right'}}>
                         <Typography sx = {{margin: '3px', fontSize: 14, marginRight:'10%'}}>
                             {'Published: ' + date}
+                        </Typography>
+                    </Grid>
+                    <Grid item xs = {20} sx={{textAlign:'left'}}>
+                        <Typography sx = {{margin: '3px', fontSize: 14, marginRight:'10%'}}>
+                            {'Tags: ' + map.tags}
                         </Typography>
                     </Grid>
                 </Grid>

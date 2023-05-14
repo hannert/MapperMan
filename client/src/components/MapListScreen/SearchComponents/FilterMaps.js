@@ -5,14 +5,15 @@ import RepoSelectButton from "./RepoSelectButton";
 import TagsFilter from "./TagsFilter";
 import SearchMaps from "./SearchMaps";
 
-export default function FilterMaps() {
+export default function FilterMaps(props) {
+  const {currentList} = props;
 
 
   return (
     <Box>
         <Grid container rowSpacing={0}>
                 <RepoSelectButton></RepoSelectButton>
-                <SearchMaps></SearchMaps>
+                <SearchMaps currentList={currentList}></SearchMaps>
                 <TagsFilter></TagsFilter>
         </Grid>
     </Box>

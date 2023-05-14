@@ -101,8 +101,11 @@ export default function AddMapDialog(props){
     function handleShpDbfConfirm(){
         console.log("confirm button for shp");
         let combinedGeoJSON = shp.combine([shp.parseShp(shapefile),shp.parseDbf(dbfFile)]);
-        let options = {tolerance: 0.05, highQuality: false};
+
+        console.log(combinedGeoJSON);
+        let options = {tolerance: 0.001, highQuality: true};
         let simplified = turf.simplify(combinedGeoJSON, options);
+
         if(user !== null){
             dispatch(createMapThunk({owner: user, mapData: simplified})).unwrap().then((res) => {
                 console.log("trying to make a map from geojson");
@@ -137,10 +140,10 @@ export default function AddMapDialog(props){
         console.log("confirm button for geojson");
         
         let options = {tolerance: 0.001, highQuality: true};
-        // let simplified = turf.simplify(geoJsonFile, options);
-        console.log(geoJsonFile);
+        let simplified = turf.simplify(geoJsonFile, options);
+
         if(user !== null){
-            dispatch(createMapThunk({owner: user, mapData: geoJsonFile})).unwrap().then((res) => {
+            dispatch(createMapThunk({owner: user, mapData: simplified})).unwrap().then((res) => {
                 console.log("trying to make a map from geojson");
                 console.log(res);
                 dispatch(getMapsDataByAccountThunk({user: user})).unwrap().then((response) => {
