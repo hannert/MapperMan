@@ -14,10 +14,6 @@ export default function PolygonButton() {
     const dispatch = useDispatch()
     const currentEditTool = useSelector(state => state.leafletEditing.editTool);
     const activeDrawing = useSelector(state => state.leafletEditing.activeDrawing);
-    const featureIndex = useSelector(state => state.leafletEditing.featureIndex);
-    const layerGroup = useSelector(state => state.leafletEditing.layerGroup);
-    const mapRef = useSelector(state => state.leafletEditing.mapRef);
-    const properties = useSelector(state => state.leafletEditing.properties);
 
     function handleButtonClick(){
         dispatch(unselectTool());

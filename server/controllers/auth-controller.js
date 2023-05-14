@@ -88,6 +88,7 @@ loginUser = async (req, res) => {
             secure: false,
             sameSite: false,
             domain: process.env.FRONTEND_DOMAIN
+            
         }).status(200).json({
             success: true,
             user: {
