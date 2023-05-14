@@ -145,7 +145,7 @@ io.on('connection', (socket) => {
     }
     })
 
-    socket.on('create delete transaction', async(roomName, lat, lng, featureIndex, vertexIndex, shape, type)=>{
+    socket.on('create delete transaction', async(roomName, lat, lng, featureIndex, vertexIndex, subPolyIndex, shape, type)=>{
       console.log("create delete transaction from ", roomName)
       if(type==="delete vertex"){
         socket.in(roomName).emit('received delete vertex transaction', {
@@ -153,6 +153,7 @@ io.on('connection', (socket) => {
           lng: lng,
           featureIndex: featureIndex,
           vertexIndex: vertexIndex,
+          subPolyIndex: subPolyIndex,
           shape: shape,
           type: "delete vertex"
         })
@@ -164,6 +165,7 @@ io.on('connection', (socket) => {
           lng: lng,
           featureIndex: featureIndex,
           vertexIndex: vertexIndex,
+          subPolyIndex: subPolyIndex,
           shape: shape,
           type: "undo delete vertex"
         })

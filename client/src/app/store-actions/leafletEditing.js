@@ -43,7 +43,7 @@ const initialState = {
     mergedFeature: null,
     chosenForDeletion: null,
     collaborators: [],
-    sharedWith: []
+    sharedWith: [],
 }
 
 export const leafletEditing = createSlice({
@@ -363,6 +363,7 @@ export const leafletEditing = createSlice({
         setFeatureIndex: (state, action) => {
             state.featureIndex = action.payload;
         },
+
         incrementFeatureIndex: (state, action) => {
             state.featureIndex += 1;
         },
