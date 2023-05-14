@@ -44,7 +44,7 @@ app.use((req, res, next) => {
   next()
 });
 
-const whitelist = [process.env.FRONTEND_URL, process.env.BACKEND_URL];
+const whitelist = [process.env.FRONTEND_URL, process.env.BACKEND_URL, 'http://ogre.adc4gis.com'];
 
 var corsOptions = {
   origin: function (origin, callback) {

@@ -1,10 +1,12 @@
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import { IconButton, Tooltip, Button, Box } from '@mui/material';
-import { shallowEqual, useSelector} from 'react-redux';
+import { shallowEqual, useSelector, useDispatch} from 'react-redux';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useState } from 'react';
+import { convertGeoJSONThunk } from '../../app/store-actions/editMapList';
+import { saveAs } from 'file-saver';
 
 
 
@@ -15,6 +17,7 @@ export default function ExportMapButton (props) {
     const currentMap = useSelector((state) => state.leafletEditing.currentGeoJSON);
     const mapName = useSelector((state) => state.editMapList.activeMapName, shallowEqual);
     const [fileTypeDialogOpen, setFileTypeDialogOpen] = useState(false);
+    const dispatch = useDispatch();
 
 
     function downloadGeoJSON() {
@@ -25,9 +28,22 @@ export default function ExportMapButton (props) {
         a.click();
     }
 
-    const handleDeletePropertyConfirm = ()=>{
-        setFileTypeDialogOpen(false);
+
+    function downloadShpDbf(){
+        const a = document.createElement("a");
+        dispatch(convertGeoJSONThunk(JSON.stringify(currentMap))).unwrap().then(async(response) =>{
+            const file = new Blob([response], {type: 'application/octet-stream'});
+            const filename = mapName + '.zip';
+            saveAs(file,filename)
+            console.log("saved?!")
+
+        });
+
+
+        
     }
+
+
 
     const handleCloseDialog = () =>{
         setFileTypeDialogOpen(false);
@@ -44,8 +60,15 @@ export default function ExportMapButton (props) {
     const handleGeoJSONClick = () =>{
         if(!currentMap) return
 
-        setFileTypeDialogOpen(true);
+        setFileTypeDialogOpen(false);
         downloadGeoJSON();
+    }
+
+    const handleShpDbfClick = () =>{
+        if(!currentMap) return
+
+        setFileTypeDialogOpen(false);
+        downloadShpDbf();
     }
 
     const fileTypeDialog = (
@@ -54,7 +77,7 @@ export default function ExportMapButton (props) {
         <Dialog open = {fileTypeDialogOpen} >
             <DialogTitle>Select a File Format:</DialogTitle>
             <DialogActions>
-                <Button variant = 'contained'>SHP/DBF</Button> <Button variant = 'contained' onClick={handleGeoJSONClick}>GeoJSON</Button>
+                <Button variant = 'contained' onClick={handleShpDbfClick}>SHP/DBF</Button> <Button variant = 'contained' onClick={handleGeoJSONClick}>GeoJSON</Button>
             </DialogActions>
             <DialogActions  sx={{display: 'flex', justifyContent:'center'}}>
                 <Button variant = 'contained' onClick={handleCloseDialog} color='error'>Cancel</Button>

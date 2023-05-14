@@ -181,6 +181,7 @@ export const addCommentThunk = createAsyncThunk('/map/:id/addComment', async(pay
         return rejectWithValue(err.response.data.errorMessage);
     }
 });
+
 export const updateTagsThunk = createAsyncThunk('/map/:id/updateTags', async(payload, {rejectWithValue}) => {
     console.log("updating tags to map id " + payload.id)
     try{
@@ -190,3 +191,15 @@ export const updateTagsThunk = createAsyncThunk('/map/:id/updateTags', async(pay
         return rejectWithValue(err.response.data.errorMessage);
     }
 });
+
+
+export const convertGeoJSONThunk = createAsyncThunk('/convertJson', async(payload, {rejectWithValue}) =>{
+    try{
+        const response = await mapApis.convertGeoJSON(payload)
+        return response.data
+    }catch(err){
+        return rejectWithValue(err.response.data.errorMessage);
+
+    }
+})
+
