@@ -5,6 +5,7 @@ import hash from 'object-hash';
 import React, { useContext, useEffect, useRef } from 'react';
 import { GeoJSON, MapContainer, TileLayer } from 'react-leaflet';
 import { useDispatch, useSelector } from 'react-redux';
+
 import { mouseToolAction, setEditTool, setFeatureIndex, setFeatureIndexClicked, setMapRef, setProperties, shapes } from '../../app/store-actions/leafletEditing';
 import { addCreatePolygonTransaction, addCreatePolylineTransaction, addDeleteFeatureTransaction, addDeleteVertexTransaction, addMoveFeatureTransaction, addMoveVertexTransaction, initTps, setDeleteParams, setfStartPos, setvStartPos } from '../../app/store-actions/transactions';
 import { SocketContext } from '../../socket';
@@ -84,6 +85,7 @@ export default function LeafletContainer(){
                 // });
 
                 e.layer.on('editable:vertex:deleted', (e) => {
+
                   
                     if(e.layer instanceof L.Polygon){
                         console.log(e);
