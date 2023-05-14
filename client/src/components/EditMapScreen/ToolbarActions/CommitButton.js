@@ -1,0 +1,29 @@
+import { Button, Typography } from "@mui/material";
+import { useDispatch } from "react-redux";
+import { setEditTool } from "../../../app/store-actions/leafletEditing";
+
+export default function CommitButton(props){
+    
+    // cancel function to stop editing in some mode
+    const {cancelFunction, setHidden} = props;
+    const dispatch = useDispatch();
+
+    function handleClick(e){
+        e.stopPropagation();
+        setHidden(true);
+        dispatch(setEditTool(null));
+        cancelFunction();
+    }
+
+    return (
+        <Button onClick ={handleClick} size="small" sx={{backgroundColor:'gray',
+        '&:hover': {
+           backgroundColor:'gray',
+           filter: 'brightness(0.85)',
+        }}}>
+            <Typography fontSize={10} variant='overline' sx={{color:'white'}}>
+                Commit
+            </Typography>
+        </Button>
+    )
+}

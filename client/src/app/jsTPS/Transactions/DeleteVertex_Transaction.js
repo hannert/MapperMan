@@ -1,5 +1,6 @@
 import { shapes } from "../../store-actions/leafletEditing";
 import { jsTPS_Transaction } from "../jsTPS";
+import * as L from 'leaflet';
 
 export default class DeleteVertex_Transaction extends jsTPS_Transaction {
 

@@ -2,86 +2,111 @@ import SearchIcon from "@mui/icons-material/Search";
 import { Autocomplete, InputAdornment, TextField } from "@mui/material";
 import { enqueueSnackbar } from 'notistack';
 import { useState } from "react";
-import { useDispatch } from "react-redux";
-import { getPublicMapsByNameThunk, setMapList } from '../../../app/store-actions/editMapList';
+import { useDispatch, useSelector } from "react-redux";
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import { setMapList,setFilteredList, getPublicMapsThunk, getMapsDataByAccountThunk, getUserSharedMapsThunk } from '../../../app/store-actions/editMapList';
+import { useResolvedPath } from "react-router-dom";
 
-export default function SearchMaps(){
-
+import ClearIcon from '@mui/icons-material/Clear';
+export default function SearchMaps(props){
+    const currentList = useSelector((state) => state.editMapList.mapList)
+    const filteredList = useSelector((state) => state.editMapList.filteredList)
     const dispatch = useDispatch();
-
+    const guest = useSelector((state) => state.accountAuth.guest);
+    const user = useSelector((state) => state.accountAuth.user);
+    const repoType = useSelector((state) => state.editMapList.repo);
+    
     const [input, setInput] = useState("");
-
     const handleChange = (event) => {
       setInput(event.target.value);
     };
-
+    let searchResults = []
+    
+    const handleResetView = (event) => {
+      dispatch(setFilteredList([]))
+      dispatch(setMapList(currentList))
+      setInput('')
+    }
     const handleSubmit = (event) => {
+      const temp = currentList
       if(event.key === 'Enter'){
-
-        dispatch(getPublicMapsByNameThunk({
-          name: input
-        })).then((response) => {
-          console.log("Getting maps with name ", input)
-          console.log('Maps', response.payload?.maps)
-
-          if(response.payload){
-            if(response.payload?.maps.length === 0) {
-              enqueueSnackbar('No maps found with that name!', {variant:'warning'})
-            } 
-            else {
-              dispatch(setMapList(response.payload.maps));
-              enqueueSnackbar('Maps successfully retreived!', {variant:'success'})
-            }
-          } 
-          if(!response.payload){
-            enqueueSnackbar('Please input a search critera.', {variant:'info'})
+        if(!user || repoType === "public"){
+          let query = input.toLowerCase();
+          if (query.length === 0){
+            enqueueSnackbar('Please input a search criteria.', {variant: 'failure'})
           }
-          
-          
-        }).catch((error) => {
-          enqueueSnackbar('Something went wrong while trying to fetch public maps.', {variant:'error'})
-          console.log(error);
-        });
+          else{
+            for (let i = 0; i <temp.length; i++){
+              if (temp[i].name.toLowerCase().includes(query)){
+                searchResults.push(temp[i])
+              }
+            }
+            if (searchResults.length !== 0){
+              console.log(searchResults)
+              dispatch(setFilteredList(searchResults));
+              enqueueSnackbar('Maps successfully retrieved!', {variant: 'success'})
+            }
+            else{
+              enqueueSnackbar('No maps found with that name!', {variant: 'warning'})
+            }
+          }
+
+        }
+        else if (repoType === "owned"){
+          let query = input.toLowerCase();
+          if (query.length === 0){
+            enqueueSnackbar('Please input a search criteria.', {variant: 'failure'})
+          }
+          else{
+            for (let i = 0; i < temp.length; i++){
+              if (temp[i].name.toLowerCase().includes(query)){
+                searchResults.push(temp[i])
+              }
+            }
+            if (searchResults.length !== 0){
+              dispatch(setFilteredList(searchResults));
+              enqueueSnackbar('Maps successfully retrieved!', {variant: 'success'})
+            }
+            else{
+              enqueueSnackbar('No maps found with that name!', {variant: 'warning'})
+            }
+          }
+        }
+        else if (repoType === "shared"){
+          let query = input.toLowerCase();
+          if (query.length === 0){
+            enqueueSnackbar('Please input a search criteria.', {variant: 'failure'})
+          }
+          else{
+            for (let i = 0; i < temp.length; i++){
+              if (temp[i].name.toLowerCase().includes(query)){
+                searchResults.push(temp[i])
+              }
+            }
+            if (searchResults.length !== 0){
+              dispatch(setFilteredList(searchResults));
+              enqueueSnackbar('Maps successfully retrieved!', {variant: 'success'})
+            }
+            else{
+              enqueueSnackbar('No maps found with that name!', {variant: 'warning'})
+            }
+          }
+        }
       }
     }
-
-    const currentList = [
-        {map: 'Africa', published: '3/7/2023', index: 0},
-        {map: 'South America', published: '3/4/2023', index: 1},
-        {map: 'Germany', published: '3/3/2023', index: 2},
-        {map: 'Netherlands', published: '2/27/2023', index: 3},
-        {map: 'France', published: '2/20/2023', index: 4},
-        {map: 'New Zealand', published: '2/19/2023', index: 5},
-        {map: 'China', published: '2/16/2023', index: 6},
-        {map: 'Japan', published: '2/16/2023', index: 7},
-        {map: 'United States', published: '2/16/2023', index: 8},
-        {map: 'Iceland', published: '2/16/2023', index: 9}
-      ]    
+      
     return (
-    <Autocomplete
-              id="maps-search"
-              disableClearable
-              forcePopupIcon={false}
-              sx = {{width:'600px', marginLeft: '5px'}}
-              options={currentList.map((obj) => obj.map)}
-              renderInput={(params) => (
+              <Box>
                 <TextField
-                  {...params}
-                  label="Search input"
-                  InputProps={{
-                    ...params.InputProps,
-                    type: 'search',
-                    endAdornment: (
-                        <InputAdornment position="end">
-                          <SearchIcon />
-                        </InputAdornment>
-                    ),
-                  }}
+                  label="Search name"
                   value={input}
                   onChange={handleChange}
                   onKeyDown={handleSubmit}
+                  sx={{width: 200}}
                 />
-              )}
-            />
+                {filteredList.length !== 0 && <Button onClick={handleResetView} sx={{color: "white"}}><ClearIcon/></Button>}
+              </Box>
+
     )
 }

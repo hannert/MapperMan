@@ -2,7 +2,7 @@ import FolderIcon from '@mui/icons-material/Folder';
 import { Button, Menu, MenuItem } from "@mui/material";
 import React from "react";
 import { useDispatch, useSelector } from 'react-redux';
-import { setMapList } from "../../../app/store-actions/editMapList";
+import { setMapList, changeRepoType } from "../../../app/store-actions/editMapList";
 
 import { getMapsDataByAccountThunk, getPublicMapsThunk, getUserSharedMapsThunk } from "../../../app/store-actions/editMapList";
 
@@ -11,7 +11,7 @@ export default function RepoSelectButton(){
     const open = Boolean(anchorEl);
     const user = useSelector((state) => state.accountAuth.user);
     const guest = useSelector((state) => state.accountAuth.guest);
-
+    let RepoType = useSelector((state) => state.editMapList.repo)
     const dispatch = useDispatch();
     const handleClick = (event) => {
       setAnchorEl(event.currentTarget);
@@ -26,6 +26,7 @@ export default function RepoSelectButton(){
           dispatch(getMapsDataByAccountThunk({user: user})).then((response) => {
               console.log("Get maps response")
               console.log(response);
+              dispatch(changeRepoType("owned"));
               if(response.payload.success){
                   dispatch(setMapList(response.payload.maps));
               }
@@ -39,6 +40,7 @@ export default function RepoSelectButton(){
           dispatch(getPublicMapsThunk()).then((response) => {
               console.log("Get maps response")
               console.log(response);
+              dispatch(changeRepoType("public"));
               if(response.payload.success){
                   dispatch(setMapList(response.payload.maps));
               }
@@ -50,6 +52,7 @@ export default function RepoSelectButton(){
       console.log('load shared maps');
       if (user) {
         dispatch(getUserSharedMapsThunk({user: user})).then((response) => {
+            dispatch(changeRepoType("shared"));
             if(response?.payload?.success){
                 console.log(response)
                 dispatch(setMapList(response.payload.maps));
@@ -57,7 +60,7 @@ export default function RepoSelectButton(){
         });
       }   
     }
-
+    console.log(RepoType)
     return (
       <div>
         <Button

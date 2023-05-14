@@ -33,7 +33,7 @@ export default function PropertyEditor(props){
     const geoJSON = useSelector((state) => state.leafletEditing.currentGeoJSON);
     const [addNewPropertyMenuOpen, setAddNewPropertyMenuOpen] = useState(false);
     const [newNameText, setNewNameText] = useState("");
-    const [newType, setNewType] = useState('string');
+    // const [newType, setNewType] = useState('string');
     const [newValue, setNewValue] = useState("");
 
     const properties = useSelector((state)=>state.leafletEditing.properties);
@@ -66,10 +66,10 @@ export default function PropertyEditor(props){
         setNewNameText(event.target.value);
     }
 
-    const handleUpdateType = (event) =>{
-        setNewType(event.target.value);
+    // const handleUpdateType = (event) =>{
+    //     setNewType(event.target.value);
         
-    }
+    // }
 
     const handleUpdateValueText = (event) =>{
         setNewValue(event.target.value) 
@@ -78,13 +78,13 @@ export default function PropertyEditor(props){
     const resetFields = () =>{
         setNewValue('');
         setNewNameText('');
-        setNewType('string');
+        // setNewType('string');
     }
 
     function handleConfirm(event) {
         console.log("confirm");
         if(newNameText!=='' && newValue!==''){
-            dispatch(editMapPropertyThunk({id: currMapId, index: featureIndex, property: newNameText, value: newValue, newProperty: {isNew: true, type: newType}})).unwrap().then((res)=>{
+            dispatch(editMapPropertyThunk({id: currMapId, index: featureIndex, property: newNameText, value: newValue, newProperty: {isNew: true, type: 'string'}})).unwrap().then((res)=>{
                 console.log(res);
 
 
@@ -139,7 +139,7 @@ export default function PropertyEditor(props){
                 />
             </TableCell>
                 
-            <TableCell>
+            {/* <TableCell>
                 <FormControl>
                 <Select
                     id="prop-type-select"
@@ -159,7 +159,7 @@ export default function PropertyEditor(props){
                 
                 </Select>
                 </FormControl>
-            </TableCell>
+            </TableCell> */}
                 
             <TableCell>
                 <TextField
@@ -207,11 +207,6 @@ export default function PropertyEditor(props){
                             <TableCell>
                                 <Typography variant='h6' sx={{fontFamily:'koulen'}}>
                                     Name
-                                </Typography>
-                            </TableCell>
-                            <TableCell>
-                                <Typography variant='h6' sx={{fontFamily:'koulen'}}>
-                                    Type
                                 </Typography>
                             </TableCell>
                             <TableCell>

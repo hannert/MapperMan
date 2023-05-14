@@ -8,7 +8,7 @@ export default function RedoButton() {
     const dispatch = useDispatch();
 
     function handleClick(){
-        dispatch(unselectTool())
+        // dispatch(unselectTool())
         dispatch(doTransaction());
     }
 

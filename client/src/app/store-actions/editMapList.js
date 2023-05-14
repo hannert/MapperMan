@@ -10,6 +10,9 @@ const initialState = {
     mapMarkedForDeletion: null,
     mapCardClickedId: null,
     mapCardClickedName: null,
+    repo: '',
+    filteredList: [],
+    tags: []
 }
 
 export const editMapList = createSlice({
@@ -27,6 +30,7 @@ export const editMapList = createSlice({
         },
         setMapList: (state, action) => {
             state.mapList = action.payload;
+            state.filteredList = [];
         },
         renameMap: (state, action) =>{
             state.activeMapId = action.payload.id;
@@ -38,12 +42,20 @@ export const editMapList = createSlice({
         setPublicRepo: (state, action) =>{
             state.publicRepo = action.payload;
         },
-
+        changeRepoType: (state, action) => {
+            state.repo = action.payload;
+        },
         setMapCardClicked: (state,action) =>{
             state.mapCardClickedId = action.payload.id;
             state.mapCardClickedName = action.payload.name;
         },
-
+        setFilteredList: (state, action) => {
+            console.log("Setting filtered list in store to ", action.payload)
+            state.filteredList = action.payload;
+        },
+        setTags: (state, action) => {
+            state.tags = action.payload;
+        },
         clear: (state, action) => {
             state.loggedIn = false;
             state.activeMapId = null;
@@ -53,11 +65,14 @@ export const editMapList = createSlice({
             state.mapMarkedForDeletion = null;
             state.mapCardClickedId = null;
             state.mapCardClickedName = null;
+            state.repo = '';
+            state.filteredList = [];
+            state.tags = [];
         }
     }
 })
 
-export const { createNewMap, setMapList, renameMap, deleteMap, setPublicRepo,setActiveMap, setMapCardClicked, clear } = editMapList.actions
+export const { changeRepoType, setFilteredList, createNewMap, setMapList, setTags, renameMap, deleteMap, setPublicRepo,setActiveMap, setMapCardClicked, clear } = editMapList.actions
 export default editMapList.reducer
 
 export const createMapThunk = createAsyncThunk('/newmap', async (payload) => {
@@ -117,16 +132,6 @@ export const getPublicMapsThunk = createAsyncThunk('/publicMaps/', async (_, {re
     }
 });
 
-export const getPublicMapsByNameThunk = createAsyncThunk('/publicMapsByName/', async (payload, {rejectWithValue}) => {
-    try {
-        console.log(payload.name)
-        const response = await mapApis.getPublicMapsByName(payload.name);
-        return response.data;
-    } catch(err){
-        return rejectWithValue(err.response.data.errorMessage);
-    }
-});
-
 export const getMapsDataByAccountThunk = createAsyncThunk('/maps', async (payload, {rejectWithValue}) => {
     try {
         const response = await mapApis.getMapsDataByAccount(payload.user);
@@ -176,3 +181,25 @@ export const addCommentThunk = createAsyncThunk('/map/:id/addComment', async(pay
         return rejectWithValue(err.response.data.errorMessage);
     }
 });
+
+export const updateTagsThunk = createAsyncThunk('/map/:id/updateTags', async(payload, {rejectWithValue}) => {
+    console.log("updating tags to map id " + payload.id)
+    try{
+        const response = await mapApis.updateTags(payload.id, payload.tags)
+        return response.data
+    }catch(err){
+        return rejectWithValue(err.response.data.errorMessage);
+    }
+});
+
+
+export const convertGeoJSONThunk = createAsyncThunk('/convertJson', async(payload, {rejectWithValue}) =>{
+    try{
+        const response = await mapApis.convertGeoJSON(payload)
+        return response.data
+    }catch(err){
+        return rejectWithValue(err.response.data.errorMessage);
+
+    }
+})
+

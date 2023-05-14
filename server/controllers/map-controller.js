@@ -122,7 +122,8 @@ getPublicMaps = async (req, res) => {
                     name: map.name,
                     owner: account[0].username,
                     createdAt: map.createdAt,
-                    published: map.published
+                    published: map.published,
+                    tags: map.tags
                 };
                 data.push(mapEntry);
             })
@@ -153,30 +154,33 @@ addComment = async(req, res) => {
         success: true
     })
 }
+updateTags = async(req,res) =>{
+    console.log("Updating tags")
+    const body = req.body;
 
-getPublicMapsByName = async (req, res) => {
+    if(!body){
+        return res.status(400).json({
+            success: false,
+            error: 'You must provide a body to update',
+        })
+    }
 
-    let queryName = req.query.name;
-    console.log("Getting public maps with name ", queryName);
-    let data = []
-    await Map.find({name: new RegExp(queryName, 'i'), published:true}).then(async(maps) => {
-        for (const map of maps){
-            console.log(map)
-            await Account.find({_id: map.owner}).then((account) => {
-                let mapEntry = {
-                    id: map._id,
-                    name: map.name,
-                    owner: account[0].username,
-                    createdAt: map.createdAt,
-                    published: map.published
-                };
-                data.push(mapEntry);
-            })
-        }
-        return res.status(200).json({success: true, maps: data})
-    }).catch(err => console.log(err))
+    const id = body.id;
+    const tags = body.tags;
+
+
+    Map.findOne({_id: id}).then((map) => { 
+
+            // Update the maps tags array and then save
+            map.tags = tags;
+            map
+                .save()
+                .then(() => {
+                    return res.status(200).json({success: true, message:'Map collaborators updated!'})
+                })
+
+    })
 }
-
 getMapsDataByAccount = async (req, res) => {
     const user = req.body;
     // console.log('User')
@@ -201,7 +205,8 @@ getMapsDataByAccount = async (req, res) => {
                     name: map.name,
                     owner: account[0].username,
                     createdAt: map.createdAt,
-                    published: map.published
+                    published: map.published,
+                    tags: map.tags
                 };
                 // console.log("Map Entry: ");
                 // console.log(mapEntry);
@@ -245,7 +250,8 @@ getSharedMapsDataByAccount = async (req, res) => {
                     name: map.name,
                     owner: account[0].username,
                     createdAt: map.createdAt,
-                    published: map.published
+                    published: map.published,
+                    tags: map.tags
                 };
                 data.push(mapEntry);
             }).catch(err => console.log(err));
@@ -596,7 +602,6 @@ module.exports = {
     deleteMapById,
     deleteMap,
     getPublicMaps,
-    getPublicMapsByName,
     getMapsDataByAccount,
     getSharedMapsDataByAccount,
     renameMap,
@@ -606,6 +611,7 @@ module.exports = {
     saveMap,
     deleteMapProperty,
     addComment,
+    updateTags,
     updateCollaborator,
     isValidEmail
 

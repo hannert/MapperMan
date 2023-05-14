@@ -6,7 +6,7 @@ import { useParams } from "react-router-dom";
 import { getMapByIdThunk } from '../../app/store-actions/editMapList';
 
 import 'leaflet-editable';
-
+import { setTags } from '../../app/store-actions/editMapList'
 import { enqueueSnackbar } from 'notistack';
 import { setCollaborators, setCurrentGeoJSON, setSharedWith, applyDelta, editPropertyValue, deleteProperty, addProperty } from '../../app/store-actions/leafletEditing';
 import { SocketContext } from '../../socket';
@@ -31,8 +31,10 @@ export default function EditScreen(){
         if (mapId) {
             console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!id')
             dispatch(getMapByIdThunk({id: mapId})).unwrap().then(async(response) => {
+                console.log(response.map.mapData)
                 dispatch(setCurrentGeoJSON(response.map.mapData));
                 dispatch(setSharedWith(response.map.sharedWith))
+                dispatch(setTags(response.map.tags))
             }).catch((error) => {
                 console.log(error);
             });
@@ -48,6 +50,7 @@ export default function EditScreen(){
             console.log('----------------------------------------- id')
             dispatch(getMapByIdThunk({id: id})).unwrap().then(async(response) => {
                 dispatch(setCurrentGeoJSON(response.map.mapData));
+                dispatch(setTags(response.map.tags))
             }).catch((error) => {
                 console.log(error);
             });
@@ -79,6 +82,7 @@ export default function EditScreen(){
             dispatch(applyDelta(delta));
         })
 
+
         socket.on('edited property', (featureIndex, key, value)=>{
             console.log('!!!!!!!!!!!!!!!!!!!!!!!!');
             console.log('received edit prop');
@@ -106,6 +110,7 @@ export default function EditScreen(){
                 value: value,
                 featureIndex: featureIndex
             }))
+
         })
 
     }, [])
@@ -123,7 +128,7 @@ export default function EditScreen(){
 
 
     function handleToggleProperty () {
-        if(featureIndex){
+        if(featureIndex!=null){
             setPropertyOpen(!propertyOpen);
         }
     }
@@ -137,7 +142,7 @@ export default function EditScreen(){
 
     return (
         <Box sx ={{width:'100%', height:'100%'}}>
-            <Button onClick={handleToggleProperty} sx={{position:'absolute', right:0, zIndex: 999}}>
+            <Button variant='contained' onClick={handleToggleProperty} sx={{position:'absolute', right:0, zIndex: 999}}>
                 Open Property
             </Button>
             <Box sx={{height:'100%', display:'flex', position:'relative'}}>

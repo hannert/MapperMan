@@ -30,7 +30,7 @@ export default class CreatePolygon_Transaction extends jsTPS_Transaction {
         polygon.featureIndex = this.featureIndex;
         polygon.properties = this.properties;
         //Don't add an extra transaction
-        polygon.inStack = true;
+        polygon.ignore = true;
         this.layerGroup.addLayer(polygon);
     }
     
@@ -46,6 +46,9 @@ export default class CreatePolygon_Transaction extends jsTPS_Transaction {
         for(let layer of this.layerGroup.getLayers()){
             if(layer.featureIndex === this.featureIndex){
                 //can't search through latlngs like this on everything :(
+                
+                // add a property like layer.ignore = true so remove event
+                // doesn't fire or sometihng like htat still need to think it through
                 this.layerGroup.removeLayer(layer);
             }
         }

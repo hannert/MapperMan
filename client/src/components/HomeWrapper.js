@@ -15,6 +15,7 @@ function HomeWrapper() {
         dispatch(getLoggedInThunk()).unwrap().then((response) => {
             if(response.loggedIn === true){
                 dispatch(loginUser(response.user));
+                
             }
         }).catch((error) => {
             console.log(error);

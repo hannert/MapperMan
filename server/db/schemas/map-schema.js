@@ -21,7 +21,7 @@ const mapSchema = new Schema(
         published: {type: Boolean, required: true},
         comments: {type: [{owner: String, content: String}], required: true },
         sharedWith: {type: [String], required: true},
-        tags: {type: Map, of: String, required: true},
+        tags: {type: [String], required: true},
     },
     { timestamps: true },
 )
