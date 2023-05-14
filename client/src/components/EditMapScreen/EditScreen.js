@@ -9,6 +9,7 @@ import 'leaflet-editable';
 
 import { enqueueSnackbar } from 'notistack';
 import { setCollaborators, setCurrentGeoJSON, setSharedWith, applyDelta, editPropertyValue, deleteProperty, addProperty } from '../../app/store-actions/leafletEditing';
+import { setTags } from '../../app/store-actions/editMapList'
 import { SocketContext } from '../../socket';
 import LeafletContainer from './LeafletContainer';
 import MergeStatus from './MergeStatus';
@@ -34,6 +35,8 @@ export default function EditScreen(){
                 console.log(response.map.mapData)
                 dispatch(setCurrentGeoJSON(response.map.mapData));
                 dispatch(setSharedWith(response.map.sharedWith))
+                dispatch(setTags(response.map.tags))
+                console.log(response.map.tags)
             }).catch((error) => {
                 console.log(error);
             });
@@ -49,6 +52,7 @@ export default function EditScreen(){
             console.log('----------------------------------------- id')
             dispatch(getMapByIdThunk({id: id})).unwrap().then(async(response) => {
                 dispatch(setCurrentGeoJSON(response.map.mapData));
+                dispatch(setTags(response.map.tags))
             }).catch((error) => {
                 console.log(error);
             });

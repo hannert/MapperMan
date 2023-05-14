@@ -26,7 +26,7 @@ router.put('/map/:id/deleteProperty', MapController.deleteMapProperty)
 
 
 router.put('/map/:id/addComment', MapController.addComment)
-
+router.put('/map/:id/addTag', MapController.addTag)
 router.put('/updateCollaborator', MapController.updateCollaborator)
 router.put('/isValidEmail/:email', MapController.isValidEmail)
 

@@ -1,5 +1,6 @@
 import { Delete, Edit, Groups, Publish, Save } from "@mui/icons-material";
 import { IconButton, Tooltip } from "@mui/material";
+import StyleIcon from '@mui/icons-material/Style';
 import { Box, Container } from '@mui/system';
 import { enqueueSnackbar } from "notistack";
 import { useState } from "react";
@@ -11,6 +12,7 @@ import DeleteModal from "./DeleteModal";
 import EditModal from "./EditModal";
 import ExportMapButton from "./ExportMapButton";
 import PublishModal from "./PublishModal";
+import TagsModal from "./TagsModal"
 /**
  * This component is a container for the buttons that appear on App Banner when on the EditScreen
  * Responsible for conditional rendering of the buttons. 
@@ -24,6 +26,7 @@ export default function EditMapActions () {
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [publishDialogOpen, setPublishDialogOpen] = useState(false);
     const [collaboratorDialogOpen, setCollaboratorDialogOpen] = useState(false);
+    const [tagDialogOpen, setTagDialogOpen] = useState(false);
 
     const mapName = useSelector((state) => state.editMapList.activeMapName)
     const layerGroup = useSelector((state) => state.leafletEditing.layerGroup);
@@ -46,7 +49,9 @@ export default function EditMapActions () {
         setCollaboratorDialogOpen(!collaboratorDialogOpen)
     }
 
-
+    const toggleTagDialog = () => {
+        setTagDialogOpen(!tagDialogOpen)
+    }
 
     //  Function to handle user clicking the save icon, Should save and give notification
     function handleSave(){
@@ -89,6 +94,8 @@ export default function EditMapActions () {
     let collaboratorDialog = "";
     collaboratorDialog = (collaboratorDialogOpen) ? <CollaboratorModal open={true} toggleCollaboratorDialog={toggleCollaboratorDialog}/> : <CollaboratorModal open={false} toggleCollaboratorDialog={toggleCollaboratorDialog}/> ;
 
+    let tagDialog = "";
+    tagDialog = (tagDialogOpen) ? <TagsModal open={true} toggleTagDialog={toggleTagDialog}/> : <TagsModal open={false} toggleTagDialog={toggleTagDialog}/> ;
     return (
         <Container>
             <Box>
@@ -121,6 +128,11 @@ export default function EditMapActions () {
                         <Save onClick={handleSave} />
                     </IconButton>
                 </Tooltip>
+                <Tooltip title='Add tags'>
+                    <IconButton>
+                        <StyleIcon onClick={toggleTagDialog} />
+                    </IconButton>
+                </Tooltip>
                 <ExportMapButton />
             </Box>
 
@@ -128,6 +140,7 @@ export default function EditMapActions () {
             {deleteDialog}
             {publishDialog}
             {collaboratorDialog}
+            {tagDialog}
         </Container>
     )
 }

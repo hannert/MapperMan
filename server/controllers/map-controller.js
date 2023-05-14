@@ -154,6 +154,26 @@ addComment = async(req, res) => {
     })
 }
 
+addTag = async(req, res) => {
+    console.log("adding tag")
+    if(!req.body){
+        return res.status(400).json({
+            success: false,
+            error: 'You must provide a body to update',
+        })
+    }
+    let tag = req.body.tag;
+    let id = req.body.id
+    console.log(tag)
+    let response = await Map.findByIdAndUpdate(
+        id,
+        {$push: {"tags": tag}}
+    );
+    console.log("adding tag done!")
+    return res.status(200).json({
+        success: true
+    })
+}
 getPublicMapsByName = async (req, res) => {
 
     let queryName = req.query.name;
@@ -606,6 +626,7 @@ module.exports = {
     saveMap,
     deleteMapProperty,
     addComment,
+    addTag,
     updateCollaborator,
     isValidEmail
 

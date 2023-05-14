@@ -10,6 +10,7 @@ const initialState = {
     mapMarkedForDeletion: null,
     mapCardClickedId: null,
     mapCardClickedName: null,
+    tags: []
 }
 
 export const editMapList = createSlice({
@@ -43,7 +44,9 @@ export const editMapList = createSlice({
             state.mapCardClickedId = action.payload.id;
             state.mapCardClickedName = action.payload.name;
         },
-
+        setTags: (state, action) => {
+            state.tags = action.payload
+        },
         clear: (state, action) => {
             state.loggedIn = false;
             state.activeMapId = null;
@@ -53,11 +56,12 @@ export const editMapList = createSlice({
             state.mapMarkedForDeletion = null;
             state.mapCardClickedId = null;
             state.mapCardClickedName = null;
+            state.tags = [];
         }
     }
 })
 
-export const { createNewMap, setMapList, renameMap, deleteMap, setPublicRepo,setActiveMap, setMapCardClicked, clear } = editMapList.actions
+export const { createNewMap, setMapList, renameMap, deleteMap, setPublicRepo,setActiveMap, setMapCardClicked, setTags, clear } = editMapList.actions
 export default editMapList.reducer
 
 export const createMapThunk = createAsyncThunk('/newmap', async (payload) => {
@@ -171,6 +175,16 @@ export const addCommentThunk = createAsyncThunk('/map/:id/addComment', async(pay
     console.log("adding comment to map id " + payload.id)
     try{
         const response = await mapApis.addComment(payload.id, payload.comment, payload.username)
+        return response.data
+    }catch(err){
+        return rejectWithValue(err.response.data.errorMessage);
+    }
+});
+
+export const addTagThunk = createAsyncThunk('/map/:id/addTag', async(payload, {rejectWithValue}) => {
+    console.log("adding comment to map id " + payload.id)
+    try{
+        const response = await mapApis.addTag(payload.id, payload.tag)
         return response.data
     }catch(err){
         return rejectWithValue(err.response.data.errorMessage);
