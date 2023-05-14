@@ -199,7 +199,8 @@ export const leafletEditing = createSlice({
             });
         },
         setChosenForDeletion: (state, action) => {
-            state.chosenForDeletion = action.payload;
+            //idk how but at some point this gets called and messes things up so commenting out
+            // state.chosenForDeletion = action.payload;
         },
         removeFeature: (state, action) => {
             console.log('Removing feature');
@@ -207,16 +208,17 @@ export const leafletEditing = createSlice({
             console.log(state.layerClickedEditor);      
         },
         mouseToolAction: (state, action) =>{
-            console.log('Attaching onClick');
-            let feature = null;
-            for(let layer of state.layerGroup.getLayers()){
-                if(layer.featureIndex === state.featureClickedIndex){
-                    feature = layer;
-                }
-            }
-            console.log(feature);
-            console.log(state.editTool);
             if(state.editTool === editTools.mouse){
+                console.log('Attaching onClick');
+                let feature = null;
+                for(let layer of state.layerGroup.getLayers()){
+                    if(layer.featureIndex === state.featureClickedIndex){
+                        feature = layer;
+                    }
+                }
+                console.log(feature);
+                console.log(state.editTool);
+
                 console.log('Mouse tool action');
                 // console.log(feature.editor._enabled)
                 console.log(feature.editEnabled());
@@ -238,26 +240,20 @@ export const leafletEditing = createSlice({
 
         },
         removeToolAction: (state, action) =>{
-            let feature = null;
-
-            for(let layer of state.layerGroup.getLayers()){
-                if(layer.featureIndex === state.featureClickedIndex){
-                    feature = layer;
-                }
-            }
-
             if(state.editTool === editTools.removeFeature){
+                let feature = null;
+
+                for(let layer of state.layerGroup.getLayers()){
+                    if(layer.featureIndex === state.featureClickedIndex){
+                        feature = layer;
+                    }
+                }
                 console.log(state.editTool);
                 console.log('Remove tool action');
-                console.log(state.chosenForDeletion);
+                console.log(feature);
+                state.chosenForDeletion = feature;
 
-                if(state.chosenForDeletion === null){
-                    feature.setStyle({color:'red'})
-                    state.chosenForDeletion = feature;
-                }else{
-                    state.layerGroup.removeLayer(state.chosenForDeletion);
-                    state.chosenForDeletion = null;
-                }
+                state.layerGroup.removeLayer(feature);
             }
         },
         setDraggable(state, action){

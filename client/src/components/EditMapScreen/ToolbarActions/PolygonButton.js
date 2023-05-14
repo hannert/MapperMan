@@ -36,7 +36,6 @@ export default function PolygonButton() {
     //when the user switches to a different tool
     useEffect(()=>{
         if(currentEditTool === null){
-            console.log('Enabling polygon')
             setDisabled(false);
         }else if (currentEditTool !== editTools.polygon){
             setDisabled(true);

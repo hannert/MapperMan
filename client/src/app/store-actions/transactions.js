@@ -12,7 +12,9 @@ const initialState = {
     vertexIndex: null,
     render: false,
     vStartPos: null,
-    fStartPos: null
+    fStartPos: null,
+    ping: false,
+    removed: null
 }
 
 
@@ -28,6 +30,7 @@ export const transactions = createSlice({
             if(state.tps.hasTransactionToRedo()){
                 console.log('Did transaction');
                 state.tps.doTransaction();
+                state.ping = !state.ping;
             }
         },
         undoTransaction: (state, action) => {
@@ -35,9 +38,12 @@ export const transactions = createSlice({
             if(state.tps.hasTransactionToUndo()){
                 console.log('Undid transaction');
                 state.tps.undoTransaction();
+                state.ping = !state.ping;
             }
         },
         addDeleteVertexTransaction: (state, action) => {
+            state.ping = !state.ping;
+
             let transaction = 
             new DeleteVertex_Transaction(action.payload.layerGroup, action.payload.latlng, 
                 action.payload.featureIndex, state.vertexIndex, action.payload.shape, 
@@ -59,6 +65,8 @@ export const transactions = createSlice({
             state.vStartPos = action.payload;
         },
         addMoveVertexTransaction: (state, action) => {
+            state.ping = !state.ping;
+
             console.log(state.vStartPos);
             console.log(action.payload.endPos);
             let transaction = new MoveVertex_Transaction(action.payload.layerGroup, action.payload.featureIndex, state.vStartPos, action.payload.endPos, action.payload.socket, action.payload.mapId);
@@ -77,6 +85,8 @@ export const transactions = createSlice({
             state.fStartPos = action.payload;
         },
         addMoveFeatureTransaction: (state, action) => {
+            state.ping = !state.ping;
+
             let offsetX = action.payload.endPos['lat'] - state.fStartPos['lat'];
             let offsetY = action.payload.endPos['lng'] - state.fStartPos['lng'];
 
@@ -91,6 +101,8 @@ export const transactions = createSlice({
             console.log("heheh")
         },
         addDeleteFeatureTransaction: (state, action) => {
+            state.ping = !state.ping;
+
             console.log('delete transaction');
             let transaction = new DeleteFeature_Transaction(action.payload.layerGroup, action.payload.latlngs, action.payload.properties, action.payload.featureIndex, action.payload.socket, action.payload.mapId);
             state.tps.addTransaction(transaction);
@@ -103,6 +115,8 @@ export const transactions = createSlice({
             console.log("heheh")
         },
         addCreatePolygonTransaction: (state, action) => {
+            state.ping = !state.ping;
+
             /**put lat lng pairs in an array so it can be sent thru sockets  */
             let latlngArr = [];
             for(let pair=0; pair<action.payload.latlngs.length; pair++){
@@ -127,6 +141,8 @@ export const transactions = createSlice({
             console.log("heheh")
         },
         addCreatePolylineTransaction: (state, action) => {
+            state.ping = !state.ping;
+
             /**put lat lng pairs in an array so it can be sent thru sockets  */
             console.log(action.payload.latlngs)
             
@@ -139,8 +155,6 @@ export const transactions = createSlice({
             }
             console.log(latlngArr)
 
-
-
             let transaction = new CreatePolyline_Transaction(action.payload.layerGroup, action.payload.latlngs, action.payload.properties, action.payload.featureIndex, action.payload.socket, action.payload.mapId, latlngArr);
             state.tps.addTransaction(transaction);
 
@@ -152,11 +166,16 @@ export const transactions = createSlice({
             console.log(transaction)
             socket.emit('create add polyline transaction', room, action.payload.featureIndex, latlngArr, action.payload.properties, "add polyline" );
             console.log("heheh")
+        },
+        setRemoved: (state, action) => {
+            state.removed = action.payload;
+            console.log('Just removed');
+            console.log(state.removed);
         }
     }
 })
 
 export const { initTps, doTransaction, undoTransaction, addDeleteVertexTransaction, setVertexIndex,
     setvStartPos, addMoveVertexTransaction, setfStartPos, addMoveFeatureTransaction, addDeleteFeatureTransaction,
-    addCreatePolygonTransaction, addCreatePolylineTransaction } = transactions.actions;
+    addCreatePolygonTransaction, addCreatePolylineTransaction, setRemoved } = transactions.actions;
 export default transactions.reducer;

@@ -9,6 +9,7 @@ import { editTools, setEditTool, setMergeArray, startMergeTool, unselectTool } f
 export default function MergeSubregionButton() {
 
     const [hidden, setHidden] = useState(true);
+    const [disabled, setDisabled] = useState(false);
     const dispatch = useDispatch()
     const currentEditTool = useSelector(state => state.leafletEditing.editTool);
     const mergeArray = useSelector(state => state.leafletEditing.mergeArray)
@@ -25,6 +26,7 @@ export default function MergeSubregionButton() {
         console.log('Merge Subregions Button Clicked');
         setHidden(false);
         dispatch(setEditTool(editTools.mergeSubregions));
+        setDisabled(true);
         dispatch(startMergeTool(handleMergeClick))
     }
 
@@ -72,15 +74,22 @@ export default function MergeSubregionButton() {
     //kind of redunant, but this is to make sure that the button is hidden 
     //when the user switches to a different tool
     useEffect(()=>{
-        if (currentEditTool !== editTools.mergeSubregions){
+        if(currentEditTool === null){
+            setDisabled(false);
+        }else if (currentEditTool !== editTools.mergeSubregions){
             setHidden(true);
+            setDisabled(true);
         }
     }, [currentEditTool])
 
     return (
         <Box sx={{display: 'flex', flexDirection:'row'}}>
             <Tooltip enterDelay={1000} title='Merge Subregions' placement='right'>
-                <Button onClick={handleButtonClick} variant='contained' sx={{backgroundColor:'#2B2B2B'}}>
+                <Button disabled={disabled} onClick={handleButtonClick} variant='contained' sx={{backgroundColor:'#2B2B2B',
+                '&:disabled': {
+                    backgroundColor:'#2B2B2B',
+                    filter: 'brightness(1)',
+                    }}}>
                     <Merge />
                 </Button>
             </Tooltip>

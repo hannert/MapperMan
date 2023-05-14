@@ -9,17 +9,17 @@ import { editTools, setDraggable, setEditTool, setFeatureIndexClicked, setLayerC
 export default function MouseButton(){
 
     const [hidden, setHidden] = useState(true);
+    const [disabled, setDisabled] = useState(false);
+
     const dispatch = useDispatch()
     const currentEditTool = useSelector(state => state.leafletEditing.editTool);
-    // const layerClickedId = useSelector(state => state.leafletEditing.layerClickedId);
-    const layerGroup = useSelector(state => state.leafletEditing.layerGroup);
-    const featureIndex = useSelector(state => state.leafletEditing.featureClickedIndex);
 
     function handleButtonClick(){
         dispatch(unselectTool());
         console.log('Mouse Button Clicked');
         setHidden(false);
         dispatch(setEditTool(editTools.mouse));
+        setDisabled(true);
 
         // dispatch(startMouseTool(handleMouseClick));
     }
@@ -39,15 +39,22 @@ export default function MouseButton(){
     //kind of redunant, but this is to make sure that the button is hidden 
     //when the user switches to a different tool
     useEffect(()=>{
-        if (currentEditTool !== editTools.mouse){
+        if(currentEditTool === null){
+            setDisabled(false);
+        }else if (currentEditTool !== editTools.mouse){
             setHidden(true);
+            setDisabled(true);
         }
     }, [currentEditTool])
 
     return (
         <Box sx={{display: 'flex', flexDirection:'row'}}>
             <Tooltip enterDelay={1000} title='Cursor' placement='right'>
-                <Button onClick={handleButtonClick} variant='contained' sx={{backgroundColor:'#2B2B2B'}}>
+                <Button disabled={disabled} onClick={handleButtonClick} variant='contained' sx={{backgroundColor:'#2B2B2B',
+                '&:disabled': {
+                    backgroundColor:'#2B2B2B',
+                    filter: 'brightness(1)',
+                    }}}>
                     <Mouse />
                 </Button>
             </Tooltip>
