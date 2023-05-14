@@ -57,7 +57,7 @@ export default function ExportMapButton (props) {
                 <Button variant = 'contained'>SHP/DBF</Button> <Button variant = 'contained' onClick={handleGeoJSONClick}>GeoJSON</Button>
             </DialogActions>
             <DialogActions  sx={{display: 'flex', justifyContent:'center'}}>
-                <Button variant = 'contained' onClick={handleCloseDialog}>Cancel</Button>
+                <Button variant = 'contained' onClick={handleCloseDialog} color='error'>Cancel</Button>
             </DialogActions>
         </Dialog>
         </Box>
