@@ -12,7 +12,7 @@ const api = axios.create({
 // WE NEED TO PUT THINGS INTO THE DATABASE OR IF WE HAVE SOME
 // CUSTOM FILTERS FOR QUERIES
 
-export const getLoggedIn = () => api.get(`/loggedIn/`);
+export const getLoggedIn = () => api.get(`/loggedIn/`, { withCredentials: true});
 export const loginUser = (email, password) => {
     return api.post(`/login`, {
         email : email,
