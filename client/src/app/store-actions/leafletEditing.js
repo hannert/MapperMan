@@ -237,6 +237,29 @@ export const leafletEditing = createSlice({
             }
 
         },
+        removeToolAction: (state, action) =>{
+            let feature = null;
+
+            for(let layer of state.layerGroup.getLayers()){
+                if(layer.featureIndex === state.featureClickedIndex){
+                    feature = layer;
+                }
+            }
+
+            if(state.editTool === editTools.removeFeature){
+                console.log(state.editTool);
+                console.log('Remove tool action');
+                console.log(state.chosenForDeletion);
+
+                if(state.chosenForDeletion === null){
+                    feature.setStyle({color:'red'})
+                    state.chosenForDeletion = feature;
+                }else{
+                    state.layerGroup.removeLayer(state.chosenForDeletion);
+                    state.chosenForDeletion = null;
+                }
+            }
+        },
         setDraggable(state, action){
             state.layerGroup.getLayer(action.payload).dragging.enable()
         },
@@ -455,7 +478,7 @@ export const { setPrevGeoJSON, setCurrentGeoJSON, setInitialized, setEditTool, s
 startPolylineDraw, endPolylineDraw, unselectTool, setLayerGroup, setFeatureClicked, setFeatureIndexClicked,
  startMouseTracking, setLayerClickedId, setLayerClickedEditor, addVertex, stopMouseTracking,
 setDraggable, unsetDraggable, startPolygonDraw, endPolygonDraw, startMarker, endMarker, 
-
+removeToolAction,
 mouseToolAction, setMergeArray, mergeRegion, finishMergeRegion, startMergeTool, removeFeature, startRemoveTool, 
 setCollaborators, setSharedWith, setChosenForDeletion, startCircleDraw, endCircleDraw, incrementFeatureIndex, setProperties, 
 setFeatureIndex, updateProperties, applyDelta, emitPropertyChange, editPropertyValue, deleteProperty, addProperty} = leafletEditing.actions;

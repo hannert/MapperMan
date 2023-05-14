@@ -5,7 +5,7 @@ import hash from 'object-hash';
 import React, { useEffect, useRef, useContext } from 'react';
 import { GeoJSON, MapContainer, TileLayer } from 'react-leaflet';
 import { useDispatch, useSelector } from 'react-redux';
-import { mouseToolAction, setEditTool, setFeatureIndex, setFeatureIndexClicked, setLayerClickedId, setMapRef, setProperties, shapes } from '../../app/store-actions/leafletEditing';
+import { mouseToolAction, removeToolAction, setEditTool, setFeatureIndex, setFeatureIndexClicked, setLayerClickedId, setMapRef, setProperties, shapes } from '../../app/store-actions/leafletEditing';
 import DeleteVertex_Transaction from '../../app/jsTPS/Transactions/DeleteVertex_Transaction';
 import { addCreatePolygonTransaction, addCreatePolylineTransaction, addDeleteFeatureTransaction, addDeleteVertexTransaction, addMoveFeatureTransaction, addMoveVertexTransaction, initTps, setVertexIndex, setfStartPos, setvStartPos } from '../../app/store-actions/transactions';
 import { SocketContext } from '../../socket';
@@ -170,6 +170,7 @@ export default function LeafletContainer(){
                     console.log(e);
                     dispatch(setFeatureIndexClicked(e.sourceTarget.featureIndex));
                     dispatch(mouseToolAction())
+                    dispatch(removeToolAction())
                 });
             });
 
@@ -237,6 +238,7 @@ export default function LeafletContainer(){
                 polygon.on('click', (e) => {
                     dispatch(setFeatureIndexClicked(e.sourceTarget.featureIndex));
                     dispatch(mouseToolAction())
+                    dispatch(removeToolAction())
                 });
 
                 // TODO prob a better way to do this

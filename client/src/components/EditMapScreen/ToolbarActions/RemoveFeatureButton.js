@@ -15,11 +15,12 @@ export default function RemoveFeatureButton() {
     const chosenForDeletion = useSelector(state => state.leafletEditing.chosenForDeletion);
 
     function handleButtonClick(){
+        dispatch(unselectTool());
         console.log('Remove Feature Button Clicked');
         setHidden(false);
         dispatch(setEditTool(editTools.removeFeature));
         // startMouseTracking((e)=>{dispatch(removeFeature(e.latlng))})
-        dispatch(startRemoveTool(RemoveFeature));
+        // dispatch(startRemoveTool(RemoveFeature));
     }
     
     const RemoveFeature = (e) => {
@@ -36,19 +37,19 @@ export default function RemoveFeatureButton() {
         }else{
             console.log('chooseFeature');
             e.target.setStyle({ color: "red" });
-            e.target.enableEdit();
+            // e.target.enableEdit();
             console.log(e.target._leaflet_id);
             dispatch(setChosenForDeletion(e.target._leaflet_id));
         }
     }
 
-    useEffect(()=>{
-        if (chosenForDeletion !== null){
-            dispatch(setLayerClickedEditor(layerGroup.getLayer(chosenForDeletion).editor));
-        }
-        console.log('Onclick readded')
-        dispatch(startRemoveTool(RemoveFeature));
-    }, [chosenForDeletion])
+    // useEffect(()=>{
+    //     if (chosenForDeletion !== null){
+    //         dispatch(setLayerClickedEditor(layerGroup.getLayer(chosenForDeletion).editor));
+    //     }
+    //     console.log('Onclick readded')
+    //     dispatch(startRemoveTool(RemoveFeature));
+    // }, [chosenForDeletion])
 
     //kind of redunant, but this is to make sure that the button is hidden 
     //when the user switches to a different tool
