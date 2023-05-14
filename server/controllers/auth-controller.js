@@ -84,8 +84,6 @@ loginUser = async (req, res) => {
 
         res.cookie("token", token, {
             // :)
-            httpOnly: false,
-            secure: false,
             sameSite: 'None',
             domain: process.env.FRONTEND_DOMAIN
             
