@@ -80,13 +80,14 @@ loginUser = async (req, res) => {
 
         // LOGIN THE USER
         const token = signToken(existingUser._id);
-        console.log('Token here');
-        console.log(token);
+        console.log(process.env.FRONTEND_URL);
 
         res.cookie("token", token, {
-            httpOnly: true,
-            secure: true,
-            sameSite: true
+            // :)
+            httpOnly: false,
+            secure: false,
+            sameSite: false,
+            domain: process.env.FRONTEND_DOMAIN
         }).status(200).json({
             success: true,
             user: {
