@@ -156,6 +156,7 @@ export const convertGeoJSON = (geoJSON) =>{
         outputName:	"",
         convert: "",
     }, {
+        responseType: 'arraybuffer',
         headers: {
             'Content-Type': 'application/x-www-form-urlencoded'
         }

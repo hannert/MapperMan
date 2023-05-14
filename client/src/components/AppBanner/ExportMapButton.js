@@ -6,7 +6,7 @@ import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
 import { useState } from 'react';
 import { convertGeoJSONThunk } from '../../app/store-actions/editMapList';
-
+import { saveAs } from 'file-saver';
 
 
 
@@ -32,21 +32,18 @@ export default function ExportMapButton (props) {
     function downloadShpDbf(){
         const a = document.createElement("a");
         dispatch(convertGeoJSONThunk(JSON.stringify(currentMap))).unwrap().then(async(response) =>{
-            const file = new Blob([response], {type: "application/zip"});
-            a.href = URL.createObjectURL(file);
-            a.download = mapName + '.shz';
-            a.click();
+            const file = new Blob([response], {type: 'application/octet-stream'});
+            const filename = mapName + '.zip';
+            saveAs(file,filename)
+            console.log("saved?!")
+
         });
 
-        // a.href = URL.createObjectURL(file);
-        // a.download = mapName + '.shz';
-        // a.click();
+
         
     }
 
-    // const handleDeletePropertyConfirm = ()=>{
-    //     setFileTypeDialogOpen(false);
-    // }
+
 
     const handleCloseDialog = () =>{
         setFileTypeDialogOpen(false);
