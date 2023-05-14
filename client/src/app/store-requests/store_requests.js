@@ -5,7 +5,7 @@ const api = axios.create({
 })
 
 const conversionAPI = axios.create({
-    baseURL: 'http://ogre.adc4gis.com'
+    baseURL: 'https://ogre.adc4gis.com'
 })
 
 //         name: { type: String, required: true },
