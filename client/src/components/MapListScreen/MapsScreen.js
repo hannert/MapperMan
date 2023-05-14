@@ -29,6 +29,7 @@ export default function MapsScreen(){
     const user = useSelector((state) => state.accountAuth.user);
     const guest = useSelector((state) => state.accountAuth.guest);
     const maps = useSelector((state) => state.editMapList.mapList);
+    const filteredMaps = useSelector((state) => state.editMapList.filteredList)
 
     const togglePublishDialog = () => {
         if(guest){
@@ -90,8 +91,7 @@ export default function MapsScreen(){
             });
         }   
     }, [guest])
-
-
+  
     useEffect(() => {
         if(maps){
             setCurrentList(maps);
@@ -134,12 +134,29 @@ export default function MapsScreen(){
                 <AddMapButton></AddMapButton>
             </Grid>
             <Grid container sx={{ alignItems:"center", justifyContent:"center"}}>
-                <FilterMaps></FilterMaps>
+                <FilterMaps currentList={currentList}></FilterMaps>
             </Grid>
 
             <Box sx={{width: '70%', backgroundColor: '#2B2B2B', marginTop: '20px'}}>
                 <Grid container rowSpacing={6} columnSpacing={6}>
-                    {      
+                    {console.log("Filtered maps", filteredMaps)}
+                    {console.log("CurrentList", currentList)}
+                    {console.log(filteredMaps.length !== 0)}
+                    {
+                        (filteredMaps.length !== 0)? 
+                        filteredMaps.map((filteredmap)=>(
+                            <Grid key={filteredmap.id} item xs = {6} sx={{align: 'center'}} >
+                                <MapCard 
+                                    key={filteredmap.id} 
+                                    sx = {{height: '400px', backgroundColor: '#282c34'}} 
+                                    map={filteredmap} 
+                                    togglePublishDialog={togglePublishDialog} 
+                                    toggleDeleteDialog={toggleDeleteDialog} 
+                                    toggleForkDialog={toggleForkDialog}
+                                />
+                            </Grid>
+                        ))
+                        :
                         currentList.map((map)=>(
                             <Grid key={map.id} item xs = {6} sx={{align: 'center'}} >
                                 <MapCard 
@@ -153,6 +170,7 @@ export default function MapsScreen(){
                             </Grid>
                         ))
                     }
+
                 </Grid>
             </Box>
             <Grid container sx={{ alignItems:"center", justifyContent:"center", margin:'10px'}}>
