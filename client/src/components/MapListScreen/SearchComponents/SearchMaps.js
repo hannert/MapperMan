@@ -16,6 +16,7 @@ export default function SearchMaps(props){
     const guest = useSelector((state) => state.accountAuth.guest);
     const user = useSelector((state) => state.accountAuth.user);
     const repoType = useSelector((state) => state.editMapList.repo);
+    
     const [input, setInput] = useState("");
     const handleChange = (event) => {
       setInput(event.target.value);
@@ -25,14 +26,14 @@ export default function SearchMaps(props){
     const handleResetView = (event) => {
       dispatch(setFilteredList([]))
       dispatch(setMapList(currentList))
+      setInput('')
     }
     const handleSubmit = (event) => {
       const temp = currentList
       if(event.key === 'Enter'){
-        if(guest || repoType == "public"){
-          console.log(temp.length)
+        if(!user || repoType === "public"){
           let query = input.toLowerCase();
-          if (query.length == 0){
+          if (query.length === 0){
             enqueueSnackbar('Please input a search criteria.', {variant: 'failure'})
           }
           else{
@@ -41,7 +42,7 @@ export default function SearchMaps(props){
                 searchResults.push(temp[i])
               }
             }
-            if (searchResults.length != 0){
+            if (searchResults.length !== 0){
               console.log(searchResults)
               dispatch(setFilteredList(searchResults));
               enqueueSnackbar('Maps successfully retrieved!', {variant: 'success'})
@@ -52,9 +53,9 @@ export default function SearchMaps(props){
           }
 
         }
-        else if (repoType == "owned"){
+        else if (repoType === "owned"){
           let query = input.toLowerCase();
-          if (query.length == 0){
+          if (query.length === 0){
             enqueueSnackbar('Please input a search criteria.', {variant: 'failure'})
           }
           else{
@@ -63,7 +64,7 @@ export default function SearchMaps(props){
                 searchResults.push(temp[i])
               }
             }
-            if (searchResults.length != 0){
+            if (searchResults.length !== 0){
               dispatch(setFilteredList(searchResults));
               enqueueSnackbar('Maps successfully retrieved!', {variant: 'success'})
             }
@@ -72,9 +73,9 @@ export default function SearchMaps(props){
             }
           }
         }
-        else if (repoType == "shared"){
+        else if (repoType === "shared"){
           let query = input.toLowerCase();
-          if (query.length == 0){
+          if (query.length === 0){
             enqueueSnackbar('Please input a search criteria.', {variant: 'failure'})
           }
           else{
@@ -83,7 +84,7 @@ export default function SearchMaps(props){
                 searchResults.push(temp[i])
               }
             }
-            if (searchResults.length != 0){
+            if (searchResults.length !== 0){
               dispatch(setFilteredList(searchResults));
               enqueueSnackbar('Maps successfully retrieved!', {variant: 'success'})
             }
@@ -98,12 +99,13 @@ export default function SearchMaps(props){
     return (
               <Box>
                 <TextField
-                  label="Search input"
+                  label="Search name"
                   value={input}
                   onChange={handleChange}
                   onKeyDown={handleSubmit}
+                  sx={{width: 200}}
                 />
-                {filteredList.length != 0 && <Button onClick={handleResetView} sx={{color: "white"}}><ClearIcon/></Button>}
+                {filteredList.length !== 0 && <Button onClick={handleResetView} sx={{color: "white"}}><ClearIcon/></Button>}
               </Box>
 
     )

@@ -11,7 +11,8 @@ const initialState = {
     mapCardClickedId: null,
     mapCardClickedName: null,
     repo: '',
-    filteredList: []
+    filteredList: [],
+    tags: []
 }
 
 export const editMapList = createSlice({
@@ -52,6 +53,9 @@ export const editMapList = createSlice({
             console.log("Setting filtered list in store to ", action.payload)
             state.filteredList = action.payload;
         },
+        setTags: (state, action) => {
+            state.tags = action.payload;
+        },
         clear: (state, action) => {
             state.loggedIn = false;
             state.activeMapId = null;
@@ -63,11 +67,12 @@ export const editMapList = createSlice({
             state.mapCardClickedName = null;
             state.repo = '';
             state.filteredList = [];
+            state.tags = [];
         }
     }
 })
 
-export const { changeRepoType, setFilteredList, createNewMap, setMapList, renameMap, deleteMap, setPublicRepo,setActiveMap, setMapCardClicked, clear } = editMapList.actions
+export const { changeRepoType, setFilteredList, createNewMap, setMapList, setTags, renameMap, deleteMap, setPublicRepo,setActiveMap, setMapCardClicked, clear } = editMapList.actions
 export default editMapList.reducer
 
 export const createMapThunk = createAsyncThunk('/newmap', async (payload) => {
@@ -171,6 +176,15 @@ export const addCommentThunk = createAsyncThunk('/map/:id/addComment', async(pay
     console.log("adding comment to map id " + payload.id)
     try{
         const response = await mapApis.addComment(payload.id, payload.comment, payload.username)
+        return response.data
+    }catch(err){
+        return rejectWithValue(err.response.data.errorMessage);
+    }
+});
+export const updateTagsThunk = createAsyncThunk('/map/:id/updateTags', async(payload, {rejectWithValue}) => {
+    console.log("updating tags to map id " + payload.id)
+    try{
+        const response = await mapApis.updateTags(payload.id, payload.tags)
         return response.data
     }catch(err){
         return rejectWithValue(err.response.data.errorMessage);

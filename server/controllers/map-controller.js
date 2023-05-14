@@ -122,7 +122,8 @@ getPublicMaps = async (req, res) => {
                     name: map.name,
                     owner: account[0].username,
                     createdAt: map.createdAt,
-                    published: map.published
+                    published: map.published,
+                    tags: map.tags
                 };
                 data.push(mapEntry);
             })
@@ -153,6 +154,33 @@ addComment = async(req, res) => {
         success: true
     })
 }
+updateTags = async(req,res) =>{
+    console.log("Updating tags")
+    const body = req.body;
+
+    if(!body){
+        return res.status(400).json({
+            success: false,
+            error: 'You must provide a body to update',
+        })
+    }
+
+    const id = body.id;
+    const tags = body.tags;
+
+
+    Map.findOne({_id: id}).then((map) => { 
+
+            // Update the maps tags array and then save
+            map.tags = tags;
+            map
+                .save()
+                .then(() => {
+                    return res.status(200).json({success: true, message:'Map collaborators updated!'})
+                })
+
+    })
+}
 getMapsDataByAccount = async (req, res) => {
     const user = req.body;
     // console.log('User')
@@ -177,7 +205,8 @@ getMapsDataByAccount = async (req, res) => {
                     name: map.name,
                     owner: account[0].username,
                     createdAt: map.createdAt,
-                    published: map.published
+                    published: map.published,
+                    tags: map.tags
                 };
                 // console.log("Map Entry: ");
                 // console.log(mapEntry);
@@ -221,7 +250,8 @@ getSharedMapsDataByAccount = async (req, res) => {
                     name: map.name,
                     owner: account[0].username,
                     createdAt: map.createdAt,
-                    published: map.published
+                    published: map.published,
+                    tags: map.tags
                 };
                 data.push(mapEntry);
             }).catch(err => console.log(err));
@@ -581,6 +611,7 @@ module.exports = {
     saveMap,
     deleteMapProperty,
     addComment,
+    updateTags,
     updateCollaborator,
     isValidEmail
 
