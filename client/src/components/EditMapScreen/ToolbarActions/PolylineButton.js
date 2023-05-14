@@ -10,18 +10,18 @@ import CommitButton from "./CommitButton";
 export default function PolylineButton(){
 
     const [hidden, setHidden] = useState(true);
+    const [disabled, setDisabled] = useState(false);
     const dispatch = useDispatch()
     const currentEditTool = useSelector(state => state.leafletEditing.editTool);
     const activeDrawing = useSelector(state => state.leafletEditing.activeDrawing);
-    const mapRef = useSelector(state => state.leafletEditing.mapRef);
 
     function handleButtonClick(){
 
         dispatch(unselectTool());
         console.log('Polyline Button Clicked');
         setHidden(false);
+        setDisabled(true);
         dispatch(setEditTool(editTools.polyline));
-
         dispatch(startPolylineDraw())
         
     }
@@ -37,7 +37,11 @@ export default function PolylineButton(){
     //kind of redunant, but this is to make sure that the button is hidden 
     //when the user switches to a different tool
     useEffect(()=>{
-        if (currentEditTool !== editTools.polyline){
+        if(currentEditTool === null){
+            console.log('Enabling polyline')
+            setDisabled(false);
+        }else if (currentEditTool !== editTools.polyline){
+            setDisabled(true);            
             setHidden(true);
         }
     }, [currentEditTool])
@@ -45,7 +49,11 @@ export default function PolylineButton(){
     return (
         <Box sx={{display: 'flex', flexDirection:'row'}}>
             <Tooltip enterDelay={1000} title='Draw Polyline' placement='right'>
-                <Button onClick={handleButtonClick} variant='contained' sx={{backgroundColor:'#2B2B2B'}}>
+                <Button disabled={disabled} onClick={handleButtonClick} variant='contained' sx={{backgroundColor:'#2B2B2B',
+                '&:disabled': {
+                backgroundColor:'#2B2B2B',
+                filter: 'brightness(1)',
+                }}}>
                     <Timeline />
                 </Button>
             </Tooltip>
