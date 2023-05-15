@@ -1,10 +1,11 @@
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Typography } from "@mui/material";
 import { shallowEqual, useDispatch, useSelector } from 'react-redux';
 import { publishMapThunk } from "../../app/store-actions/editMapList";
-
+import { useNavigate } from 'react-router-dom';
 export default function PublishModal(props){
     const { open, togglePublishDialog } = props;
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const mapID = useSelector((state) => state.editMapList.activeMapId, shallowEqual);
     const mapName = useSelector((state) => state.editMapList.activeMapName, shallowEqual);
 
@@ -16,6 +17,7 @@ export default function PublishModal(props){
             console.log(error);
         })
         togglePublishDialog();
+        navigate("/maps")
     }
 
     return (

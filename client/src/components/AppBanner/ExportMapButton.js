@@ -1,12 +1,12 @@
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
-import { IconButton, Tooltip, Button, Box } from '@mui/material';
-import { shallowEqual, useSelector, useDispatch} from 'react-redux';
+import { Box, Button, IconButton, Tooltip } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
 import DialogActions from '@mui/material/DialogActions';
 import DialogTitle from '@mui/material/DialogTitle';
-import { useState } from 'react';
-import { convertGeoJSONThunk } from '../../app/store-actions/editMapList';
 import { saveAs } from 'file-saver';
+import { useState } from 'react';
+import { shallowEqual, useDispatch, useSelector } from 'react-redux';
+import { convertGeoJSONThunk } from '../../app/store-actions/editMapList';
 
 
 
@@ -16,13 +16,38 @@ export default function ExportMapButton (props) {
     const user = useSelector((state) => state.accountAuth.user);
     const currentMap = useSelector((state) => state.leafletEditing.currentGeoJSON);
     const mapName = useSelector((state) => state.editMapList.activeMapName, shallowEqual);
+    const layerGroup = useSelector((state) => state.leafletEditing.layerGroup);
     const [fileTypeDialogOpen, setFileTypeDialogOpen] = useState(false);
+    const properties = useSelector((state) => state.leafletEditing.properties);
+
     const dispatch = useDispatch();
 
 
     function downloadGeoJSON() {
+        let geoJSON = null;
+
+        try{
+            geoJSON = layerGroup.toGeoJSON();
+        }catch(e){
+            console.log(e)
+            // enqueueSnackbar('Error while trying to convert map!', {variant:'error'})
+            return
+        }
+        if(geoJSON === null) return;
+        let idx = 0; 
+        console.log(properties);
+        for(let feature of geoJSON.features){
+            feature.properties = properties[idx];
+            idx += 1;
+            console.log(feature);
+        }
+
+
+
+
+
         const a = document.createElement("a");
-        const file = new Blob([JSON.stringify(currentMap)], { type: 'text/plain' });
+        const file = new Blob([JSON.stringify(geoJSON)], { type: 'text/plain' });
         a.href = URL.createObjectURL(file);
         a.download = mapName + '.json';
         a.click();
@@ -30,8 +55,27 @@ export default function ExportMapButton (props) {
 
 
     function downloadShpDbf(){
+        let geoJSON = null;
+
+        try{
+            geoJSON = layerGroup.toGeoJSON();
+        }catch(e){
+            console.log(e)
+            // enqueueSnackbar('Error while trying to convert map!', {variant:'error'})
+            return
+        }
+        if(geoJSON === null) return;
+        let idx = 0; 
+        console.log(properties);
+        for(let feature of geoJSON.features){
+            feature.properties = properties[idx];
+            idx += 1;
+            console.log(feature);
+        }
+
+
         const a = document.createElement("a");
-        dispatch(convertGeoJSONThunk(JSON.stringify(currentMap))).unwrap().then(async(response) =>{
+        dispatch(convertGeoJSONThunk(JSON.stringify(geoJSON))).unwrap().then(async(response) =>{
             const file = new Blob([response], {type: 'application/octet-stream'});
             const filename = mapName + '.zip';
             saveAs(file,filename)

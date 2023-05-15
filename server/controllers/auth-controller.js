@@ -294,7 +294,7 @@ sendVerification = async (req, res) => {
         const reply_to = email;
         const subject = "Verify your email for password reset."
         const message = `
-            <p>Hi! You have requested to do a password reset. Please click <a href=${process.env.FRONTEND_URL}changePassword/${existingUser._id}/${t.token}>here</a> to verify and complete it!</p>
+            <p>Hi! You have requested to do a password reset. Please click <a href=${process.env.FRONTEND_URL}/changePassword/${existingUser._id}/${t.token}>here</a> to verify and complete it!</p>
             <p>Regards, </p>
             <p>Mapperman team</p>`
         await sendEmail(subject, message, send_to, send_from, reply_to)

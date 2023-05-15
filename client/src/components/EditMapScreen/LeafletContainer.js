@@ -1,3 +1,4 @@
+import * as turf from '@turf/turf';
 import * as L from 'leaflet';
 import 'leaflet-editable';
 import 'leaflet-path-drag';
@@ -114,6 +115,7 @@ export default function LeafletContainer(){
                             mapId: mapId,
                             socket: socket
                         }))
+                        save();
                     }else if(e.layer instanceof L.Polyline){
                         dispatch(addDeleteVertexTransaction({
                             layerGroup: layerGroup, 
@@ -124,6 +126,7 @@ export default function LeafletContainer(){
                             mapId: mapId,
                             socket: socket
                         }))
+                        save();
                     }
                 });
 
@@ -131,7 +134,6 @@ export default function LeafletContainer(){
                     //cursed format
                     let latlng = L.latLng(e.vertex.latlng['lat'], e.vertex.latlng['lng']);
                     dispatch(setvStartPos(latlng));
-
                 });
 
                 e.layer.on('editable:vertex:dragend', (e) => {
@@ -170,12 +172,7 @@ export default function LeafletContainer(){
                         socket: socket
                     }))
                     
-                    // let geoJSON = layerGroup.toGeoJSON();
-                    // dispatch(saveGeojsonThunk(
-                    //     {owner: user, 
-                    //     mapData: geoJSON, 
-                    //     id: mapId}
-                    // ))
+                    save();
 
 
                     
@@ -269,6 +266,8 @@ export default function LeafletContainer(){
 
                     console.log('remove event')
                     let arr = []
+                    console.log(e.sourceTarget)
+                    if(e.sourceTarget?.split === true) return
                     for(let latlng of e.sourceTarget.getLatLngs()[0]){
                         let copy = L.latLng(
                             JSON.parse(JSON.stringify(latlng['lat'])), 
@@ -277,8 +276,7 @@ export default function LeafletContainer(){
                     }
                     console.log(arr);
 
-                    // TODO For some reason this causes an error
-
+                    // // TODO For some reason this causes an error
                     dispatch(addDeleteFeatureTransaction({
                         layerGroup: layerGroup,
                         latlngs: arr,
@@ -307,21 +305,45 @@ export default function LeafletContainer(){
 
             });
 
+            // mapRef.current.on('editable:drawing:end', (e) => {
+                
+            //     console.log('Editable created');
+            //     console.log(e);
+            //     /**
+            //      * TODO currently this fires a lot since every time a polyline or polygon is clicked
+            //      * it will immediately get added to the layergroup, need to find a way to only add it
+            //      * purposefully
+            //      * 
+            //      * Shapes have inheritance, need to have else ifs
+            //      */
+            //     console.log(e.sourceTarget instanceof L.Polygon);
+            //     console.log(e.layer instanceof L.Polygon);
+            //     console.log(e.layer instanceof L.Polyline);
+                
+            //     if(e.layer instanceof L.Polygon){
+            //         dispatch(addCreatePolygonTransaction({
+            //             layerGroup: layerGroup,
+            //             latlngs: e.layer._latlngs[0],
+            //             properties: e.layer.properties,
+            //             featureIndex: e.layer.featureIndex,
+            //             socket: socket,
+            //             mapId: mapId
+            //         }))
+            //     }else if(e.layer instanceof L.Polyline){
+            //         console.log(e.layer);
+            //         dispatch(addCreatePolylineTransaction({
+            //             layerGroup: layerGroup,
+            //             latlngs: e.layer._latlngs,
+            //             properties: e.layer.properties,
+            //             featureIndex: e.layer.featureIndex,
+            //             socket: socket,
+            //             mapId: mapId
+            //         }))
+            //     }
+
+            // });
+            
             mapRef.current.on('editable:drawing:end', (e) => {
-                
-                console.log('Editable created');
-                console.log(e);
-                /**
-                 * TODO currently this fires a lot since every time a polyline or polygon is clicked
-                 * it will immediately get added to the layergroup, need to find a way to only add it
-                 * purposefully
-                 * 
-                 * Shapes have inheritance, need to have else ifs
-                 */
-                console.log(e.sourceTarget instanceof L.Polygon);
-                console.log(e.layer instanceof L.Polygon);
-                console.log(e.layer instanceof L.Polyline);
-                
                 if(e.layer instanceof L.Polygon){
                     dispatch(addCreatePolygonTransaction({
                         layerGroup: layerGroup,
@@ -331,7 +353,9 @@ export default function LeafletContainer(){
                         socket: socket,
                         mapId: mapId
                     }))
-                }else if(e.layer instanceof L.Polyline){
+                    save();
+                }
+                else if(e.layer instanceof L.Polyline && e.layer.split === false){
                     console.log(e.layer);
                     dispatch(addCreatePolylineTransaction({
                         layerGroup: layerGroup,
@@ -341,8 +365,12 @@ export default function LeafletContainer(){
                         socket: socket,
                         mapId: mapId
                     }))
-                }
-
+                    save();
+                } 
+                // Split event start
+                else if(e.layer instanceof L.Polyline && e.layer.split === true){
+                    console.log('Split event?', e.layer);
+                } 
             });
             
             console.log('Geojson being loaded');
@@ -695,12 +723,217 @@ export default function LeafletContainer(){
                     }
                 }
             })
+            socket.on('received split region', (transaction) => {
+                console.log('Received Split region from socket --------------')
+                let drawnGeometry =  turf.getGeom(transaction.drawnGeoJSON);
+                for(let [i, container] of Object.entries(layerGroup._layers)){
+                    let polygon = layerGroup._layers[i];
+                    var cutPolygon = null;
+                    if(polygon instanceof L.Polygon){
+                        cutPolygon = polygonCut(polygon, drawnGeometry);
+                    }
+                    console.log('CutPolygon:', cutPolygon)
+                    if (cutPolygon != null) {
+    
+    
+                        turf.geomEach(cutPolygon, function (geometry) {
+                            console.log(L.GeoJSON.geometryToLayer(geometry))
+                            let poly = L.polygon(L.GeoJSON.geometryToLayer(geometry)._latlngs, {draggable:true, shape:'polygon'})
+                            let layers = layerGroup._layers
+                            let lastItemInLayers = layers[Object.keys(layers)[Object.keys(layers).length - 1]]
+                            let newFeatureIndex = lastItemInLayers.featureIndex + 1
+                            poly.dragging.disable();
+                            poly.featureIndex = newFeatureIndex
+                            poly.on('click', (e) => {
+                                console.log("clicked newly split polyogn", e, e.sourceTarget.featureIndex) 
+                                dispatch(setFeatureIndexClicked(e.sourceTarget.featureIndex));
+                                dispatch(mouseToolAction())
+                            });
+    
+                            console.log('polytype:', poly.type)
+                            console.log('poly', poly)
+                            layerGroup.addLayer(poly)
+    
+                        });
+    
+                        
+                    }
+    
+                }
+                
 
+
+
+            })
+            socket.on('received merge region', (transaction)=>{ 
+                let mergeArray = transaction.indexArray
+                console.log(mergeArray)
+                let mergeIndexOne = null;
+                let mergeIndexTwo = null;
+                let j = 0;
+                for(let [i, layers] of Object.entries(layerGroup._layers)){
+                    let layer = layerGroup._layers[i]
+                    let idOne = layer[j]
+                    if(j === mergeArray[0]){
+                        console.log('Found a matching leafet id at index:', i)
+                        mergeIndexOne = layer._leaflet_id
+                    }
+                    else if (j === mergeArray[1]){
+                        console.log('Found a matching leafet id at index:', i)
+                        mergeIndexTwo = layer._leaflet_id
+                    }
+                    j++;
+                        
+                    
+                }
+
+                console.log(mergeIndexOne, mergeIndexTwo)
+
+
+                let geometryFirst = layerGroup.getLayer(mergeIndexOne).toGeoJSON();
+                let geometrySecond = layerGroup.getLayer(mergeIndexTwo).toGeoJSON();
+                
+                /**Set these to true so the listener in the container doesnt pick it up */
+                layerGroup.getLayer(mergeIndexOne).inStack = true;
+                layerGroup.getLayer(mergeIndexTwo).inStack = true;
+    
+    
+                layerGroup.removeLayer(mergeIndexOne)
+                layerGroup.removeLayer(mergeIndexTwo)
+                console.log("Removed old region")
+                console.log("geoFirst", geometryFirst)
+                console.log('geoSecon', geometrySecond)
+                let mergedFeature = turf.union(
+                    geometryFirst, 
+                    geometrySecond, 
+                )
+    
+                let polygon = L.polygon(L.GeoJSON.geometryToLayer(mergedFeature.geometry)._latlngs, {draggable:true});
+                // polygon.featureIndex = state.featureIndex;
+                polygon.on('click', (e) => {
+                    console.log("clicked newly split polyogn", e, e.sourceTarget.featureIndex) 
+                    dispatch(setFeatureIndexClicked(e.sourceTarget.featureIndex));
+                    dispatch(mouseToolAction())
+                });            
+                layerGroup.addLayer(polygon)
+
+
+
+            });
             
         }
     }, [mapRef.current]);
 
+    function save() {
+        let geoJSON = null;
 
+        try{
+            geoJSON = layerGroup.toGeoJSON();
+        }catch(e){
+            console.log(e)
+            // enqueueSnackbar('Error while trying to convert map!', {variant:'error'})
+            return
+        }
+        if(geoJSON === null) return;
+
+        // let idx = 0; 
+        // // console.log(properties);
+        // for(let feature of geoJSON.features){
+        //     feature.properties = properties[idx];
+        //     idx += 1;
+        //     console.log(feature);
+        // }
+        
+        dispatch(saveGeojsonThunk(
+            {owner: user, 
+            mapData: geoJSON, 
+            id: mapId}
+        ))
+    }
+
+    function polygonCut(polygon, line, idPrefix) {
+        // Old one should be deleted here?
+        const THICK_LINE_UNITS = 'kilometers';
+        const THICK_LINE_WIDTH = 0.001;
+        var i, j, id, intersectPoints, lineCoords, forCut, forSelect;
+        var thickLineString, thickLinePolygon, clipped, polyg, intersect;
+        var polyCoords = [];
+        var cutPolyGeoms = [];
+        var cutFeatures = [];
+        var offsetLine = [];
+        var retVal = null;
+        // console.log('polygon shape', polygon.shape)
+        // console.log('line type', line.type)
+
+        // if (((polygon.shape != 'polygon') && (polygon.shape != 'MultiPolygon')) || (line.type != 'LineString')) {
+        //     // console.log("return ")
+        //     return retVal;
+        // }
+        // if(polygon.instanceOf(L.Polygon) ){
+        //     console.log("INSTACNE OF POLYGON")
+        // }
+        if((line.type != 'LineString')){
+            return retVal;
+        }
+        if (typeof(idPrefix) === 'undefined') {
+            idPrefix = '';
+        }
+        let newPolygon = polygon.toGeoJSON().geometry
+        // console.log(newPolygon)
+        intersectPoints = turf.lineIntersect(newPolygon, line);
+        if (intersectPoints.features.length == 0) {
+            // console.log("return ")
+            return retVal;
+        }
+        
+        var lineCoords = turf.getCoords(line);
+        if ((turf.booleanWithin(turf.point(lineCoords[0]), newPolygon) ||
+            (turf.booleanWithin(turf.point(lineCoords[lineCoords.length - 1]), newPolygon)))) {
+            console.log("return ")
+            return retVal;
+        }
+
+        offsetLine[0] = turf.lineOffset(line, THICK_LINE_WIDTH, {units: THICK_LINE_UNITS});
+        offsetLine[1] = turf.lineOffset(line, -THICK_LINE_WIDTH, {units: THICK_LINE_UNITS});
+
+        for (i = 0; i <= 1; i++) {
+            forCut = i; 
+            forSelect = (i + 1) % 2; 
+            polyCoords = [];
+            for (j = 0; j < line.coordinates.length; j++) {
+                polyCoords.push(line.coordinates[j]);
+            }
+            for (j = (offsetLine[forCut].geometry.coordinates.length - 1); j >= 0; j--) {
+                polyCoords.push(offsetLine[forCut].geometry.coordinates[j]);
+            }
+            polyCoords.push(line.coordinates[0]);
+
+            thickLineString = turf.lineString(polyCoords);
+            thickLinePolygon = turf.lineToPolygon(thickLineString);
+            clipped = turf.difference(newPolygon, thickLinePolygon);
+            console.log(clipped)
+            cutPolyGeoms = [];
+            
+            for (j = 0; j < clipped.geometry.coordinates.length; j++) {
+                polyg = turf.polygon(clipped.geometry.coordinates[j]);
+                intersect = turf.lineIntersect(polyg, offsetLine[forSelect]);
+                if (intersect.features.length > 0) {
+                    cutPolyGeoms.push(polyg.geometry.coordinates);
+                };
+            };
+
+            cutPolyGeoms.forEach(function (geometry, index) {
+            id = idPrefix + (i + 1) + '.' +  (index + 1);
+            cutFeatures.push(turf.polygon(geometry, {id: id}));
+                });
+        }
+        console.log('End', line ,line.type)
+        console.log('End',polygon, polygon.type)
+        layerGroup.removeLayer(polygon._leaflet_id)
+        if (cutFeatures.length > 0) retVal = turf.featureCollection(cutFeatures);
+
+        return retVal;
+    }
 
     // Leaflet Map Container will only be used for initial map creation and that's it
     return (

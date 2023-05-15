@@ -270,8 +270,19 @@ io.on('connection', (socket) => {
         })
       }
     })
+    socket.on('split region', async(roomName, drawnGeoJSON)=>{
+      socket.in(roomName).emit('received split region',{
+        drawnGeoJSON: drawnGeoJSON
 
+      })
+    })
+    socket.on('merge region', async(roomName, indexArray)=>{
+      console.log('Merge region ')
+      socket.in(roomName).emit('received merge region',{
+        indexArray: indexArray
 
+      })
+    })
 
 })
 
