@@ -341,6 +341,7 @@ export const leafletEditing = createSlice({
 
             state.featureClickedIndex = action.payload;
             console.log("feature Index in store: ", state.featureClickedIndex);
+
         },
         setMergeArray: (state, action) =>{
             state.mergeArray = action.payload;

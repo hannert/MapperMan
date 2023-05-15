@@ -181,7 +181,23 @@ export default function LeafletContainer(){
                 e.layer.on('dragstart', (e) => {
                     console.log(e);
                     console.log(e.target._latlngs[0][0])
-                    dispatch(setfStartPos(e.target._latlngs[0][0]));
+                    let arr = []
+                    if(e.target._latlngs.length > 1){
+                        for(let latlngArr of e.target._latlngs){
+                            // console.log(latlngs);
+                            let temp = []
+                            for(let latlngs of latlngArr){
+                                for(let latlng of latlngs){
+                                    console.log(latlng);
+                                    temp.push(L.latLng(latlng.lat, latlng.lng))
+                                }
+                            }
+                            arr.push(temp)
+                        }
+                        dispatch(setfStartPos(arr))
+                    }else{
+                        dispatch(setfStartPos((e.target._latlngs)));
+                    }
                 });
                 
                 e.layer.on('dragend', (e) => {
@@ -191,7 +207,7 @@ export default function LeafletContainer(){
                     dispatch(addMoveFeatureTransaction({
                         layerGroup: layerGroup,
                         featureIndex: e.target.featureIndex,
-                        endPos: e.target._latlngs[0][0],
+                        endPos: e.target._latlngs,
                         mapId: mapId,
                         socket: socket
                     }))

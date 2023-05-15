@@ -26,6 +26,9 @@ export const transactions = createSlice({
         initTps: (state, action) => {
             state.tps = new jsTPS();
         },
+        clearTps: (state, action) => {
+            state.tps.clearAllTransactions();
+        },
         doTransaction: (state, action) => {
             console.log(state.tps.toString())
             if(state.tps.hasTransactionToRedo()){
@@ -85,7 +88,6 @@ export const transactions = createSlice({
             state.tps.addTransaction(transaction);
 
 
-
             let socket = action.payload.socket;
             let room = action.payload.mapId;
             console.log("emitting");
@@ -98,19 +100,20 @@ export const transactions = createSlice({
         },
         addMoveFeatureTransaction: (state, action) => {
             state.ping = !state.ping;
+            console.log(state.fStartPos);
+            console.log(action.payload.endPos);
+            // let offsetX = action.payload.endPos['lat'] - state.fStartPos['lat'];
+            // let offsetY = action.payload.endPos['lng'] - state.fStartPos['lng'];
 
-            let offsetX = action.payload.endPos['lat'] - state.fStartPos['lat'];
-            let offsetY = action.payload.endPos['lng'] - state.fStartPos['lng'];
+            // let transaction = new MoveFeature_Transaction(action.payload.layerGroup, action.payload.featureIndex, offsetX, offsetY, action.payload.socket, action.payload.mapId);
+            // state.tps.addTransaction(transaction);
 
-            let transaction = new MoveFeature_Transaction(action.payload.layerGroup, action.payload.featureIndex, offsetX, offsetY, action.payload.socket, action.payload.mapId);
-            state.tps.addTransaction(transaction);
-
-            let socket = action.payload.socket;
-            let room = action.payload.mapId;
-            console.log("emitting");
-            console.log(transaction)
-            socket.emit('create move feature transaction', room, action.payload.featureIndex, offsetX, offsetY, "move feature" );
-            console.log("heheh")
+            // let socket = action.payload.socket;
+            // let room = action.payload.mapId;
+            // console.log("emitting");
+            // console.log(transaction)
+            // socket.emit('create move feature transaction', room, action.payload.featureIndex, offsetX, offsetY, "move feature" );
+            // console.log("heheh")
         },
         addDeleteFeatureTransaction: (state, action) => {
             state.ping = !state.ping;
@@ -189,5 +192,5 @@ export const transactions = createSlice({
 
 export const { initTps, doTransaction, undoTransaction, addDeleteVertexTransaction, setVertexIndex, setSubPolyIndex, setDeleteParams,
     setvStartPos, addMoveVertexTransaction, setfStartPos, addMoveFeatureTransaction, addDeleteFeatureTransaction,
-    addCreatePolygonTransaction, addCreatePolylineTransaction, setRemoved } = transactions.actions;
+    addCreatePolygonTransaction, addCreatePolylineTransaction, setRemoved, clearTps } = transactions.actions;
 export default transactions.reducer;

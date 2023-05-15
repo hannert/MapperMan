@@ -25,7 +25,6 @@ export default class MoveVertex_Transaction extends jsTPS_Transaction {
 
 
 
-
         for(let layer of this.layerGroup.getLayers()){
             if(layer.featureIndex === this.featureIndex){
                 //can't search through latlngs like this on everything :(
@@ -68,9 +67,6 @@ export default class MoveVertex_Transaction extends jsTPS_Transaction {
                             }
                         }     
                     }
-
-                
-
             }
 
         }

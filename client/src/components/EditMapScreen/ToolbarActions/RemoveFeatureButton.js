@@ -54,24 +54,31 @@ export default function RemoveFeatureButton() {
             console.log(chosenForDeletion);
             console.log('Removed something');
             let arr = []
-                    for(let latlng of chosenForDeletion.getLatLngs()[0]){
-                        let copy = L.latLng(
-                            JSON.parse(JSON.stringify(latlng['lat'])), 
-                            JSON.parse(JSON.stringify(latlng['lng'])))
-                        arr.push(copy);
+            let groupedPolygon = Array.isArray(chosenForDeletion._latlngs)
+
+            for(let latlngs of chosenForDeletion._latlngs){
+                // If any child of initial depth is array, there is a GROUPED POLYGON subregion
+
+                if(groupedPolygon === true){
+                    for(let latlng of latlngs){
+                        arr.push(latlng)
                     }
-                    console.log(arr);
+                }
+                if(groupedPolygon === false){
+                    arr = chosenForDeletion._latlngs
+                }     
+            }
 
-                    // TODO For some reason this causes an error
+            console.log(arr);
 
-                    dispatch(addDeleteFeatureTransaction({
-                        layerGroup: layerGroup,
-                        latlngs: arr,
-                        properties: chosenForDeletion.properties,
-                        featureIndex: chosenForDeletion.featureIndex,
-                        socket: socket,
-                        mapId: mapId
-                    }))
+            dispatch(addDeleteFeatureTransaction({
+                layerGroup: layerGroup,
+                latlngs: arr,
+                properties: chosenForDeletion.properties,
+                featureIndex: chosenForDeletion.featureIndex,
+                socket: socket,
+                mapId: mapId
+            }))
         }
     }, [chosenForDeletion])
 

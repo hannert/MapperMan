@@ -14,6 +14,7 @@ import LeafletContainer from './LeafletContainer';
 import MergeStatus from './MergeStatus';
 import PropertyEditor from './PropertyEditor';
 import Toolbar from './ToolbarActions/Toolbar';
+import { clearTps } from '../../app/store-actions/transactions';
 
 
 export default function EditScreen(){
