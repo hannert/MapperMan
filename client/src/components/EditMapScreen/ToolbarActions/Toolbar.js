@@ -1,11 +1,11 @@
 import { Box } from "@mui/material";
-import MarkerButton from "./MarkerButton";
 import MergeSubregionButton from './MergeSubregionsButton';
 import MouseButton from './MouseButton';
 import PolygonButton from "./PolygonButton";
 import PolylineButton from './PolylineButton';
 import RedoButton from './RedoButton';
 import RemoveFeatureButton from './RemoveFeatureButton';
+import SplitButton from "./SplitButton.js";
 import UndoButton from './UndoButton';
 
 export default function Toolbar(){
@@ -31,6 +31,7 @@ export default function Toolbar(){
             
             <RemoveFeatureButton></RemoveFeatureButton>
             <MergeSubregionButton></MergeSubregionButton>
+            <SplitButton></SplitButton>
             <UndoButton></UndoButton>
             <RedoButton></RedoButton>
         </Box>

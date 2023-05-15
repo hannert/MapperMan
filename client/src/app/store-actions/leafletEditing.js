@@ -1,10 +1,9 @@
-import { createAsyncThunk, createSlice, current } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import * as turf from '@turf/turf';
 import * as L from 'leaflet';
 import 'leaflet-editable';
 import 'leaflet-path-drag';
 import mapApis from "../store-requests/store_requests";
-import jsTPS from "../jsTPS/jsTPS";
 
 export const editTools ={
     addVertex: 'addVertex',
@@ -12,6 +11,7 @@ export const editTools ={
     addSubregion: 'addSubregion',
     removeFeature: 'removeFeature',    
     mergeSubregions: 'mergeSubregions',
+    splitSubregions: 'splitSubregions',
     mouse: 'mouseButton',
     polyline: 'polyline',
     polygon: 'polygon',
@@ -123,6 +123,152 @@ export const leafletEditing = createSlice({
             // state.mapRef.editTools.stopDrawing();
             // state.editTool = null;
         },
+        startSplit: (state, action) => {
+            state.editTool = editTools.splitSubregions;
+            let polyline = state.mapRef.editTools.startPolyline(undefined, {draggable: true});
+            state.featureIndex += 1;
+            polyline.featureIndex = state.featureIndex;
+            // polyline.shape = shapes.polyline;
+            // in stack with create polyline transaction
+            polyline.dragging.disable();
+
+            state.layerGroup.addLayer(polyline);
+            state.activeDrawing = polyline;
+
+        },
+        endSplit: (state, action) => { 
+            console.log("ending split")
+            let drawnLayer = state.activeDrawing;
+            let drawnGeoJSON = drawnLayer.toGeoJSON();
+            let drawnGeometry = turf.getGeom(drawnGeoJSON);
+            console.log(drawnGeometry.type)
+
+            // state.layerGroup.addLayer(drawnLayer);
+
+            console.log(Object.entries(state.layerGroup._layers))
+            console.log(drawnGeometry)
+            for(let [i, container] of Object.entries(state.layerGroup._layers)){
+                let polygon = state.layerGroup._layers[i];
+                var cutPolygon = null;
+                if(polygon instanceof L.Polygon){
+                    cutPolygon = polygonCut(polygon, drawnGeometry);
+                }
+                console.log('CutPolygon:', cutPolygon)
+                if (cutPolygon != null) {
+
+
+                    turf.geomEach(cutPolygon, function (geometry) {
+                        console.log(L.GeoJSON.geometryToLayer(geometry))
+                        let poly = L.polygon(L.GeoJSON.geometryToLayer(geometry)._latlngs, {draggable:true, shape:'polygon'})
+                        let layers = state.layerGroup._layers
+                        let lastItemInLayers = layers[Object.keys(layers)[Object.keys(layers).length - 1]]
+                        let newFeatureIndex = lastItemInLayers.featureIndex + 1
+                        poly.dragging.disable();
+                        poly.featureIndex = newFeatureIndex
+                        poly.on('click', (e) => {
+                            console.log("clicked newly split polyogn", e, e.sourceTarget.featureIndex) 
+                            state.featureClickedIndex = e.sourceTarget.featureIndex
+
+                        });
+
+                        console.log('polytype:', poly.type)
+                        console.log('poly', poly)
+                        state.layerGroup.addLayer(poly)
+
+                    });
+                }
+
+            }
+
+            function polygonCut(polygon, line, idPrefix) {
+                // Old one should be deleted here?
+                const THICK_LINE_UNITS = 'kilometers';
+                const THICK_LINE_WIDTH = 0.001;
+                var i, j, id, intersectPoints, lineCoords, forCut, forSelect;
+                var thickLineString, thickLinePolygon, clipped, polyg, intersect;
+                var polyCoords = [];
+                var cutPolyGeoms = [];
+                var cutFeatures = [];
+                var offsetLine = [];
+                var retVal = null;
+                // console.log('polygon shape', polygon.shape)
+                // console.log('line type', line.type)
+        
+                // if (((polygon.shape != 'polygon') && (polygon.shape != 'MultiPolygon')) || (line.type != 'LineString')) {
+                //     // console.log("return ")
+                //     return retVal;
+                // }
+                // if(polygon.instanceOf(L.Polygon) ){
+                //     console.log("INSTACNE OF POLYGON")
+                // }
+                if((line.type != 'LineString')){
+                    return retVal;
+                }
+                if (typeof(idPrefix) === 'undefined') {
+                    idPrefix = '';
+                }
+                let newPolygon = polygon.toGeoJSON().geometry
+                // console.log(newPolygon)
+                intersectPoints = turf.lineIntersect(newPolygon, line);
+                if (intersectPoints.features.length == 0) {
+                    // console.log("return ")
+                    return retVal;
+                }
+                
+                var lineCoords = turf.getCoords(line);
+                if ((turf.booleanWithin(turf.point(lineCoords[0]), newPolygon) ||
+                    (turf.booleanWithin(turf.point(lineCoords[lineCoords.length - 1]), newPolygon)))) {
+                    console.log("return ")
+                    return retVal;
+                }
+        
+                offsetLine[0] = turf.lineOffset(line, THICK_LINE_WIDTH, {units: THICK_LINE_UNITS});
+                offsetLine[1] = turf.lineOffset(line, -THICK_LINE_WIDTH, {units: THICK_LINE_UNITS});
+        
+                for (i = 0; i <= 1; i++) {
+                    forCut = i; 
+                    forSelect = (i + 1) % 2; 
+                    polyCoords = [];
+                    for (j = 0; j < line.coordinates.length; j++) {
+                        polyCoords.push(line.coordinates[j]);
+                    }
+                    for (j = (offsetLine[forCut].geometry.coordinates.length - 1); j >= 0; j--) {
+                        polyCoords.push(offsetLine[forCut].geometry.coordinates[j]);
+                    }
+                    polyCoords.push(line.coordinates[0]);
+        
+                    thickLineString = turf.lineString(polyCoords);
+                    thickLinePolygon = turf.lineToPolygon(thickLineString);
+                    clipped = turf.difference(newPolygon, thickLinePolygon);
+                    console.log(clipped)
+                    cutPolyGeoms = [];
+                    
+                    for (j = 0; j < clipped.geometry.coordinates.length; j++) {
+                        polyg = turf.polygon(clipped.geometry.coordinates[j]);
+                        intersect = turf.lineIntersect(polyg, offsetLine[forSelect]);
+                        if (intersect.features.length > 0) {
+                            cutPolyGeoms.push(polyg.geometry.coordinates);
+                        };
+                    };
+        
+                    cutPolyGeoms.forEach(function (geometry, index) {
+                    id = idPrefix + (i + 1) + '.' +  (index + 1);
+                    cutFeatures.push(turf.polygon(geometry, {id: id}));
+                        });
+                }
+                console.log('End', line ,line.type)
+                console.log('End',polygon, polygon.type)
+                state.layerGroup.removeLayer(polygon._leaflet_id)
+                if (cutFeatures.length > 0) retVal = turf.featureCollection(cutFeatures);
+        
+                return retVal;
+            }
+
+            state.layerGroup.removeLayer(drawnLayer)
+
+
+        },
+
         startPolygonDraw: (state, action) => {
             state.editTool = editTools.polygon;
             let polygon = state.mapRef.editTools.startPolygon(undefined, {draggable: true});
@@ -456,7 +602,7 @@ export const { setPrevGeoJSON, setCurrentGeoJSON, setInitialized, setEditTool, s
 startPolylineDraw, endPolylineDraw, unselectTool, setLayerGroup, setFeatureClicked, setFeatureIndexClicked,
  startMouseTracking, setLayerClickedId, setLayerClickedEditor, addVertex, stopMouseTracking,
 setDraggable, unsetDraggable, startPolygonDraw, endPolygonDraw, startMarker, endMarker, 
-
+startSplit, endSplit,
 mouseToolAction, setMergeArray, mergeRegion, finishMergeRegion, startMergeTool, removeFeature, startRemoveTool, 
 setCollaborators, setSharedWith, setChosenForDeletion, startCircleDraw, endCircleDraw, incrementFeatureIndex, setProperties, 
 setFeatureIndex, updateProperties, applyDelta, emitPropertyChange, editPropertyValue, deleteProperty, addProperty} = leafletEditing.actions;
