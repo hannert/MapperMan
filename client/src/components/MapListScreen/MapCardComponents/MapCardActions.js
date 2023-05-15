@@ -23,7 +23,7 @@ export default function MapCardActions(props){
         <Box sx={{marginRight:'5%'}}>
             {!published && !guest && <PublishButton togglePublishDialog={togglePublishDialog} handleActionClick={handleActionClick}></PublishButton>}
             {published && !guest && <ForkButton toggleForkDialog={toggleForkDialog} handleActionClick={handleActionClick}></ForkButton>}
-            {!publicRepo && temp && <DeleteButton toggleDeleteDialog={toggleDeleteDialog} handleActionClick={handleActionClick}></DeleteButton>}
+            {!publicRepo && temp && (user !== null && user.username === owner) && <DeleteButton toggleDeleteDialog={toggleDeleteDialog} handleActionClick={handleActionClick}></DeleteButton>}
         </Box>
 
     )
