@@ -8,7 +8,7 @@ import { GeoJSON, MapContainer, TileLayer } from 'react-leaflet';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { mouseToolAction, setEditTool, setFeatureIndex, setFeatureIndexClicked, setMapRef, setProperties, shapes } from '../../app/store-actions/leafletEditing';
-import { addCreatePolylineTransaction, addCreatePolygonTransaction, addDeleteVertexTransaction, addMoveFeatureTransaction, addMoveVertexTransaction, initTps, setDeleteParams, setfStartPos, setvStartPos } from '../../app/store-actions/transactions';
+import { addCreatePolygonTransaction, addCreatePolylineTransaction, addDeleteVertexTransaction, addMoveFeatureTransaction, addMoveVertexTransaction, initTps, setDeleteParams, setfStartPos, setvStartPos } from '../../app/store-actions/transactions';
 import { SocketContext } from '../../socket';
 
 
@@ -287,65 +287,6 @@ export default function LeafletContainer(){
             // });
             
             mapRef.current.on('editable:drawing:end', (e) => {
-                var drawnLayer, drawnGeoJSON, drawnGeometry, unkinked;
-                var newPolygons = [];
-                // let polygons = [];
-                // let drawnLines = L.featureGroup();
-                // let drawnPolygons = L.featureGroup();
-
-                // drawnLayer = e.layer;
-                // drawnGeoJSON = drawnLayer.toGeoJSON();
-                // drawnGeometry = turf.getGeom(drawnGeoJSON);
-                // console.log(drawnGeometry.type)
-
-                // if (drawnGeometry.type == 'LineString') {
-                //     layerGroup.addLayer(drawnLayer);
-                //     // drawnLines.addLayer(drawnLayer);
-                //     // drawnPolygons.clearLayers();
-                //     console.log('LineString is real')
-                //     console.log(Object.entries(layerGroup._layers))
-                //     console.log(drawnGeometry)
-                //     for(let [i, container] of Object.entries(layerGroup._layers)){
-                //         let polygon = layerGroup._layers[i];
-                //         var cutPolygon = null;
-                //         if(polygon instanceof L.Polygon){
-                //             cutPolygon = polygonCut(polygon, drawnGeometry);
-                //         }
-                //         console.log('CutPolygon:', cutPolygon)
-                //         if (cutPolygon != null) {
-
-
-                //             turf.geomEach(cutPolygon, function (geometry) {
-                //                 console.log(L.GeoJSON.geometryToLayer(geometry))
-                //                 let poly =L.polygon(L.GeoJSON.geometryToLayer(geometry)._latlngs, {draggable:true, shape:'polygon'})
-                //                 let layers = layerGroup._layers
-                //                 let lastItemInLayers = layers[Object.keys(layers)[Object.keys(layers).length - 1]]
-                //                 let newFeatureIndex = lastItemInLayers.featureIndex + 1
-                //                 poly.dragging.disable();
-                //                 poly.featureIndex = newFeatureIndex
-                                // poly.on('click', (e) => {
-                                //     console.log("clicked newly split polyogn", e, e.sourceTarget.featureIndex) 
-                                //     console.log(layerGroup)
-                                //     dispatch(setFeatureIndexClicked(e.sourceTarget.featureIndex));
-                                //     dispatch(mouseToolAction())
-                                // });
-
-                //                 console.log('polytype:', poly.type)
-                //                 console.log('poly', poly)
-                //                 layerGroup.addLayer(poly)
-                //                 newPolygons.push(geometry);
-
-                //             });
-                //         }
-
-                //     }
-
-                //     console.log('NewPolygons:', newPolygons)
-                //     layerGroup.removeLayer(drawnLayer)
-                //     // polygons = newPolygons;
-                //     // let newLayer = L.polygon(newPolygons)
-                //     // layerGroup.addLayer(newLayer)
-                // }
                 if(e.layer instanceof L.Polygon){
                     dispatch(addCreatePolygonTransaction({
                         layerGroup: layerGroup,
@@ -366,7 +307,12 @@ export default function LeafletContainer(){
                         socket: socket,
                         mapId: mapId
                     }))
-                }
+                } 
+                // Split event start
+                else if(e.layer instanceof L.Polyline && e.layer.split === true){
+                    console.log('Split event?', e.layer);
+                    
+                } 
             });
 
             console.log(geoJSON);
@@ -711,7 +657,47 @@ export default function LeafletContainer(){
                     }
                 }
             })
+            socket.on('received split region', (transaction) => {
+                console.log('Received Split region from socket --------------')
+                let drawnGeometry =  turf.getGeom(transaction.drawnGeoJSON);
+                for(let [i, container] of Object.entries(layerGroup._layers)){
+                    let polygon = layerGroup._layers[i];
+                    var cutPolygon = null;
+                    if(polygon instanceof L.Polygon){
+                        cutPolygon = polygonCut(polygon, drawnGeometry);
+                    }
+                    console.log('CutPolygon:', cutPolygon)
+                    if (cutPolygon != null) {
+    
+    
+                        turf.geomEach(cutPolygon, function (geometry) {
+                            console.log(L.GeoJSON.geometryToLayer(geometry))
+                            let poly = L.polygon(L.GeoJSON.geometryToLayer(geometry)._latlngs, {draggable:true, shape:'polygon'})
+                            let layers = layerGroup._layers
+                            let lastItemInLayers = layers[Object.keys(layers)[Object.keys(layers).length - 1]]
+                            let newFeatureIndex = lastItemInLayers.featureIndex + 1
+                            poly.dragging.disable();
+                            poly.featureIndex = newFeatureIndex
+                            poly.on('click', (e) => {
+                                console.log("clicked newly split polyogn", e, e.sourceTarget.featureIndex) 
+                                dispatch(setFeatureIndexClicked(e.sourceTarget.featureIndex));
+                                dispatch(mouseToolAction())
+                            });
+    
+                            console.log('polytype:', poly.type)
+                            console.log('poly', poly)
+                            layerGroup.addLayer(poly)
+    
+                        });
+    
+                        
+                    }
+    
+                }
 
+
+
+            })
             
         }
     }, [mapRef.current]);

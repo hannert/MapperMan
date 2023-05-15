@@ -270,7 +270,12 @@ io.on('connection', (socket) => {
         })
       }
     })
+    socket.on('split region', async(roomName, drawnGeoJSON)=>{
+      socket.in(roomName).emit('received split region',{
+        drawnGeoJSON: drawnGeoJSON
 
+      })
+    })
 
 
 })

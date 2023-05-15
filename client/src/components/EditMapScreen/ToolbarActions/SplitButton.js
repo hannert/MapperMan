@@ -1,10 +1,12 @@
 import CallSplitIcon from '@mui/icons-material/CallSplit';
 import { Box, Button, Tooltip } from "@mui/material";
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from "react-redux";
-import { editTools, setEditTool, startSplit, unselectTool, endSplit, updateProperties } from '../../../app/store-actions/leafletEditing';
+import { editTools, endSplit, setEditTool, startSplit, unselectTool } from '../../../app/store-actions/leafletEditing';
+import { SocketContext } from '../../../socket';
 import CancelButton from './CancelButton';
 import CommitButton from './CommitButton';
+
 
 export default function SplitButton() {
     const [hidden, setHidden] = useState(true);
@@ -13,6 +15,10 @@ export default function SplitButton() {
     const dispatch = useDispatch()
     const currentEditTool = useSelector(state => state.leafletEditing.editTool);
     const activeDrawing = useSelector(state => state.leafletEditing.activeDrawing);
+    const socket = useContext(SocketContext);
+    const mapId = useSelector((state) => state.editMapList.activeMapId);
+
+
 
     function handleButtonClick(){
         dispatch(unselectTool());
@@ -24,7 +30,7 @@ export default function SplitButton() {
     }
     
     function endTool(){
-        dispatch(endSplit(dispatch));
+        dispatch(endSplit({'dispatch': dispatch,'socket':socket,'mapId': mapId}));
         dispatch(unselectTool());
     }
 

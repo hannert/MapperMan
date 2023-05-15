@@ -168,8 +168,8 @@ export const leafletEditing = createSlice({
                         poly.featureIndex = newFeatureIndex
                         poly.on('click', (e) => {
                             console.log("clicked newly split polyogn", e, e.sourceTarget.featureIndex) 
-                            action.payload(setFeatureIndexClicked(e.sourceTarget.featureIndex));
-                            action.payload(mouseToolAction())
+                            action.payload.dispatch(setFeatureIndexClicked(e.sourceTarget.featureIndex));
+                            action.payload.dispatch(mouseToolAction())
                         });
 
                         console.log('polytype:', poly.type)
@@ -177,6 +177,8 @@ export const leafletEditing = createSlice({
                         state.layerGroup.addLayer(poly)
 
                     });
+                    let room = action.payload.mapId
+                    action.payload.socket.emit("split region", room, drawnGeoJSON)
 
                     
                 }
