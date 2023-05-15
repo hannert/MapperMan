@@ -60,7 +60,7 @@ export default function EditMapActions () {
             geoJSON = layerGroup.toGeoJSON();
         } catch(e) {
             console.log(e)
-            enqueueSnackbar('Error while trying to convert map!', {variant:'error'})
+            // enqueueSnackbar('Error while trying to convert map!', {variant:'error'})
         }
         if (geoJSON === null) return
 

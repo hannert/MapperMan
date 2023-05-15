@@ -276,7 +276,13 @@ io.on('connection', (socket) => {
 
       })
     })
+    socket.on('merge region', async(roomName, indexArray)=>{
+      console.log('Merge region ')
+      socket.in(roomName).emit('received merge region',{
+        indexArray: indexArray
 
+      })
+    })
 
 })
 

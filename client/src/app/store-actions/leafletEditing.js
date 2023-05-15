@@ -39,7 +39,8 @@ const initialState = {
     layerClickedId: null,
     layerClickedEditor: null,
     activeDrawing: null,
-    mergeArray: [],
+    mergeIndexArray: [],
+    mergeIdArray: [],
     mergedFeature: null,
     chosenForDeletion: null,
     collaborators: [],
@@ -458,7 +459,7 @@ export const leafletEditing = createSlice({
                     
                     }
                 });
-                if(state.mergeArray.includes(layer._leaflet_id)){
+                if(state.mergeIdArray.includes(layer._leaflet_id)){
                     layer.setStyle({fillColor: '#CD544F'})
                 } else{
                     layer.setStyle({fillColor: '#3388FF'})
@@ -501,20 +502,23 @@ export const leafletEditing = createSlice({
             console.log("feature Index in store: ", state.featureClickedIndex);
         },
         setMergeArray: (state, action) =>{
-            state.mergeArray = action.payload;
-            console.log("mergeArray in store: ", state.mergeArray);
+            state.mergeIndexArray = action.payload.mergeIndexArray;
+            state.mergeIdArray = action.payload.mergeIdArray;
+            console.log("mergeIndexArray in store: ", state.mergeIndexArray);
+            console.log("mergeIdArray in store: ", state.mergeIdArray);
         },
         mergeRegion: (state, action) =>{
-            let geometryFirst = state.layerGroup.getLayer(state.mergeArray[0]).toGeoJSON();
-            let geometrySecond = state.layerGroup.getLayer(state.mergeArray[1]).toGeoJSON();
+            console.log('PAYLOAD:', action.payload)
+            let geometryFirst = state.layerGroup.getLayer(state.mergeIdArray[0]).toGeoJSON();
+            let geometrySecond = state.layerGroup.getLayer(state.mergeIdArray[1]).toGeoJSON();
             
             /**Set these to true so the listener in the container doesnt pick it up */
-            state.layerGroup.getLayer(state.mergeArray[0]).inStack = true;
-            state.layerGroup.getLayer(state.mergeArray[1]).inStack = true;
+            state.layerGroup.getLayer(state.mergeIdArray[0]).inStack = true;
+            state.layerGroup.getLayer(state.mergeIdArray[1]).inStack = true;
 
 
-            state.layerGroup.removeLayer(state.mergeArray[0])
-            state.layerGroup.removeLayer(state.mergeArray[1])
+            state.layerGroup.removeLayer(state.mergeIdArray[0])
+            state.layerGroup.removeLayer(state.mergeIdArray[1])
             console.log("Removed old region")
             console.log("geoFirst", geometryFirst)
             console.log('geoSecon', geometrySecond)
@@ -527,19 +531,30 @@ export const leafletEditing = createSlice({
             polygon.featureIndex = state.featureIndex;
             polygon.on('click', (e) => {
                 console.log("clicked newly split polyogn", e, e.sourceTarget.featureIndex) 
-                action.payload(setFeatureIndexClicked(e.sourceTarget.featureIndex));
-                action.payload(mouseToolAction())
-            });
+                action.payload.dispatch(setFeatureIndexClicked(e.sourceTarget.featureIndex));
+                action.payload.dispatch(mouseToolAction())
+            });            
+            
+            let indexArray = state.mergeIndexArray
             state.featureIndex += 1;
             state.properties[state.featureIndex] = {name: 'New Merged Region'};
 
             state.layerGroup.addLayer(polygon);
-            state.mergeArray = []
+            state.mergeIdArray = []
+            state.mergeIndexArray = []
+
+            let room = action.payload.mapId
+            
+            action.payload.socket.emit("merge region", room, indexArray)
+
+
         },
         finishMergeRegion: (state, action ) => {
             console.log("Finishing merge region")
             state.mergedFeature = null
-            state.mergeArray = []
+            state.mergeIdArray = []
+            state.mergeIndexArray = []
+
         },
         //TODO bandaid fix
         setFeatureIndex: (state, action) => {

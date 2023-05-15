@@ -11,7 +11,12 @@ export default function MergeSubregionButton() {
     const [hidden, setHidden] = useState(true);
     const dispatch = useDispatch()
     const currentEditTool = useSelector(state => state.leafletEditing.editTool);
-    const mergeArray = useSelector(state => state.leafletEditing.mergeArray)
+    const mergeIndexArray = useSelector(state => state.leafletEditing.mergeIndexArray)
+    const mergeIdArray = useSelector(state => state.leafletEditing.mergeIdArray)
+
+    const layerGroup = useSelector((state) => state.leafletEditing.layerGroup);
+
+
 
     useEffect(() => {
         if(currentEditTool === editTools.mergeSubregions){
@@ -19,7 +24,7 @@ export default function MergeSubregionButton() {
             dispatch(startMergeTool(handleMergeClick))
         }
         
-    }, [mergeArray])
+    }, [mergeIndexArray])
 
     function handleButtonClick(){
         console.log('Merge Subregions Button Clicked');
@@ -30,39 +35,56 @@ export default function MergeSubregionButton() {
 
     function handleMergeClick(e){
         let leafletID = e.target._leaflet_id
-
-        console.log(leafletID);
-        console.log(mergeArray)
-        if(mergeArray.length === 0){
-            console.log("Empty list")
-            dispatch(setMergeArray([leafletID]))
+        console.log(layerGroup)
+        console.log(e.target)
+        let index = null;
+        let j = 0;
+        for(let [i, layers] of Object.entries(layerGroup._layers)){
+            let layer = layerGroup._layers[i]
+            if(layer._leaflet_id === e.target._leaflet_id){
+                console.log('Found a matching leafet id at index:', i)
+                index = j
+            }
+            j++;
+                
+            
         }
-        else if (mergeArray.length === 1){
-            if(mergeArray.includes(leafletID)){
-                dispatch(setMergeArray([]))
+        console.log(mergeIdArray)
+        if(mergeIdArray.length === 0){
+            console.log("Empty list")
+            dispatch(setMergeArray({'mergeIdArray': [leafletID], 'mergeIndexArray': [index]}))
+        }
+        else if (mergeIdArray.length === 1){
+            if(mergeIdArray.includes(leafletID)){
+                dispatch(setMergeArray({'mergeIdArray': [], 'mergeIndexArray': []}))
             } else {
                 console.log("One item in list")
-                let temp = [... mergeArray];
-                temp.push(leafletID)
-                console.log(temp)
-                dispatch(setMergeArray(temp))
+                let tempIndex = [... mergeIndexArray];
+                tempIndex.push(index)
+                let tempId = [... mergeIdArray];
+                tempId.push(leafletID)
+                dispatch(setMergeArray({'mergeIdArray': tempId, 'mergeIndexArray': tempIndex}))
             }
             
         }
-        else if (mergeArray.length === 2){
+        else if (mergeIdArray.length === 2){
             // If the mergeArray currently has two features already in it, keep most recent one
-            if(mergeArray.includes(leafletID)){
+            if(mergeIdArray.includes(leafletID)){
                 // If the currently clicked region is in the first place, slide back second place to first
-                if(mergeArray[0] === leafletID){
-                    dispatch(setMergeArray([mergeArray[1]]))
+                if(mergeIdArray[0] === leafletID){
+                    dispatch(setMergeArray({'mergeIdArray': [mergeIdArray[1]], 'mergeIndexArray': [mergeIndexArray[1]]}))
                 } else {
-                    dispatch(setMergeArray([mergeArray[0]]))
+                    dispatch(setMergeArray({'mergeIdArray': [mergeIdArray[0]], 'mergeIndexArray': [mergeIndexArray[0]]}))
                 }
             } else {
-                let temp = [];
-                temp.push(mergeArray[1]); 
-                temp.push(leafletID);
-                dispatch(setMergeArray(temp));
+                let tempId = [];
+                tempId.push(mergeIdArray[1]); 
+                tempId.push(leafletID);
+                let tempIndex = [];
+                tempIndex.push(mergeIndexArray[1]);
+                tempIndex.push(index)
+
+                dispatch(setMergeArray({'mergeIdArray': tempId, 'mergeIndexArray': tempIndex}));
             }
         }
     }
