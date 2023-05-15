@@ -8,7 +8,7 @@ import { GeoJSON, MapContainer, TileLayer } from 'react-leaflet';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { mouseToolAction, setEditTool, setFeatureIndex, setFeatureIndexClicked, setMapRef, setProperties, shapes } from '../../app/store-actions/leafletEditing';
-import { addCreatePolygonTransaction, addDeleteVertexTransaction, addMoveFeatureTransaction, addMoveVertexTransaction, initTps, setDeleteParams, setfStartPos, setvStartPos } from '../../app/store-actions/transactions';
+import { addCreatePolylineTransaction, addCreatePolygonTransaction, addDeleteVertexTransaction, addMoveFeatureTransaction, addMoveVertexTransaction, initTps, setDeleteParams, setfStartPos, setvStartPos } from '../../app/store-actions/transactions';
 import { SocketContext } from '../../socket';
 
 
@@ -356,17 +356,17 @@ export default function LeafletContainer(){
                         mapId: mapId
                     }))
                 }
-                // else if(e.layer instanceof L.Polyline){
-                //     console.log(e.layer);
-                //     dispatch(addCreatePolylineTransaction({
-                //         layerGroup: layerGroup,
-                //         latlngs: e.layer._latlngs,
-                //         properties: e.layer.properties,
-                //         featureIndex: e.layer.featureIndex,
-                //         socket: socket,
-                //         mapId: mapId
-                //     }))
-                // }
+                else if(e.layer instanceof L.Polyline && e.layer.split === false){
+                    console.log(e.layer);
+                    dispatch(addCreatePolylineTransaction({
+                        layerGroup: layerGroup,
+                        latlngs: e.layer._latlngs,
+                        properties: e.layer.properties,
+                        featureIndex: e.layer.featureIndex,
+                        socket: socket,
+                        mapId: mapId
+                    }))
+                }
             });
 
             console.log(geoJSON);

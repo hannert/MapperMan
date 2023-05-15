@@ -92,6 +92,7 @@ export const leafletEditing = createSlice({
             state.editTool = editTools.polyline;
             let polyline = state.mapRef.editTools.startPolyline(undefined, {draggable: true});
             state.featureIndex += 1;
+            polyline.split = false;
             polyline.featureIndex = state.featureIndex;
             // polyline.shape = shapes.polyline;
             // in stack with create polyline transaction
@@ -126,6 +127,7 @@ export const leafletEditing = createSlice({
             state.editTool = editTools.splitSubregions;
             let polyline = state.mapRef.editTools.startPolyline(undefined, {draggable: true});
             state.featureIndex += 1;
+            polyline.split = true;
             polyline.featureIndex = state.featureIndex;
             // polyline.shape = shapes.polyline;
             // in stack with create polyline transaction
@@ -175,6 +177,8 @@ export const leafletEditing = createSlice({
                         state.layerGroup.addLayer(poly)
 
                     });
+
+                    
                 }
 
             }
@@ -190,6 +194,7 @@ export const leafletEditing = createSlice({
                 var cutFeatures = [];
                 var offsetLine = [];
                 var retVal = null;
+                var intersectIndexArray = [];
                 // console.log('polygon shape', polygon.shape)
                 // console.log('line type', line.type)
         
@@ -206,8 +211,17 @@ export const leafletEditing = createSlice({
                 if (typeof(idPrefix) === 'undefined') {
                     idPrefix = '';
                 }
-                let newPolygon = polygon.toGeoJSON().geometry
-                // console.log(newPolygon)
+                let newPolygon = null;
+                try{
+                    newPolygon = polygon.toGeoJSON().geometry; 
+ 
+                } catch(e) {
+                    console.log(e)
+                }
+                if (newPolygon === null) return
+                if (line?.coordinates?.length === 0) return
+                console.log(line)
+                console.log('NewPolygon', newPolygon)
                 intersectPoints = turf.lineIntersect(newPolygon, line);
                 if (intersectPoints.features.length == 0) {
                     // console.log("return ")
@@ -246,6 +260,8 @@ export const leafletEditing = createSlice({
                         polyg = turf.polygon(clipped.geometry.coordinates[j]);
                         intersect = turf.lineIntersect(polyg, offsetLine[forSelect]);
                         if (intersect.features.length > 0) {
+                            console.log("Intersecting at j of ", j)
+                            intersectIndexArray.push(j);
                             cutPolyGeoms.push(polyg.geometry.coordinates);
                         };
                     };
@@ -257,9 +273,21 @@ export const leafletEditing = createSlice({
                 }
                 console.log('End', line ,line.type)
                 console.log('End',polygon, polygon.type)
-                state.layerGroup.removeLayer(polygon._leaflet_id)
+                if(newPolygon.type === 'MultiPolygon'){
+                    console.log("Multipolygon trying to be spit")
+                    intersectIndexArray.sort()
+                    console.log(polygon)
+                    for(let i = intersectIndexArray.length - 1; i >= 0; i--){
+                        console.log('i', i)
+                        polygon._latlngs.splice(intersectIndexArray[i], 1)
+                    }
+                    polygon.redraw()
+                } else {
+                    state.layerGroup.removeLayer(polygon._leaflet_id)
+                }
+                
                 if (cutFeatures.length > 0) retVal = turf.featureCollection(cutFeatures);
-        
+                
                 return retVal;
             }
 
@@ -493,6 +521,11 @@ export const leafletEditing = createSlice({
 
             let polygon = L.polygon(L.GeoJSON.geometryToLayer(mergedFeature.geometry)._latlngs, {draggable:true});
             polygon.featureIndex = state.featureIndex;
+            polygon.on('click', (e) => {
+                console.log("clicked newly split polyogn", e, e.sourceTarget.featureIndex) 
+                action.payload(setFeatureIndexClicked(e.sourceTarget.featureIndex));
+                action.payload(mouseToolAction())
+            });
             state.featureIndex += 1;
             state.properties[state.featureIndex] = {name: 'New Merged Region'};
 

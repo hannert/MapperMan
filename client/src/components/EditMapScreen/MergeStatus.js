@@ -23,7 +23,7 @@ export default function MergeStatus() {
     }, [mergeArray])
 
     function handleConfirm() {
-        dispatch(mergeRegion())
+        dispatch(mergeRegion(dispatch))
     }
 
     let first = '';
