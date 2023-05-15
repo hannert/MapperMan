@@ -6,9 +6,8 @@ import hash from 'object-hash';
 import React, { useContext, useEffect, useRef } from 'react';
 import { GeoJSON, MapContainer, TileLayer } from 'react-leaflet';
 import { useDispatch, useSelector } from 'react-redux';
-import { mouseToolAction, removeToolAction, setEditTool, setFeatureIndex, setFeatureIndexClicked, setLayerClickedId, setMapRef, setProperties, shapes } from '../../app/store-actions/leafletEditing';
-import DeleteVertex_Transaction from '../../app/jsTPS/Transactions/DeleteVertex_Transaction';
-import { addCreatePolygonTransaction, addCreatePolylineTransaction, addDeleteFeatureTransaction, addDeleteVertexTransaction, addMoveFeatureTransaction, addMoveVertexTransaction, initTps, setDeleteParams, setRemoved, setVertexIndex, setfStartPos, setvStartPos } from '../../app/store-actions/transactions';
+import { mouseToolAction, removeToolAction, saveGeojsonThunk, setEditTool, setFeatureIndex, setFeatureIndexClicked, setMapRef, setProperties, shapes } from '../../app/store-actions/leafletEditing';
+import { addCreatePolygonTransaction, addCreatePolylineTransaction, addDeleteFeatureTransaction, addDeleteVertexTransaction, addMoveFeatureTransaction, addMoveVertexTransaction, initTps, setDeleteParams, setfStartPos, setvStartPos } from '../../app/store-actions/transactions';
 import { SocketContext } from '../../socket';
 
 
@@ -21,6 +20,7 @@ export default function LeafletContainer(){
     const mapId = useSelector((state) => state.editMapList.activeMapId);
     const socket = useContext(SocketContext);
     const tps = useSelector((state) => state.transactions.tps);
+    const user = useSelector((state) => state.accountAuth.user);;
 
     const mapRef = useRef(null);
     const dispatch = useDispatch();
@@ -268,12 +268,23 @@ export default function LeafletContainer(){
                     let arr = []
                     console.log(e.sourceTarget)
                     if(e.sourceTarget?.split === true) return
-                    for(let latlng of e.sourceTarget.getLatLngs()[0]){
-                        let copy = L.latLng(
+                    try{
+                        for(let latlng of e.sourceTarget.getLatLngs()[0]){
+                        let copy = null;
+                        try{
+                            copy = L.latLng(
                             JSON.parse(JSON.stringify(latlng['lat'])), 
-                            JSON.parse(JSON.stringify(latlng['lng'])))
-                        arr.push(copy);
+                            JSON.parse(JSON.stringify(latlng['lng']))) 
+                            arr.push(copy);
+                        } catch(e){
+                            console.log(e)
+                        }
+                       
                     }
+                    } catch(e){
+                        console.log(e)
+                    }
+                    
                     console.log(arr);
 
                     // // TODO For some reason this causes an error

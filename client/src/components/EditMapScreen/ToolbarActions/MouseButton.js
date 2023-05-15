@@ -1,10 +1,9 @@
 import { Mouse } from "@mui/icons-material";
-import { Box, Button, Tooltip, Typography } from "@mui/material";
+import { Box, Button, Tooltip } from "@mui/material";
 import { useEffect, useState } from "react";
-import CancelButton from "./CancelButton";
-import * as L from 'leaflet';
 import { useDispatch, useSelector } from "react-redux";
-import { editTools, setDraggable, setEditTool, setFeatureIndexClicked, setLayerClickedEditor, setLayerClickedId, startMouseTool, unselectTool } from "../../../app/store-actions/leafletEditing";
+import { editTools, setEditTool, setLayerClickedId, unselectTool } from "../../../app/store-actions/leafletEditing";
+import CancelButton from "./CancelButton";
 
 export default function MouseButton(){
 
