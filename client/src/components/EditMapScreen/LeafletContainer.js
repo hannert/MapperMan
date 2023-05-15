@@ -115,6 +115,7 @@ export default function LeafletContainer(){
                             mapId: mapId,
                             socket: socket
                         }))
+                        save();
                     }else if(e.layer instanceof L.Polyline){
                         dispatch(addDeleteVertexTransaction({
                             layerGroup: layerGroup, 
@@ -125,6 +126,7 @@ export default function LeafletContainer(){
                             mapId: mapId,
                             socket: socket
                         }))
+                        save();
                     }
                 });
 
