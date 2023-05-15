@@ -27,12 +27,10 @@ export default function EditMapActions () {
     const [publishDialogOpen, setPublishDialogOpen] = useState(false);
     const [collaboratorDialogOpen, setCollaboratorDialogOpen] = useState(false);
     const [tagDialogOpen, setTagDialogOpen] = useState(false);
-
-    const mapName = useSelector((state) => state.editMapList.activeMapName)
     const layerGroup = useSelector((state) => state.leafletEditing.layerGroup);
     const user = useSelector((state) => state.accountAuth.user);
     const mapId = useSelector((state) => state.editMapList.activeMapId);
-    const properties = useSelector((state) => state.leafletEditing.properties);
+
     const dispatch = useDispatch
     ()
     const toggleEditDialog = () => {
@@ -57,17 +55,23 @@ export default function EditMapActions () {
     function handleSave(){
         const geoJSON = layerGroup.toGeoJSON();
 
+        const layers = layerGroup.getLayers()
+        console.log(layers);
+        console.log('Geojson here');
         console.log(geoJSON);
-        let idx = 0; 
-        console.log(properties);
-        for(let feature of geoJSON.features){
-            feature.properties = properties[idx];
-            idx += 1;
-            console.log(feature);
+
+        let copy = {}
+    
+        for(let i in layers){
+            geoJSON.features[i].properties = layers[i].properties
         }
+        console.log('Copy here')
+        console.log(copy);
+        
         console.log(user);
         console.log(geoJSON);
         console.log(mapId);
+
         dispatch(saveGeojsonThunk({
             owner: user, 
             mapData: geoJSON, 
@@ -80,7 +84,8 @@ export default function EditMapActions () {
             console.log(error);
         });
 
-        console.log(geoJSON);    }
+        console.log(geoJSON);    
+    }
 
     let editDialog = "";
     editDialog = (editDialogOpen) ? <EditModal open={true} toggleEditDialog={toggleEditDialog}/> : <EditModal open={false} toggleEditDialog={toggleEditDialog}/> ;

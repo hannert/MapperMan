@@ -43,7 +43,7 @@ export default function LeafletContainer(){
                 console.log("Created polygon");
                 console.log(e);
             })
-            
+
             mapRef.current.on('editable:enable', (e) => {
                 console.log('Enable edit');
                 console.log(e);
@@ -345,43 +345,45 @@ export default function LeafletContainer(){
 
             });
             
-
+            console.log('Geojson being loaded');
             console.log(geoJSON);
             let properties = [];
 
             let idx = 0;
             for(let feature of geoJSON.features){
-                console.log(feature);
-                // Have to add draggable here first then disable/enable it when wanted
-                // console.log(L.GeoJSON.geometryToLayer(feature));
-                let polygon = null;
-                if(feature.geometry.type === 'MultiPolygon'){
-                    console.log('MultiPolygon');
-                    polygon = L.polygon(L.GeoJSON.geometryToLayer(feature)._latlngs, {draggable:false});
+                if(feature !== null){
+                    console.log(feature);
+                    // Have to add draggable here first then disable/enable it when wanted
+                    // console.log(L.GeoJSON.geometryToLayer(feature));
+                    let polygon = null;
+                    if(feature?.geometry?.type === 'MultiPolygon'){
+                        console.log('MultiPolygon');
+                        polygon = L.polygon(L.GeoJSON.geometryToLayer(feature)._latlngs, {draggable:false});
+                    }
+                    polygon = L.polygon(L.GeoJSON.geometryToLayer(feature)._latlngs, {draggable:true});
+
+                    console.log(polygon);
+                    console.log(feature.geometry.coordinates);
+                    // console.log(L.GeoJSON.coordsToLatLngs(feature.geometry.coordinates))
+                    console.log(L.GeoJSON.geometryToLayer(feature)._latlngs);
+                    polygon.dragging.disable();
+                    // polygon._latlngs[0].push(L.latLng(0, 0));
+                    polygon.featureIndex = idx;
+                    polygon.properties = geoJSON.features[idx].properties
+                    // console.log(polygon);
+                    dispatch(initTps());
+                    
+                    polygon.on('click', (e) => {
+                        dispatch(setFeatureIndexClicked(e.sourceTarget.featureIndex));
+                        dispatch(mouseToolAction())
+                        dispatch(removeToolAction())
+                    });
+
+                    // TODO prob a better way to do this
+                    properties.push(geoJSON.features[idx].properties);
+                    idx += 1;
+                    layerGroup.addLayer(polygon);
                 }
-                polygon = L.polygon(L.GeoJSON.geometryToLayer(feature)._latlngs, {draggable:true});
-
-                console.log(polygon);
-                console.log(feature.geometry.coordinates);
-                // console.log(L.GeoJSON.coordsToLatLngs(feature.geometry.coordinates))
-                console.log(L.GeoJSON.geometryToLayer(feature)._latlngs);
-                polygon.dragging.disable();
-                // polygon._latlngs[0].push(L.latLng(0, 0));
-                polygon.featureIndex = idx;
-                polygon.properties = geoJSON.features[idx].properties
-                // console.log(polygon);
-                dispatch(initTps());
-                
-                polygon.on('click', (e) => {
-                    dispatch(setFeatureIndexClicked(e.sourceTarget.featureIndex));
-                    dispatch(mouseToolAction())
-                    dispatch(removeToolAction())
-                });
-
-                // TODO prob a better way to do this
-                properties.push(geoJSON.features[idx].properties);
-                idx += 1;
-                layerGroup.addLayer(polygon);
             }
 
             // TODO prob a better way to do this

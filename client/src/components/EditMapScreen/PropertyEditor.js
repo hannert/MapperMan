@@ -29,8 +29,8 @@ export default function PropertyEditor(props){
      */
     // const feature = useSelector((state)=>state.leafletEditing.featureClicked);
     const featureIndex = useSelector((state)=>state.leafletEditing.featureClickedIndex);
+    const layerGroup = useSelector((state)=>state.leafletEditing.layerGroup); 
     const currMapId = useSelector((state)=>state.editMapList.activeMapId);
-    const geoJSON = useSelector((state) => state.leafletEditing.currentGeoJSON);
     const [addNewPropertyMenuOpen, setAddNewPropertyMenuOpen] = useState(false);
     const [newNameText, setNewNameText] = useState("");
     // const [newType, setNewType] = useState('string');
@@ -41,8 +41,18 @@ export default function PropertyEditor(props){
      * Holds the properties in the feature that was taken
      * from the state
      */
-    const featureProperties = properties[featureIndex];
-
+    const [featureProperties, setFeatureProperties] = useState({})
+    
+    useEffect(()=>{
+        if(layerGroup !== null){
+            for(let layer of layerGroup.getLayers()){
+                if(layer.featureIndex === featureIndex){
+                    console.log(layer);
+                    setFeatureProperties(layer.properties);
+                }
+            }
+        }
+    }, [featureIndex])
 
     /**
      * Puts the properties into the

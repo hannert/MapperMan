@@ -425,47 +425,96 @@ export const leafletEditing = createSlice({
             console.log(socket.emit('edit properties', room, featureIndex, key, value, type));
         },
         editPropertyValue: (state, action) =>{
-            let key = action.payload.key;
-            let value = action.payload.value;
-            let featureIndex = action.payload.featureIndex;
-            state.currentGeoJSON.features[featureIndex].properties[key]=value;
-            // console.log(JSON.stringify(state.currentGeoJSON.features[featureIndex].properties))
-            let properties = [];
-            let index=0;
-            for(let feature of state.currentGeoJSON.features){
-                properties.push(state.currentGeoJSON.features[index].properties);
-                index += 1;
+            // let key = action.payload.key;
+            // let value = action.payload.value;
+            // let featureIndex = action.payload.featureIndex;
+            // state.currentGeoJSON.features[featureIndex].properties[key]=value;
+            // // console.log(JSON.stringify(state.currentGeoJSON.features[featureIndex].properties))
+            // let properties = [];
+            // let index=0;
+            // for(let feature of state.currentGeoJSON.features){
+            //     properties.push(state.currentGeoJSON.features[index].properties);
+            //     index += 1;
+            // }
+            // state.properties = properties;
+
+            let feature = null;
+            for(let layer of state.layerGroup.getLayers()){
+                if(layer.featureIndex === state.featureClickedIndex){
+                    feature = layer;
+                }
             }
-            state.properties = properties;
+
+            let copy = {}
+            for(let property in feature.properties){
+                if(property !== action.payload.key){
+                    copy[property] = feature.properties[property]
+                }else{
+                    copy[action.payload.key] = action.payload.value;
+                }
+            }
+            feature.properties = copy;
+
         },
         deleteProperty: (state, action) =>{
-            let key = action.payload.key;
-            let featureIndex = action.payload.featureIndex;
-            delete state.currentGeoJSON.features[featureIndex].properties[key];
-            // console.log(JSON.stringify(state.currentGeoJSON.features[featureIndex].properties))
+            // let key = action.payload.key;
+            // let featureIndex = action.payload.featureIndex;
+            // delete state.currentGeoJSON.features[featureIndex].properties[key];
+            // // console.log(JSON.stringify(state.currentGeoJSON.features[featureIndex].properties))
             
-            let properties = [];
-            let index=0;
-            for(let feature of state.currentGeoJSON.features){
-                properties.push(state.currentGeoJSON.features[index].properties);
-                index += 1;
+            // let properties = [];
+            // let index=0;
+            // for(let feature of state.currentGeoJSON.features){
+            //     properties.push(state.currentGeoJSON.features[index].properties);
+            //     index += 1;
+            // }
+            // state.properties = properties;
+
+            let feature = null;
+            for(let layer of state.layerGroup.getLayers()){
+                if(layer.featureIndex === state.featureClickedIndex){
+                    feature = layer;
+                }
             }
-            state.properties = properties;
+
+            let copy = {}
+            for(let property in feature.properties){
+                if(property !== action.payload.key){
+                    copy[property] = feature.properties[property]
+                }
+            }
+            feature.properties = copy;
+
         },
         addProperty: (state, action) =>{
-            let key = action.payload.key;
-            let value = action.payload.value;
-            let featureIndex = action.payload.featureIndex;
+            // let key = action.payload.key;
+            // let value = action.payload.value;
+            // let featureIndex = action.payload.featureIndex;
 
-            state.currentGeoJSON.features[featureIndex].properties[key]=value;
+            // state.currentGeoJSON.features[featureIndex].properties[key]=value;
 
-            let properties = [];
-            let index=0;
-            for(let feature of state.currentGeoJSON.features){
-                properties.push(state.currentGeoJSON.features[index].properties);
-                index += 1;
+            // let properties = [];
+            // let index=0;
+            // for(let feature of state.currentGeoJSON.features){
+            //     properties.push(state.currentGeoJSON.features[index].properties);
+            //     index += 1;
+            // }
+            // state.properties = properties;
+            console.log('Trying to add property')
+            let feature = null;
+            for(let layer of state.layerGroup.getLayers()){
+                if(layer.featureIndex === state.featureClickedIndex){
+                    feature = layer;
+                }
             }
-            state.properties = properties;
+
+            let copy = {}
+            for(let property in feature.properties){
+                copy[property] = feature.properties[property]
+            }
+            copy[action.payload.key] = action.payload.value;
+            feature.properties = copy;
+
         }
         
     }
@@ -499,7 +548,7 @@ export const saveGeojsonThunk = createAsyncThunk('/map/:id', async(payload, {rej
         const response = await mapApis.saveMap(payload.owner, payload.mapData, payload.id);
         return response.data;
     }catch(err){
-        return rejectWithValue(err.response.data.errorMessage);
+        return rejectWithValue(err);
     }
 });
 export const deleteMapPropertyThunk = createAsyncThunk('/map/:id/deleteProperty', async(payload, {rejectWithValue}) => {

@@ -5,7 +5,7 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Box } from "@mui/system";
-import { useState, useContext  } from 'react';
+import { useState, useContext, useEffect  } from 'react';
 import TextField from '@mui/material/TextField';
 import { editMapPropertyThunk } from '../../app/store-actions/leafletEditing';
 import { setCurrentGeoJSON, setFeatureClicked, setPrevGeoJSON, setProperties, emitPropertyChange, editPropertyValue, deleteProperty} from '../../app/store-actions/leafletEditing';
@@ -26,6 +26,7 @@ export default function PropertyCard(props){
     const featureIndex = useSelector((state)=>state.leafletEditing.featureClickedIndex);
     const currMapId = useSelector((state)=>state.editMapList.activeMapId);
     const socket = useContext(SocketContext);
+
 
     const handleValueDoubleClick = (event) =>{
         console.log("clicked on property value");
