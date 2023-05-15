@@ -693,10 +693,66 @@ export default function LeafletContainer(){
                     }
     
                 }
+                
 
 
 
             })
+            socket.on('received merge region', (transaction)=>{ 
+                let mergeArray = transaction.indexArray
+                console.log(mergeArray)
+                let mergeIndexOne = null;
+                let mergeIndexTwo = null;
+                let j = 0;
+                for(let [i, layers] of Object.entries(layerGroup._layers)){
+                    let layer = layerGroup._layers[i]
+                    let idOne = layer[j]
+                    if(j === mergeArray[0]){
+                        console.log('Found a matching leafet id at index:', i)
+                        mergeIndexOne = layer._leaflet_id
+                    }
+                    else if (j === mergeArray[1]){
+                        console.log('Found a matching leafet id at index:', i)
+                        mergeIndexTwo = layer._leaflet_id
+                    }
+                    j++;
+                        
+                    
+                }
+
+                console.log(mergeIndexOne, mergeIndexTwo)
+
+
+                let geometryFirst = layerGroup.getLayer(mergeIndexOne).toGeoJSON();
+                let geometrySecond = layerGroup.getLayer(mergeIndexTwo).toGeoJSON();
+                
+                /**Set these to true so the listener in the container doesnt pick it up */
+                layerGroup.getLayer(mergeIndexOne).inStack = true;
+                layerGroup.getLayer(mergeIndexTwo).inStack = true;
+    
+    
+                layerGroup.removeLayer(mergeIndexOne)
+                layerGroup.removeLayer(mergeIndexTwo)
+                console.log("Removed old region")
+                console.log("geoFirst", geometryFirst)
+                console.log('geoSecon', geometrySecond)
+                let mergedFeature = turf.union(
+                    geometryFirst, 
+                    geometrySecond, 
+                )
+    
+                let polygon = L.polygon(L.GeoJSON.geometryToLayer(mergedFeature.geometry)._latlngs, {draggable:true});
+                // polygon.featureIndex = state.featureIndex;
+                polygon.on('click', (e) => {
+                    console.log("clicked newly split polyogn", e, e.sourceTarget.featureIndex) 
+                    dispatch(setFeatureIndexClicked(e.sourceTarget.featureIndex));
+                    dispatch(mouseToolAction())
+                });            
+                layerGroup.addLayer(polygon)
+
+
+
+            });
             
         }
     }, [mapRef.current]);
@@ -708,7 +764,7 @@ export default function LeafletContainer(){
             geoJSON = layerGroup.toGeoJSON();
         }catch(e){
             console.log(e)
-            enqueueSnackbar('Error while trying to convert map!', {variant:'error'})
+            // enqueueSnackbar('Error while trying to convert map!', {variant:'error'})
             return
         }
         if(geoJSON === null) return;

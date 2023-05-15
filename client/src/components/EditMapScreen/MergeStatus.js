@@ -1,13 +1,18 @@
 import { Box, Button, LinearProgress } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext} from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { editTools, incrementFeatureIndex, mergeRegion } from '../../app/store-actions/leafletEditing';
+import { editTools, mergeRegion } from '../../app/store-actions/leafletEditing';
+import { SocketContext } from "../../socket";
 
 export default function MergeStatus() {
 
     const editTool = useSelector((state) => state.leafletEditing.editTool);
-    const mergeArray = useSelector((state) => state.leafletEditing.mergeArray);
+    const mergeArray = useSelector((state) => state.leafletEditing.mergeIndexArray);
     const mergeFeature = useSelector((state) => state.leafletEditing.mergeFeature);
+    const currentEditTool = useSelector(state => state.leafletEditing.editTool);
+    const activeDrawing = useSelector(state => state.leafletEditing.activeDrawing);
+    const socket = useContext(SocketContext);
+    const mapId = useSelector((state) => state.editMapList.activeMapId);
 
     const dispatch = useDispatch();
 
@@ -23,7 +28,7 @@ export default function MergeStatus() {
     }, [mergeArray])
 
     function handleConfirm() {
-        dispatch(mergeRegion(dispatch))
+        dispatch(mergeRegion({'dispatch': dispatch,'socket':socket,'mapId': mapId}))
     }
 
     let first = '';
