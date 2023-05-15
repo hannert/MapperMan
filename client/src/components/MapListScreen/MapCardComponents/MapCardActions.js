@@ -13,14 +13,17 @@ export default function MapCardActions(props){
     let {mapId, owner, published, togglePublishDialog, toggleDeleteDialog, toggleForkDialog, handleActionClick} = props;
     const publicRepo = useSelector((state) => state.editMapList.publicRepo);
     const guest = useSelector((state) => state.accountAuth.guest);
-    const user = useSelector((state) => state.accountAuth.user)
+    const user = useSelector((state) => state.accountAuth.user);
+    let temp = true
+    if (user === null || guest){
+        temp = false
+    }
     console.log(owner)
-    console.log(user.username)
     return (
         <Box sx={{marginRight:'5%'}}>
             {!published && !guest && <PublishButton togglePublishDialog={togglePublishDialog} handleActionClick={handleActionClick}></PublishButton>}
             {published && !guest && <ForkButton toggleForkDialog={toggleForkDialog} handleActionClick={handleActionClick}></ForkButton>}
-            {!publicRepo && (owner === user.username) && <DeleteButton toggleDeleteDialog={toggleDeleteDialog} handleActionClick={handleActionClick}></DeleteButton>}
+            {!publicRepo && temp && <DeleteButton toggleDeleteDialog={toggleDeleteDialog} handleActionClick={handleActionClick}></DeleteButton>}
         </Box>
 
     )
