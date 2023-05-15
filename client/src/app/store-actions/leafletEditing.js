@@ -45,7 +45,6 @@ const initialState = {
     collaborators: [],
     sharedWith: [],
 }
-
 export const leafletEditing = createSlice({
     name: 'leafletEditing',
     initialState,
@@ -167,8 +166,8 @@ export const leafletEditing = createSlice({
                         poly.featureIndex = newFeatureIndex
                         poly.on('click', (e) => {
                             console.log("clicked newly split polyogn", e, e.sourceTarget.featureIndex) 
-                            state.featureClickedIndex = e.sourceTarget.featureIndex
-
+                            action.payload(setFeatureIndexClicked(e.sourceTarget.featureIndex));
+                            action.payload(mouseToolAction())
                         });
 
                         console.log('polytype:', poly.type)

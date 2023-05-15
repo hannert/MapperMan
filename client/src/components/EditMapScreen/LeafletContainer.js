@@ -323,12 +323,12 @@ export default function LeafletContainer(){
                 //                 let newFeatureIndex = lastItemInLayers.featureIndex + 1
                 //                 poly.dragging.disable();
                 //                 poly.featureIndex = newFeatureIndex
-                                poly.on('click', (e) => {
-                                    console.log("clicked newly split polyogn", e, e.sourceTarget.featureIndex) 
-                                    console.log(layerGroup)
-                                    dispatch(setFeatureIndexClicked(e.sourceTarget.featureIndex));
-                                    dispatch(mouseToolAction())
-                                });
+                                // poly.on('click', (e) => {
+                                //     console.log("clicked newly split polyogn", e, e.sourceTarget.featureIndex) 
+                                //     console.log(layerGroup)
+                                //     dispatch(setFeatureIndexClicked(e.sourceTarget.featureIndex));
+                                //     dispatch(mouseToolAction())
+                                // });
 
                 //                 console.log('polytype:', poly.type)
                 //                 console.log('poly', poly)
