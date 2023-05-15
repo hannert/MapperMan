@@ -1,11 +1,10 @@
-import { Box, Divider, Grid, Typography } from '@mui/material';
+import LanguageIcon from '@mui/icons-material/Language';
+import { Box, Divider, Grid, Icon, Typography } from '@mui/material';
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import dummy from '../../na.png';
-import MapCardActions from './MapCardActions';
-
 import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { setActiveMap, setMapCardClicked } from '../../../app/store-actions/editMapList';
+import MapCardActions from './MapCardActions';
 
 /**
  * This component is a card that displays a map in the Map List Screen. Deals with actions
@@ -99,7 +98,10 @@ export default function MapCard(props) {
 
             {/* Picture of the map here */}
             <Box sx ={{minHeight: '200px', maxWidth:'100%', maxHeight:'100%', padding:'5%'}}>
-                <img alt='?' src={dummy} width='100%' height='100%'></img>
+                {/* <img alt='?' src={dummy} width='100%' height='100%'></img> */}
+                <Icon sx={{fontSize: 100, width: '100%', height: '100%'}}>
+                    <LanguageIcon sx={{fontSize: 200}}/>
+                </Icon>
             </Box>
 
             <Divider variant='middle' flexItem sx={{backgroundColor:'gray'}}/>

@@ -726,7 +726,6 @@ export default function LeafletContainer(){
             mapData: geoJSON, 
             id: mapId}
         ))
-        enqueueSnackbar('map saved!', {variant:'success'})
     }
 
     function polygonCut(polygon, line, idPrefix) {
