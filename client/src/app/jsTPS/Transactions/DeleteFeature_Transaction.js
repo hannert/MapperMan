@@ -43,15 +43,16 @@ export default class DeleteFeature_Transaction extends jsTPS_Transaction {
         console.log("emitting")
         this.socket.emit('create delete feature transaction', room, this.featureIndex, this.latlngs, this.properties, "undo delete feature" );
 
-
         const polygon = L.polygon(this.latlngs, {draggable:true});
+
         polygon.dragging.disable();
         console.log(polygon);
         polygon.featureIndex = this.featureIndex;
         polygon.properties = this.properties;
         //Don't add an extra transaction
-        polygon.ignore = true;
 
         this.layerGroup.addLayer(polygon);
+        polygon.toggleEdit();
+        polygon.toggleEdit();
     }
 }

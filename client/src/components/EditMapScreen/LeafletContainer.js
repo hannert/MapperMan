@@ -7,8 +7,8 @@ import React, { useContext, useEffect, useRef } from 'react';
 import { GeoJSON, MapContainer, TileLayer } from 'react-leaflet';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { mouseToolAction, setEditTool, setFeatureIndex, setFeatureIndexClicked, setMapRef, setProperties, shapes } from '../../app/store-actions/leafletEditing';
-import { addCreatePolylineTransaction, addCreatePolygonTransaction, addDeleteVertexTransaction, addMoveFeatureTransaction, addMoveVertexTransaction, initTps, setDeleteParams, setfStartPos, setvStartPos } from '../../app/store-actions/transactions';
+import { mouseToolAction, removeToolAction, setEditTool, setFeatureIndex, setFeatureIndexClicked, setMapRef, setProperties, shapes } from '../../app/store-actions/leafletEditing';
+import { addCreatePolygonTransaction, addCreatePolylineTransaction, addDeleteVertexTransaction, addMoveFeatureTransaction, addMoveVertexTransaction, initTps, setDeleteParams, setfStartPos, setvStartPos } from '../../app/store-actions/transactions';
 import { SocketContext } from '../../socket';
 
 
@@ -19,9 +19,8 @@ export default function LeafletContainer(){
     const geoJSON = useSelector((state) => state.leafletEditing.currentGeoJSON);
     const layerGroup = useSelector((state) => state.leafletEditing.layerGroup);
     const mapId = useSelector((state) => state.editMapList.activeMapId);
-    const tps = useSelector((state) => state.transactions.tps);
     const socket = useContext(SocketContext);
-    const user = useSelector((state) => state.accountAuth.user);
+    const tps = useSelector((state) => state.transactions.tps);
 
     const mapRef = useRef(null);
     const dispatch = useDispatch();
@@ -41,7 +40,11 @@ export default function LeafletContainer(){
             layerGroup.clearLayers()
             console.log('Layergroup after clear: ', layerGroup);
             
-
+            layerGroup.on('createdPolygon', (e)=>{
+                console.log("Created polygon");
+                console.log(e);
+            })
+            
             mapRef.current.on('editable:enable', (e) => {
                 console.log('Enable edit');
                 console.log(e);
@@ -182,21 +185,78 @@ export default function LeafletContainer(){
 
                 e.layer.on('dragstart', (e) => {
                     console.log(e);
-                    console.log(e.target._latlngs[0][0])
                     dispatch(setfStartPos(e.target._latlngs[0][0]));
+                    console.log("Length here")
+                    console.log(e.target._latlngs.length);
+                    let arr = []
+                    if(e.target._latlngs.length === 1){
+                        for(let latlng of e.target._latlngs[0]){
+                            arr.push(L.latLng(latlng.lat, latlng.lng));
+                        }
+                        console.log('Array here');
+                        console.log(arr);
+                        dispatch(setfStartPos(arr));
+                    }
+                    // let arr = []
+                    // if(e.target._latlngs.length > 1){
+                    //     for(let latlngArr of e.target._latlngs){
+                    //         // console.log(latlngs);
+                    //         let temp = []
+                    //         for(let latlngs of latlngArr){
+                    //             for(let latlng of latlngs){
+                    //                 temp.push(L.latLng(latlng.lat, latlng.lng))
+                    //             }
+                    //         }
+                    //         arr.push(temp)
+                    //     }
+                    //     dispatch(setfStartPos(arr))
+                    // }else{
+                    //     dispatch(setfStartPos((e.target._latlngs)));
+                    // }
                 });
                 
                 e.layer.on('dragend', (e) => {
                     console.log(e);
-                    console.log(e.target._latlngs[0][0])
-                    
-                    dispatch(addMoveFeatureTransaction({
-                        layerGroup: layerGroup,
-                        featureIndex: e.target.featureIndex,
-                        endPos: e.target._latlngs[0][0],
-                        mapId: mapId,
-                        socket: socket
-                    }))
+                    console.log(e.target._latlngs.length);
+                    if(e.target._latlngs.length === 1){
+                        let arr = []
+                        for(let latlng of e.target._latlngs[0]){
+                            arr.push(L.latLng(latlng.lat, latlng.lng));
+                        }
+                        console.log('Array here');
+                        console.log(arr);
+                        dispatch(addMoveFeatureTransaction({
+                            layerGroup: layerGroup,
+                            featureIndex: e.target.featureIndex,
+                            endPos: arr,
+                            mapId: mapId,
+                            socket: socket
+                        }))
+                    }
+                    // let arr = []
+                    // if(e.target._latlngs.length > 1){
+                    //     for(let latlngArr of e.target._latlngs){
+                    //         // console.log(latlngs);
+                    //         let temp = []
+                    //         for(let latlngs of latlngArr){
+                    //             for(let latlng of latlngs){
+                    //                 temp.push(L.latLng(latlng.lat, latlng.lng))
+                    //             }
+                    //         }
+                    //         arr.push(temp)
+                    //     }
+                    // }else{
+                    //     arr = e.target._latlngs;
+                    // }
+                    // console.log(arr);
+
+                    // dispatch(addMoveFeatureTransaction({
+                    //     layerGroup: layerGroup,
+                    //     featureIndex: e.target.featureIndex,
+                    //     endPos: e.target._latlngs,
+                    //     mapId: mapId,
+                    //     socket: socket
+                    // }))
                 });
 
                 e.layer.on('remove', (e) => {
@@ -245,7 +305,9 @@ export default function LeafletContainer(){
                     console.log(e);
                     dispatch(setFeatureIndexClicked(e.sourceTarget.featureIndex));
                     dispatch(mouseToolAction())
+                    dispatch(removeToolAction())
                 });
+
             });
 
             // mapRef.current.on('editable:drawing:end', (e) => {
@@ -377,8 +439,12 @@ export default function LeafletContainer(){
                 // console.log(feature);
                 // Have to add draggable here first then disable/enable it when wanted
                 // console.log(L.GeoJSON.geometryToLayer(feature));
-                
-                const polygon = L.polygon(L.GeoJSON.geometryToLayer(feature)._latlngs, {draggable:true});
+                let polygon = null;
+                if(feature.geometry.type === 'MultiPolygon'){
+                    console.log('MultiPolygon');
+                    polygon = L.polygon(L.GeoJSON.geometryToLayer(feature)._latlngs, {draggable:false});
+                }
+                polygon = L.polygon(L.GeoJSON.geometryToLayer(feature)._latlngs, {draggable:true});
 
                 // console.log(polygon);
                 // console.log(feature.geometry.coordinates);
@@ -394,6 +460,7 @@ export default function LeafletContainer(){
                 polygon.on('click', (e) => {
                     dispatch(setFeatureIndexClicked(e.sourceTarget.featureIndex));
                     dispatch(mouseToolAction())
+                    dispatch(removeToolAction())
                 });
 
                 // TODO prob a better way to do this

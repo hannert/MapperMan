@@ -22,7 +22,6 @@ export default class CreatePolyline_Transaction extends jsTPS_Transaction {
         let room = this.mapId;
         console.log("emitting")
         this.socket.emit('create add polyline transaction', room, this.featureIndex, this.latlngArr, this.properties, "add polyline" );
-
         console.log('Making polyline');
         console.log(this.latlngs);
         const polyline = L.polyline(this.latlngs, {draggable:true});

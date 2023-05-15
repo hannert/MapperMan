@@ -372,7 +372,8 @@ export const leafletEditing = createSlice({
             });
         },
         setChosenForDeletion: (state, action) => {
-            state.chosenForDeletion = action.payload;
+            //idk how but at some point this gets called and messes things up so commenting out
+            // state.chosenForDeletion = action.payload;
         },
         removeFeature: (state, action) => {
             console.log('Removing feature');
@@ -380,16 +381,17 @@ export const leafletEditing = createSlice({
             console.log(state.layerClickedEditor);      
         },
         mouseToolAction: (state, action) =>{
-            console.log('Attaching onClick');
-            let feature = null;
-            for(let layer of state.layerGroup.getLayers()){
-                if(layer.featureIndex === state.featureClickedIndex){
-                    feature = layer;
-                }
-            }
-            console.log(feature);
-            console.log(state.editTool);
             if(state.editTool === editTools.mouse){
+                console.log('Attaching onClick');
+                let feature = null;
+                for(let layer of state.layerGroup.getLayers()){
+                    if(layer.featureIndex === state.featureClickedIndex){
+                        feature = layer;
+                    }
+                }
+                console.log(feature);
+                console.log(state.editTool);
+
                 console.log('Mouse tool action');
                 // console.log(feature.editor._enabled)
                 console.log(feature.editEnabled());
@@ -397,18 +399,34 @@ export const leafletEditing = createSlice({
                 if(feature.editEnabled()){
                     feature.setStyle({ color: "#3388ff" });
                     feature.toggleEdit();
-                    state.layerGroup.getLayer(feature._leaflet_id).dragging.disable()
-                    console.log('Disabling edit');
-                    console.log(feature.editEnabled())
                 }else{
                     feature.setStyle({ color: "black" });
                     feature.toggleEdit();
                     console.log('Enabling edit');
                     console.log(feature.editEnabled())
-                    state.layerGroup.getLayer(feature._leaflet_id).dragging.enable()
+                    if(feature._latlngs.length !== 1){
+                        state.layerGroup.getLayer(feature._leaflet_id).dragging.disable()
+                    }
                 }
             }
 
+        },
+        removeToolAction: (state, action) =>{
+            if(state.editTool === editTools.removeFeature){
+                let feature = null;
+
+                for(let layer of state.layerGroup.getLayers()){
+                    if(layer.featureIndex === state.featureClickedIndex){
+                        feature = layer;
+                    }
+                }
+                console.log(state.editTool);
+                console.log('Remove tool action');
+                console.log(feature);
+                state.chosenForDeletion = feature;
+
+                state.layerGroup.removeLayer(feature);
+            }
         },
         setDraggable(state, action){
             state.layerGroup.getLayer(action.payload).dragging.enable()
@@ -495,6 +513,7 @@ export const leafletEditing = createSlice({
 
             state.featureClickedIndex = action.payload;
             console.log("feature Index in store: ", state.featureClickedIndex);
+
         },
         setMergeArray: (state, action) =>{
             state.mergeArray = action.payload;
@@ -635,6 +654,7 @@ startPolylineDraw, endPolylineDraw, unselectTool, setLayerGroup, setFeatureClick
  startMouseTracking, setLayerClickedId, setLayerClickedEditor, addVertex, stopMouseTracking,
 setDraggable, unsetDraggable, startPolygonDraw, endPolygonDraw, startMarker, endMarker, 
 startSplit, endSplit,
+removeToolAction,
 mouseToolAction, setMergeArray, mergeRegion, finishMergeRegion, startMergeTool, removeFeature, startRemoveTool, 
 setCollaborators, setSharedWith, setChosenForDeletion, startCircleDraw, endCircleDraw, incrementFeatureIndex, setProperties, 
 setFeatureIndex, updateProperties, applyDelta, emitPropertyChange, editPropertyValue, deleteProperty, addProperty} = leafletEditing.actions;

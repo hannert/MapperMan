@@ -36,7 +36,6 @@ export default function PolygonButton() {
     //when the user switches to a different tool
     useEffect(()=>{
         if(currentEditTool === null){
-            console.log('Enabling polygon')
             setDisabled(false);
         }else if (currentEditTool !== editTools.polygon){
             setDisabled(true);
@@ -55,7 +54,6 @@ export default function PolygonButton() {
                     <PentagonIcon />
                 </Button>
             </Tooltip>
-            { !hidden && <CommitButton setHidden={setHidden} cancelFunction={endTool}/>}
             { !hidden && <CancelButton setHidden={setHidden} cancelFunction={endTool}/>}
         </Box>
     );

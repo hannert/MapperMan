@@ -38,7 +38,6 @@ export default function PolylineButton(){
     //when the user switches to a different tool
     useEffect(()=>{
         if(currentEditTool === null){
-            console.log('Enabling polyline')
             setDisabled(false);
         }else if (currentEditTool !== editTools.polyline){
             setDisabled(true);            
@@ -57,7 +56,6 @@ export default function PolylineButton(){
                     <Timeline />
                 </Button>
             </Tooltip>
-            { !hidden && <CommitButton setHidden={setHidden} cancelFunction={endTool}/>}
             { !hidden && <CancelButton setHidden={setHidden} cancelFunction={endTool} />}
         </Box>
     )
