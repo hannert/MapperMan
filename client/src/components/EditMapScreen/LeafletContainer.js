@@ -7,8 +7,9 @@ import React, { useContext, useEffect, useRef } from 'react';
 import { GeoJSON, MapContainer, TileLayer } from 'react-leaflet';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { mouseToolAction, setEditTool, setFeatureIndex, setFeatureIndexClicked, setMapRef, setProperties, shapes } from '../../app/store-actions/leafletEditing';
-import { addCreatePolygonTransaction, addCreatePolylineTransaction, addDeleteVertexTransaction, addMoveFeatureTransaction, addMoveVertexTransaction, initTps, setDeleteParams, setfStartPos, setvStartPos } from '../../app/store-actions/transactions';
+import { enqueueSnackbar } from 'notistack';
+import { mouseToolAction, saveGeojsonThunk, setEditTool, setFeatureIndex, setFeatureIndexClicked, setMapRef, setProperties, shapes } from '../../app/store-actions/leafletEditing';
+import { addCreatePolygonTransaction, addCreatePolylineTransaction, addDeleteFeatureTransaction, addDeleteVertexTransaction, addMoveFeatureTransaction, addMoveVertexTransaction, initTps, setDeleteParams, setfStartPos, setvStartPos } from '../../app/store-actions/transactions';
 import { SocketContext } from '../../socket';
 
 
@@ -22,6 +23,8 @@ export default function LeafletContainer(){
     const tps = useSelector((state) => state.transactions.tps);
     const socket = useContext(SocketContext);
     const user = useSelector((state) => state.accountAuth.user);
+    const properties = useSelector((state) => state.leafletEditing.properties);
+
 
     const mapRef = useRef(null);
     const dispatch = useDispatch();
@@ -129,7 +132,6 @@ export default function LeafletContainer(){
                     //cursed format
                     let latlng = L.latLng(e.vertex.latlng['lat'], e.vertex.latlng['lng']);
                     dispatch(setvStartPos(latlng));
-
                 });
 
                 e.layer.on('editable:vertex:dragend', (e) => {
@@ -168,12 +170,7 @@ export default function LeafletContainer(){
                         socket: socket
                     }))
                     
-                    // let geoJSON = layerGroup.toGeoJSON();
-                    // dispatch(saveGeojsonThunk(
-                    //     {owner: user, 
-                    //     mapData: geoJSON, 
-                    //     id: mapId}
-                    // ))
+                    save();
 
 
                     
@@ -197,6 +194,7 @@ export default function LeafletContainer(){
                         mapId: mapId,
                         socket: socket
                     }))
+                    save();
                 });
 
                 e.layer.on('remove', (e) => {
@@ -208,28 +206,28 @@ export default function LeafletContainer(){
                     //     return
                     // }
 
-                    // console.log('remove event')
-                    // console.log(e)
-                    // let arr = []
-                    // for(let latlng of e.sourceTarget.getLatLngs()[0]){
+                    console.log('remove event')
+                    let arr = []
+                    console.log(e.sourceTarget)
+                    if(e.sourceTarget?.split === true) return
+                    for(let latlng of e.sourceTarget.getLatLngs()[0]){
                         
-                    //     let copy = L.latLng(
-                    //         JSON.parse(JSON.stringify(latlng['lat'])), 
-                    //         JSON.parse(JSON.stringify(latlng['lng'])))
-                    //     arr.push(copy);
-                    // }
-                    // console.log(arr);
+                        let copy = L.latLng(
+                            JSON.parse(JSON.stringify(latlng['lat'])), 
+                            JSON.parse(JSON.stringify(latlng['lng'])))
+                        arr.push(copy);
+                    }
+                    console.log(arr);
 
                     // // TODO For some reason this causes an error
-
-                    // dispatch(addDeleteFeatureTransaction({
-                    //     layerGroup: layerGroup,
-                    //     latlngs: arr,
-                    //     properties: e.sourceTarget.properties,
-                    //     featureIndex: e.sourceTarget.featureIndex,
-                    //     socket: socket,
-                    //     mapId: mapId
-                    // }))
+                    dispatch(addDeleteFeatureTransaction({
+                        layerGroup: layerGroup,
+                        latlngs: arr,
+                        properties: e.sourceTarget.properties,
+                        featureIndex: e.sourceTarget.featureIndex,
+                        socket: socket,
+                        mapId: mapId
+                    }))
                     
                 });
             });
@@ -296,6 +294,7 @@ export default function LeafletContainer(){
                         socket: socket,
                         mapId: mapId
                     }))
+                    save();
                 }
                 else if(e.layer instanceof L.Polyline && e.layer.split === false){
                     console.log(e.layer);
@@ -307,11 +306,11 @@ export default function LeafletContainer(){
                         socket: socket,
                         mapId: mapId
                     }))
+                    save();
                 } 
                 // Split event start
                 else if(e.layer instanceof L.Polyline && e.layer.split === true){
                     console.log('Split event?', e.layer);
-                    
                 } 
             });
 
@@ -701,6 +700,34 @@ export default function LeafletContainer(){
             
         }
     }, [mapRef.current]);
+
+    function save() {
+        let geoJSON = null;
+
+        try{
+            geoJSON = layerGroup.toGeoJSON();
+        }catch(e){
+            console.log(e)
+            enqueueSnackbar('Error while trying to convert map!', {variant:'error'})
+            return
+        }
+        if(geoJSON === null) return;
+
+        // let idx = 0; 
+        // // console.log(properties);
+        // for(let feature of geoJSON.features){
+        //     feature.properties = properties[idx];
+        //     idx += 1;
+        //     console.log(feature);
+        // }
+        
+        dispatch(saveGeojsonThunk(
+            {owner: user, 
+            mapData: geoJSON, 
+            id: mapId}
+        ))
+        enqueueSnackbar('map saved!', {variant:'success'})
+    }
 
     function polygonCut(polygon, line, idPrefix) {
         // Old one should be deleted here?

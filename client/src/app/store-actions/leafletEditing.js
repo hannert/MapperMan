@@ -285,6 +285,7 @@ export const leafletEditing = createSlice({
                     }
                     polygon.redraw()
                 } else {
+                    polygon.isSplit = true;
                     state.layerGroup.removeLayer(polygon._leaflet_id)
                 }
                 
@@ -293,6 +294,7 @@ export const leafletEditing = createSlice({
                 return retVal;
             }
 
+            drawnLayer.isSplit = true;
             state.layerGroup.removeLayer(drawnLayer)
 
 

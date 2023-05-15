@@ -1,7 +1,7 @@
 import { Delete, Edit, Groups, Publish, Save } from "@mui/icons-material";
+import StyleIcon from '@mui/icons-material/Style';
 import { IconButton, Tooltip } from "@mui/material";
 import { Box, Container } from '@mui/system';
-import StyleIcon from '@mui/icons-material/Style';
 import { enqueueSnackbar } from "notistack";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -12,7 +12,7 @@ import DeleteModal from "./DeleteModal";
 import EditModal from "./EditModal";
 import ExportMapButton from "./ExportMapButton";
 import PublishModal from "./PublishModal";
-import TagsModal from "./TagsModal"
+import TagsModal from "./TagsModal";
 /**
  * This component is a container for the buttons that appear on App Banner when on the EditScreen
  * Responsible for conditional rendering of the buttons. 
@@ -55,7 +55,15 @@ export default function EditMapActions () {
 
     //  Function to handle user clicking the save icon, Should save and give notification
     function handleSave(){
-        const geoJSON = layerGroup.toGeoJSON();
+        var geoJSON = null;
+        try {
+            geoJSON = layerGroup.toGeoJSON();
+        } catch(e) {
+            console.log(e)
+            enqueueSnackbar('Error while trying to convert map!', {variant:'error'})
+        }
+        if (geoJSON === null) return
+
 
         console.log(geoJSON);
         let idx = 0; 
