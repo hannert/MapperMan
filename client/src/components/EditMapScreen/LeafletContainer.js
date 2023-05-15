@@ -39,7 +39,11 @@ export default function LeafletContainer(){
             layerGroup.clearLayers()
             console.log('Layergroup after clear: ', layerGroup);
             
-
+            layerGroup.on('createdPolygon', (e)=>{
+                console.log("Created polygon");
+                console.log(e);
+            })
+            
             mapRef.current.on('editable:enable', (e) => {
                 console.log('Enable edit');
                 console.log(e);
@@ -180,37 +184,78 @@ export default function LeafletContainer(){
 
                 e.layer.on('dragstart', (e) => {
                     console.log(e);
-                    console.log(e.target._latlngs[0][0])
+                    dispatch(setfStartPos(e.target._latlngs[0][0]));
+                    console.log("Length here")
+                    console.log(e.target._latlngs.length);
                     let arr = []
-                    if(e.target._latlngs.length > 1){
-                        for(let latlngArr of e.target._latlngs){
-                            // console.log(latlngs);
-                            let temp = []
-                            for(let latlngs of latlngArr){
-                                for(let latlng of latlngs){
-                                    console.log(latlng);
-                                    temp.push(L.latLng(latlng.lat, latlng.lng))
-                                }
-                            }
-                            arr.push(temp)
+                    if(e.target._latlngs.length === 1){
+                        for(let latlng of e.target._latlngs[0]){
+                            arr.push(L.latLng(latlng.lat, latlng.lng));
                         }
-                        dispatch(setfStartPos(arr))
-                    }else{
-                        dispatch(setfStartPos((e.target._latlngs)));
+                        console.log('Array here');
+                        console.log(arr);
+                        dispatch(setfStartPos(arr));
                     }
+                    // let arr = []
+                    // if(e.target._latlngs.length > 1){
+                    //     for(let latlngArr of e.target._latlngs){
+                    //         // console.log(latlngs);
+                    //         let temp = []
+                    //         for(let latlngs of latlngArr){
+                    //             for(let latlng of latlngs){
+                    //                 temp.push(L.latLng(latlng.lat, latlng.lng))
+                    //             }
+                    //         }
+                    //         arr.push(temp)
+                    //     }
+                    //     dispatch(setfStartPos(arr))
+                    // }else{
+                    //     dispatch(setfStartPos((e.target._latlngs)));
+                    // }
                 });
                 
                 e.layer.on('dragend', (e) => {
                     console.log(e);
-                    console.log(e.target._latlngs[0][0])
-                    
-                    dispatch(addMoveFeatureTransaction({
-                        layerGroup: layerGroup,
-                        featureIndex: e.target.featureIndex,
-                        endPos: e.target._latlngs,
-                        mapId: mapId,
-                        socket: socket
-                    }))
+                    console.log(e.target._latlngs.length);
+                    if(e.target._latlngs.length === 1){
+                        let arr = []
+                        for(let latlng of e.target._latlngs[0]){
+                            arr.push(L.latLng(latlng.lat, latlng.lng));
+                        }
+                        console.log('Array here');
+                        console.log(arr);
+                        dispatch(addMoveFeatureTransaction({
+                            layerGroup: layerGroup,
+                            featureIndex: e.target.featureIndex,
+                            endPos: arr,
+                            mapId: mapId,
+                            socket: socket
+                        }))
+                    }
+                    // let arr = []
+                    // if(e.target._latlngs.length > 1){
+                    //     for(let latlngArr of e.target._latlngs){
+                    //         // console.log(latlngs);
+                    //         let temp = []
+                    //         for(let latlngs of latlngArr){
+                    //             for(let latlng of latlngs){
+                    //                 temp.push(L.latLng(latlng.lat, latlng.lng))
+                    //             }
+                    //         }
+                    //         arr.push(temp)
+                    //     }
+                    // }else{
+                    //     arr = e.target._latlngs;
+                    // }
+                    // console.log(arr);
+
+                    // dispatch(addMoveFeatureTransaction({
+                    //     layerGroup: layerGroup,
+                    //     featureIndex: e.target.featureIndex,
+                    //     endPos: e.target._latlngs,
+                    //     mapId: mapId,
+                    //     socket: socket
+                    // }))
                 });
 
                 e.layer.on('remove', (e) => {
@@ -309,8 +354,12 @@ export default function LeafletContainer(){
                 console.log(feature);
                 // Have to add draggable here first then disable/enable it when wanted
                 // console.log(L.GeoJSON.geometryToLayer(feature));
-                
-                const polygon = L.polygon(L.GeoJSON.geometryToLayer(feature)._latlngs, {draggable:true});
+                let polygon = null;
+                if(feature.geometry.type === 'MultiPolygon'){
+                    console.log('MultiPolygon');
+                    polygon = L.polygon(L.GeoJSON.geometryToLayer(feature)._latlngs, {draggable:false});
+                }
+                polygon = L.polygon(L.GeoJSON.geometryToLayer(feature)._latlngs, {draggable:true});
 
                 console.log(polygon);
                 console.log(feature.geometry.coordinates);

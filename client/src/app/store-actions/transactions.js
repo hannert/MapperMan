@@ -6,7 +6,7 @@ import DeleteVertex_Transaction from "../jsTPS/Transactions/DeleteVertex_Transac
 import MoveFeature_Transaction from "../jsTPS/Transactions/MoveFeature_Transaction";
 import MoveVertex_Transaction from "../jsTPS/Transactions/MoveVertex_Transaction";
 import jsTPS from "../jsTPS/jsTPS";
-
+import * as L from 'leaflet';
 const initialState = {
     tps: null,
     vertexIndex: null,
@@ -100,20 +100,24 @@ export const transactions = createSlice({
         },
         addMoveFeatureTransaction: (state, action) => {
             state.ping = !state.ping;
-            console.log(state.fStartPos);
+            
+            //cancer
+            let copy = JSON.parse(JSON.stringify(state.fStartPos));
+            let temp = [];
+            for(let latlng of copy){
+                temp.push(L.latLng(latlng.lat, latlng.lng));
+            }
+
             console.log(action.payload.endPos);
-            // let offsetX = action.payload.endPos['lat'] - state.fStartPos['lat'];
-            // let offsetY = action.payload.endPos['lng'] - state.fStartPos['lng'];
+            let transaction = new MoveFeature_Transaction(action.payload.layerGroup, action.payload.featureIndex, action.payload.endPos, temp, action.payload.socket, action.payload.mapId);
+            state.tps.addTransaction(transaction);
 
-            // let transaction = new MoveFeature_Transaction(action.payload.layerGroup, action.payload.featureIndex, offsetX, offsetY, action.payload.socket, action.payload.mapId);
-            // state.tps.addTransaction(transaction);
-
-            // let socket = action.payload.socket;
-            // let room = action.payload.mapId;
-            // console.log("emitting");
-            // console.log(transaction)
-            // socket.emit('create move feature transaction', room, action.payload.featureIndex, offsetX, offsetY, "move feature" );
-            // console.log("heheh")
+            let socket = action.payload.socket;
+            let room = action.payload.mapId;
+            console.log("emitting");
+            console.log(transaction)
+            socket.emit('create move feature transaction', room, action.payload.featureIndex, "move feature" );
+            console.log("heheh")
         },
         addDeleteFeatureTransaction: (state, action) => {
             state.ping = !state.ping;

@@ -226,15 +226,14 @@ export const leafletEditing = createSlice({
                 if(feature.editEnabled()){
                     feature.setStyle({ color: "#3388ff" });
                     feature.toggleEdit();
-                    state.layerGroup.getLayer(feature._leaflet_id).dragging.disable()
-                    console.log('Disabling edit');
-                    console.log(feature.editEnabled())
                 }else{
                     feature.setStyle({ color: "black" });
                     feature.toggleEdit();
                     console.log('Enabling edit');
                     console.log(feature.editEnabled())
-                    state.layerGroup.getLayer(feature._leaflet_id).dragging.enable()
+                    if(feature._latlngs.length !== 1){
+                        state.layerGroup.getLayer(feature._leaflet_id).dragging.disable()
+                    }
                 }
             }
 

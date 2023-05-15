@@ -54,7 +54,6 @@ export default function PolygonButton() {
                     <PentagonIcon />
                 </Button>
             </Tooltip>
-            { !hidden && <CommitButton setHidden={setHidden} cancelFunction={endTool}/>}
             { !hidden && <CancelButton setHidden={setHidden} cancelFunction={endTool}/>}
         </Box>
     );
