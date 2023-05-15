@@ -15,7 +15,7 @@ export default function DeleteModal (props) {
     const user = useSelector((state) => state.accountAuth.user);
 
     const handleConfirm = () => {
-        console.log("map Id that will be published: " + mapID)
+        console.log("map Id that will be deleted: " + mapID)
         dispatch(deleteMapThunk({
             id: mapID,
             user: user

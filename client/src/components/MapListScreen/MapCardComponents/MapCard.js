@@ -86,6 +86,7 @@ export default function MapCard(props) {
                     </Grid>
                     <Grid item xs = {6} sx={{textAlign:'right'}}>
                         <MapCardActions 
+                            owner = {map.owner}
                             published={map.published} 
                             togglePublishDialog={togglePublishDialog}
                             toggleDeleteDialog={toggleDeleteDialog}
