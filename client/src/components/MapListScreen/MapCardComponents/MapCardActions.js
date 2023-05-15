@@ -10,15 +10,17 @@ import PublishButton from './PublishButton';
  * @returns Box of all of the Map Card Actions
  */
 export default function MapCardActions(props){
-    let {mapId, published, togglePublishDialog, toggleDeleteDialog, toggleForkDialog, handleActionClick} = props;
+    let {mapId, owner, published, togglePublishDialog, toggleDeleteDialog, toggleForkDialog, handleActionClick} = props;
     const publicRepo = useSelector((state) => state.editMapList.publicRepo);
     const guest = useSelector((state) => state.accountAuth.guest);
-
+    const user = useSelector((state) => state.accountAuth.user)
+    console.log(owner)
+    console.log(user.username)
     return (
         <Box sx={{marginRight:'5%'}}>
             {!published && !guest && <PublishButton togglePublishDialog={togglePublishDialog} handleActionClick={handleActionClick}></PublishButton>}
             {published && !guest && <ForkButton toggleForkDialog={toggleForkDialog} handleActionClick={handleActionClick}></ForkButton>}
-            {!publicRepo && !guest && <DeleteButton toggleDeleteDialog={toggleDeleteDialog} handleActionClick={handleActionClick}></DeleteButton>}
+            {!publicRepo && (owner === user.username) && <DeleteButton toggleDeleteDialog={toggleDeleteDialog} handleActionClick={handleActionClick}></DeleteButton>}
         </Box>
 
     )
